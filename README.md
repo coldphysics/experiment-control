@@ -1,11 +1,21 @@
 # Software Control
 This repository maintains a software used to control physical experiments related to very cold molecules and atoms.
 
-## Software Features
+## Features
 
+### Main Features
+A short description of the main features of this software should be placed here
+
+### Details
 The features of this software are documented in the [Wiki](https://github.com/coldphysics/software-control/wiki).
 
 ## How Tos
+
+### How to Setup the Software Control for Regular Use?
+TODO
+
+### How to Setup the Codebase for Code Contributions?
+TODO
 
 ### How to Add a New Issue?
   0. Make sure the issue is not added already.
@@ -24,6 +34,5 @@ The features of this software are documented in the [Wiki](https://github.com/co
   5. Add additional labels if necessary, e.g., AdWin or NationalInstuments or both.
   
 ### How Document a Feature?
-
 Please use the [Wiki](https://github.com/coldphysics/software-control/wiki).
   
