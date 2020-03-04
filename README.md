@@ -11,13 +11,13 @@ The features of this software are documented in the [Wiki](https://github.com/co
 
 ## How Tos
 
-### How to Setup the Software Control for Regular Use?
+### How to setup the software control for regular use?
 TODO
 
-### How to Setup the Codebase for Code Contributions?
+### How to setup the codebase for code contributions?
 TODO
 
-### How to Add a New Issue?
+### How to add a new issue?
   0. Make sure the issue is not added already.
   1. Go to the [`Issues`](https://github.com/coldphysics/software-control/issues) tab.
   2. Click on `New Issue`.
@@ -25,7 +25,7 @@ TODO
   4. Fill-in the proposed template with the bug details. Remove any unused sections.
   5. Add additional labels if necessary, e.g., AdWin or NationalInstuments or both.
   
-### How to Add a New Feature Request?
+### How to add a new feature request?
   0. Make sure the feature request is not added already.
   1. Go to the [`Issues`](https://github.com/coldphysics/software-control/issues) tab.
   2. Click on `New Issue`.
@@ -33,6 +33,6 @@ TODO
   4. Fill-in the proposed template with the bug details. Remove any unused sections.
   5. Add additional labels if necessary, e.g., AdWin or NationalInstuments or both.
   
-### How Document a Feature?
+### How to document a feature?
 Please use the [Wiki](https://github.com/coldphysics/software-control/wiki).
   
