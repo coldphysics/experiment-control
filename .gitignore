@@ -360,3 +360,5 @@ libs/NationalInstruments.DAQmx.msl
 libs/NationalInstruments.DAQmx.xml
 libs/NationalInstruments.MStudioCLM.dll
 libs/NationalInstruments.NiLmClientDLL.dll
+
+!Controller/Controller/AdWin/Debug
