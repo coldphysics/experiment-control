@@ -362,3 +362,5 @@ libs/NationalInstruments.MStudioCLM.dll
 libs/NationalInstruments.NiLmClientDLL.dll
 
 !Controller/Controller/AdWin/Debug
+!View/View/AdWin/Debug
+!HardwareAdWin/HardwareAdWin/Debug
