@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="e45f65a7-f040-4788-9ce1-99d6b14983d9" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+    <introduction>
+      <para>This project constitutes a part of the controller of the MVVM design pattern (the entire solution follows the MVVM design pattern).</para>
+      <para>More specifically, this project provides classes which calculate the duration of the output sequence</para>
+      <autoOutline />
+    </introduction>
+    <!-- Add one or more top-level section elements.  These are collapsible.
+         If using <autoOutline />, add an address attribute to identify it
+         and specify a title so that it can be jumped to with a hyperlink. -->
+    <section address="ClassDiagram">
+      <title>Class Diagram</title>
+      <content>
+        <para>
+          The class diagram shows that each of the project's classes depends on a class from the <link xlink:href="bdbf227e-a5fe-400f-8940-b560ed76a1cb"/> project.
+        </para>
+        <para>
+          Each class uses the associated <codeInline>Model</codeInline> class to calculate the overall duration of the corresponding level in the hierarchy, and then gives the result to the upper level to help it calculate its duration. 
+          This means that the <codeEntityReference>T:AbstractController.AbstractRootController</codeEntityReference> class has an overview of the overall sequence duration.
+        </para>
+        <mediaLink>
+          <caption>The class diagram of the AbstractController project</caption>
+          <image placement="center" xlink:href="ClassDiagram_AbstractController"/>
+        </mediaLink>
+      </content>
+
+    </section>
+    <section address="Remarks">
+      <title>Remarks</title>
+      <content>
+        <list class="bullet">
+          <listItem>
+            <para>
+              The duration of a tab-sequence is the duration of the longest tab-sequence among all channels in all cards (see <codeEntityReference>M:AbstractController.Data.Sequence.AbstractSequenceController.LongestDurationAllSequences</codeEntityReference>).
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              The duration of a card is the sum of the durations of all tab-sequences that belong to the card (see <codeEntityReference>M:AbstractController.Data.Card.AbstractCardController.Duration</codeEntityReference>).
+            </para>
+          </listItem>
+        </list>
+      </content>
+    </section>
+    <relatedTopics>
+      <codeEntityReference>G:AbstractController</codeEntityReference>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

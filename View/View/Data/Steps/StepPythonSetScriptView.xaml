@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="View.Data.Steps.StepPythonSetScriptView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+			 Name="UC"
+             d:DesignHeight="400" d:DesignWidth="600">
+	<UserControl.Resources>
+		<Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+			<Style.Triggers>
+				<Trigger Property="Validation.HasError" Value="true">
+					<Setter Property="ToolTip"
+              Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors).CurrentItem.ErrorContent}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+	</UserControl.Resources>
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="200"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="1"/>
+			<RowDefinition Height="55"/>
+		</Grid.RowDefinitions>
+		
+		<TextBox Margin="0,5,5,0" Grid.Row="0" Style="{StaticResource textBoxInError}" Grid.Column="1" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left"  Text="{Binding Script, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" HorizontalScrollBarVisibility="Visible" AcceptsReturn="True" />
+		   
+		<TextBlock  TextWrapping="Wrap" Margin="5,5,5,0">
+			<Run Text="A Python script that generates the output of the current step. It is evaluated for each time step. Within the script you can use the following variables:"/>
+			<LineBreak/>
+			<LineBreak/>
+			<Run Text="&quot;out&quot;: the result"/>
+			<LineBreak/>
+			<Run Text="&quot;t&quot;: the current relative time (ms)"/>
+			<LineBreak/>
+			<Run Text="&quot;t0&quot;: the starting absolute time (ms)"/>
+			<LineBreak/>
+			<Run Text="&quot;T&quot;: the duration of the step (ms)"/>
+			<LineBreak/>	
+			<Run Text="The enabled/disabled state of sequences can be used as boolean variables (seq_0, seq_1, ..)"/>
+			<LineBreak/>	
+			<Run Text="All static, iterator, and dynamic variables can also be used."/>
+			<LineBreak/>
+			<LineBreak/>
+			<Run Text="Example:"/>
+			<LineBreak/>
+			<Run Text="A = 5"/>
+			<LineBreak/>
+			<Run Text="f = 50000"/>
+			<LineBreak/>
+			<Run Text="time = t/1000"/>
+			<LineBreak/>
+			<Run Text="out = A*sin(2*pi*f*time)"/>
+			<LineBreak/>
+		</TextBlock>
+		
+		<Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"  Stroke="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Margin="5,0,5,0"/>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"  Grid.ColumnSpan="2" >
+			<Button Content="Cancel" Width="70" Height="25" VerticalAlignment="Top" Margin="25,15,10,5" Command="{Binding CloseCommand}" CommandParameter="{Binding ElementName=UC}"/>
+			<Button Content="OK" Width="70"  Height="25" VerticalAlignment="Top" Margin="0,15,0,5" Command="{Binding SaveCommand}" CommandParameter="{Binding ElementName=UC}" />
+		</StackPanel>
+		
+	</Grid>
+</UserControl>

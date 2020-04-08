@@ -1,0 +1,560 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F7A4A900-EC4B-48D4-8708-71F0EA844C09}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>View</RootNamespace>
+    <AssemblyName>View</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\MainProject\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Control.Draggable, Version=1.0.5049.269, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\MainProject\packages\Control.Draggable.1.0.5049.269\lib\net35-Client\Control.Draggable.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MainProject\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MainProject\packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.8.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\MainProject\packages\Extended.Wpf.Toolkit.3.8.1\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.8.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\MainProject\packages\Extended.Wpf.Toolkit.3.8.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.8.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\MainProject\packages\Extended.Wpf.Toolkit.3.8.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.8.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\MainProject\packages\Extended.Wpf.Toolkit.3.8.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=3.8.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\MainProject\packages\Extended.Wpf.Toolkit.3.8.1\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AdWin\Debug\FifoDebugView.xaml.cs">
+      <DependentUpon>FifoDebugView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AdWin\Simulator\ChannelOutputView.xaml.cs">
+      <DependentUpon>ChannelOutputView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AdWin\Simulator\SimulatorView.xaml.cs">
+      <DependentUpon>SimulatorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\StepBatchAdderUC.xaml.cs">
+      <DependentUpon>StepBatchAdderUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\SwitchWindowUC.xaml.cs">
+      <DependentUpon>SwitchWindowUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\WindowsTemplate.xaml.cs">
+      <DependentUpon>WindowsTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Channels\DigitalHeader.xaml.cs">
+      <DependentUpon>DigitalHeader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Steps\SetMessageWindowView.xaml.cs">
+      <DependentUpon>SetMessageWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Steps\StepPythonSetScriptView.xaml.cs">
+      <DependentUpon>StepPythonSetScriptView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Steps\StepPythonView.xaml.cs">
+      <DependentUpon>StepPythonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helper\DragDropHelper.cs" />
+    <Compile Include="Helper\DraggedAdorner.cs" />
+    <Compile Include="Helper\InsertionAdorner.cs" />
+    <Compile Include="Helper\Utilities.cs" />
+    <Compile Include="Data\Channels\AnalogHeader.xaml.cs">
+      <DependentUpon>AnalogHeader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Steps\StepAnalogRampView.xaml.cs">
+      <DependentUpon>StepAnalogRampView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Steps\StepAnalogFileView.xaml.cs">
+      <DependentUpon>StepAnalogFileView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Steps\StepDigitalFileView.xaml.cs">
+      <DependentUpon>StepDigitalFileView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Steps\StepDigitalRamp.xaml.cs">
+      <DependentUpon>StepDigitalRamp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Windows\WindowAnalogView.xaml.cs">
+      <DependentUpon>WindowAnalogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Windows\WindowDigitalView.xaml.cs">
+      <DependentUpon>WindowDigitalView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Main\IterationManagerView.xaml.cs">
+      <DependentUpon>IterationManagerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Main\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Main\MeasurementRoutineManagerView.xaml.cs">
+      <DependentUpon>MeasurementRoutineManagerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Main\MeasurementRoutineSampleScriptView.xaml.cs">
+      <DependentUpon>MeasurementRoutineSampleScriptView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Main\MeasurementRoutineScriptView.xaml.cs">
+      <DependentUpon>MeasurementRoutineScriptView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Main\PythonScriptsView.xaml.cs">
+      <DependentUpon>PythonScriptsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Main\TemplatePythonScriptsFile.xaml.cs">
+      <DependentUpon>TemplatePythonScriptsFile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Options\OptionsManagerView.xaml.cs">
+      <DependentUpon>OptionsManagerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="OutputVisualizer\OutputVisualizationWindow.xaml.cs">
+      <DependentUpon>OutputVisualizationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="OutputVisualizer\OutputVisualizer.xaml.cs">
+      <DependentUpon>OutputVisualizer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\ProfileManagerView.xaml.cs">
+      <DependentUpon>ProfileManagerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Settings\BooleanSettingView.xaml.cs">
+      <DependentUpon>BooleanSettingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Settings\DatabaseConnectionSettingView.xaml.cs">
+      <DependentUpon>DatabaseConnectionSettingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Settings\FileFolderSettingView.xaml.cs">
+      <DependentUpon>FileFolderSettingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Settings\DecimalSettingView.xaml.cs">
+      <DependentUpon>DecimalSettingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Settings\IntegerSettingView.xaml.cs">
+      <DependentUpon>IntegerSettingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Settings\SettingTemplate.xaml.cs">
+      <DependentUpon>SettingTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Settings\SettingWithChildrenTemplate.xaml.cs">
+      <DependentUpon>SettingWithChildrenTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Settings\StringMultiOptionSettingView.xaml.cs">
+      <DependentUpon>StringMultiOptionSettingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Settings\StringSettingView.xaml.cs">
+      <DependentUpon>StringSettingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VariablesView.xaml.cs">
+      <DependentUpon>VariablesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VariableTypes\VariableBasicView.xaml.cs">
+      <DependentUpon>VariableBasicView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VariableTypes\VariableDynamicView.xaml.cs">
+      <DependentUpon>VariableDynamicView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VariableTypes\VariableIteratorView.xaml.cs">
+      <DependentUpon>VariableIteratorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VariableTypes\VariableGroupHeaderView.xaml.cs">
+      <DependentUpon>VariableGroupHeaderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VariableTypes\VariableStaticView.xaml.cs">
+      <DependentUpon>VariableStaticView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="AdWin\Debug\FifoDebugView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AdWin\Simulator\ChannelOutputView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="AdWin\Simulator\SimulatorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="AdWin\Simulator\SimulatorResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\StepBatchAdderUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\SwitchWindowUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\WindowsTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\Channels\AnalogHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\Channels\DigitalHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\Steps\SetMessageWindowView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Data\Steps\StepPythonSetScriptView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\Steps\StepPythonView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Data\Steps\StepAnalogRampView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\Steps\StepAnalogFileView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\Steps\StepDigitalFileView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\Steps\StepDigitalRamp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\Windows\WindowAnalogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\Windows\WindowDigitalView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Main\IterationManagerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Main\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Main\MeasurementRoutineManagerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Main\MeasurementRoutineSampleScriptView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Main\MeasurementRoutineScriptView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Main\PythonScriptsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Main\TemplatePythonScriptsFile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Options\OptionsManagerView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="OutputVisualizer\OutputVisualizationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="OutputVisualizer\OutputVisualizer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\CommonDimensions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\SettingsAndOptionsCommonResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Settings\ProfileManagerView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\Settings\BooleanSettingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\Settings\DatabaseConnectionSettingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\Settings\FileFolderSettingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\Settings\DecimalSettingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\Settings\IntegerSettingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\Settings\SettingTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\Settings\SettingWithChildrenTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\Settings\StringMultiOptionSettingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\Settings\StringSettingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Variables\VariablesResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Variables\VariablesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Variables\VariableTypes\VariableBasicView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Variables\VariableTypes\VariableDynamicView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Variables\VariableTypes\VariableIteratorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Variables\VariableTypes\VariableGroupHeaderView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Variables\VariableTypes\VariableStaticView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Helper\WindowGenerator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\AbstractController\AbstractController\AbstractController.csproj">
+      <Project>{729d4737-0773-440f-b79e-5ce13c39e8a8}</Project>
+      <Name>AbstractController</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Buffer\Buffer\Buffer.csproj">
+      <Project>{a4e6d34d-9407-40b7-a5e1-15c040584399}</Project>
+      <Name>Buffer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Communication\Communication\Communication.csproj">
+      <Project>{d7b1494d-a547-420f-8e79-a8746552686c}</Project>
+      <Name>Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Controller\Controller\Controller.csproj">
+      <Project>{41eb105c-05d3-4629-8ce4-c4718d2e278c}</Project>
+      <Name>Controller</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CustomElements\CustomElements\CustomElements.csproj">
+      <Project>{727c9f78-694c-4c30-99dc-0c81d84b49a8}</Project>
+      <Name>CustomElements</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Errors\Errors\Errors.csproj">
+      <Project>{60ae18b6-af6c-413a-b2e3-a7e04f4796f3}</Project>
+      <Name>Errors</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\HardwareAdWin\HardwareAdWin\HardwareAdWin.csproj">
+      <Project>{c6af2f23-8196-45ad-8d1c-7b3d67370636}</Project>
+      <Name>HardwareAdWin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Model\Model\Model.csproj">
+      <Project>{8E3379F7-41FB-4A3B-B3EC-74451D7E9E6C}</Project>
+      <Name>Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\1484583613_plus-24.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\1484583618_cross-24.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\1484857826_check.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Clear.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SuperatomsIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\1490114942_Import.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\1490114946_Export.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\emmy.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\cr.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Topics>
+  <Topic id="d8c06d5b-027b-49dd-a4e2-948a717b6a32" visible="True" isDefault="true" title="Welcome to the Experiment Computer Control Documentation">
+    <HelpKeywords>
+      <HelpKeyword index="K" term="Welcome" />
+    </HelpKeywords>
+  </Topic>
+  <Topic id="ba7a31fe-b67d-4ceb-83a6-18926d03dd09" visible="True" isExpanded="true">
+    <Topic id="581d44d9-6875-4d01-9fc8-200b4c841350" visible="True" title="Cross-Project" />
+    <Topic id="581d44d9-6875-4d01-9fc8-200b4c841349" visible="True" isExpanded="true">
+      <Topic id="e45f65a7-f040-4788-9ce1-99d6b14983d9" visible="True" />
+      <Topic id="bdbf227e-a5fe-400f-8940-b560ed76a1cb" visible="True" />
+      <Topic id="91eef49a-af36-475a-bd43-186a9f3cddff" visible="True" title="Buffer" />
+      <Topic id="2365b2ef-e966-4b0d-ab40-4682a9fcde08" visible="True" />
+      <Topic id="c72ec7fd-0cf6-42a5-ad16-66dca6b63074" visible="True" isSelected="true" />
+    </Topic>
+  </Topic>
+  <Topic id="85ac4421-5c69-4582-8a97-ad14ef50d30d" visible="True" apiParentMode="InsertAsChild" title="Reference" />
+</Topics>

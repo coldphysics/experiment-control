@@ -1,0 +1,89 @@
+﻿<Application x:Class="MainProject.App"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            
+			 xmlns:vmc="clr-namespace:Controller.Control;assembly=Controller"
+			 xmlns:vmsba="clr-namespace:Controller.Control.StepBatchAddition;assembly=Controller"
+			 xmlns:vwc="clr-namespace:View.Control;assembly=View"
+            xmlns:vmvisualizer="clr-namespace:Controller.OutputVisualizer;assembly=Controller"
+             xmlns:vwvisualizer="clr-namespace:View.OutputVisualizer;assembly=View"
+     
+			 xmlns:vms="clr-namespace:Controller.Data.Steps;assembly=Controller"
+			 xmlns:vws="clr-namespace:View.Data.Steps;assembly=View"
+			 xmlns:vmsettings="clr-namespace:Controller.Settings;assembly=Controller"
+			 xmlns:vwsettings="clr-namespace:View.Settings;assembly=View"
+			 xmlns:vmoptions="clr-namespace:Controller.Options;assembly=Controller"
+			 xmlns:vwoptions="clr-namespace:View.Options;assembly=View"
+			 xmlns:vmsimulator="clr-namespace:Controller.AdWin.Simulator;assembly=Controller"
+			 xmlns:vwsimulator="clr-namespace:View.AdWin.Simulator;assembly=View"
+			 xmlns:vmfifodebug="clr-namespace:Controller.AdWin.Debug;assembly=Controller"
+			 xmlns:vwfifodebug="clr-namespace:View.AdWin.Debug;assembly=View"
+			 xmlns:vmmain="clr-namespace:Controller.MainWindow.MeasurementRoutine;assembly=Controller"
+           
+               
+      
+			 xmlns:vwmain="clr-namespace:View.Main;assembly=View"
+             StartupUri="MainWindow.xaml">
+	<Application.Resources>
+        <!--align -->
+            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+            <Style TargetType="{x:Type MenuItem}">
+			<Setter Property="HorizontalContentAlignment" Value="Left" />
+			<Setter Property="VerticalContentAlignment" Value="Top" />
+		</Style>
+
+		<DataTemplate DataType="{x:Type vmfifodebug:FifoDebugController}">
+			<vwfifodebug:FifoDebugView  />
+		</DataTemplate>
+		
+		<DataTemplate DataType="{x:Type vmsimulator:SimulatorController}">
+			<vwsimulator:SimulatorView  />
+		</DataTemplate>
+		
+		<DataTemplate DataType="{x:Type vms:StepPythonSetScriptController}">
+			<vws:StepPythonSetScriptView  />
+		</DataTemplate>
+		
+		<DataTemplate DataType="{x:Type vmc:SwitchWindowController}">
+			<vwc:SwitchWindowUC />
+		</DataTemplate>
+
+		<DataTemplate DataType="{x:Type vms:SetMessageWindowController}">
+			<vws:SetMessageWindowView />
+		</DataTemplate>
+
+		<DataTemplate DataType="{x:Type vmsettings:ProfileManagerController}">
+			<vwsettings:ProfileManagerView />
+		</DataTemplate>
+
+		<DataTemplate DataType="{x:Type vmoptions:OptionsManagerController}">
+			<vwoptions:OptionsManagerView />
+		</DataTemplate>
+
+		<DataTemplate DataType="{x:Type vmsba:StepBatchAdderController}">
+			<vwc:StepBatchAdderUC />
+		</DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmvisualizer:OutputVisualizationWindowController}">
+            <vwvisualizer:OutputVisualizationWindow />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmvisualizer:OutputVisualizerController}">
+            <vwvisualizer:OutputVisualizer />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmmain:PythonScriptsController}">
+            <vwmain:PythonScriptsView/>
+        </DataTemplate>
+
+
+        <DataTemplate DataType="{x:Type vmmain:MeasurementRoutineScriptController}">
+			<vwmain:MeasurementRoutineScriptView  />
+		</DataTemplate>
+
+		<DataTemplate DataType="{x:Type vmmain:MeasurementRoutineSampleScriptController}">
+			<vwmain:MeasurementRoutineSampleScriptView  />
+		</DataTemplate>
+		
+	</Application.Resources>
+</Application>

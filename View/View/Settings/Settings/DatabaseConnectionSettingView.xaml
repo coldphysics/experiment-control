@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="View.Settings.Settings.DatabaseConnectionSettingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:my="clr-namespace:View.Settings.Settings" 
+			 >
+	<UserControl.Resources>
+		<Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+			<Style.Triggers>
+				<Trigger Property="Validation.HasError" Value="true">
+					<Setter Property="ToolTip"
+              Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors).CurrentItem.ErrorContent}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+
+		<Style x:Key="nudInError" TargetType="{x:Type xctk:IntegerUpDown}">
+			<Style.Triggers>
+				<Trigger Property="Validation.HasError" Value="true">
+					<Setter Property="ToolTip"
+              Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors).CurrentItem.ErrorContent}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+	</UserControl.Resources>
+	<my:SettingTemplate>
+		<xctk:BusyIndicator IsBusy="{Binding IsVerifyingConnection}" >
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Label Content="Server:" Grid.Column="0" Grid.Row="0" />
+				<TextBox Style="{StaticResource textBoxInError}" Text="{Binding Server, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="0" Margin="2"/>
+				<Label Content="Port:" Grid.Column="0" Grid.Row="1"/>
+				<xctk:IntegerUpDown Style="{StaticResource nudInError}" Grid.Row="1" Grid.Column="1" Text="{Binding PortText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" Value="{Binding Port, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="65535" Margin="2" />
+				<Label Content="Database:" Grid.Column="0" Grid.Row="2" />
+				<TextBox Style="{StaticResource textBoxInError}" Text="{Binding Database, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="2" Margin="2"/>
+				<Label Content="Username:" Grid.Column="0" Grid.Row="3" />
+				<TextBox Style="{StaticResource textBoxInError}" Text="{Binding Username, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="3" Margin="2"/>
+				<Label Content="Password:" Grid.Column="0" Grid.Row="4" />
+				<TextBox Style="{StaticResource textBoxInError}" Text="{Binding Password, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="4" Margin="2"/>
+				<Label Content="Table:" Grid.Column="0" Grid.Row="5" />
+				<TextBox Style="{StaticResource textBoxInError}" Text="{Binding Table, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="5" Margin="2"/>
+				<Button Content="Verify Database Connection" Command="{Binding VerifyConnectionCommand}" Grid.Column="1" Grid.Row="6" Padding ="5,2,5,2" HorizontalAlignment="Right" Margin="2"/>
+			</Grid>
+		</xctk:BusyIndicator>
+	</my:SettingTemplate>
+</UserControl>

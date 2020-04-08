@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C6AF2F23-8196-45AD-8D1C-7B3D67370636}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HardwareAdWin</RootNamespace>
+    <AssemblyName>HardwareAdWin</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\HardwareAdWin.XML</DocumentationFile>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\HardwareAdWin.XML</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\HardwareAdWin.XML</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ADwin.Driver, Version=1.0.58.25313, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libs\ADwin.Driver.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Driver\AdWinDriverFactory.cs" />
+    <Compile Include="Driver\DummyAdWinDriver.cs" />
+    <Compile Include="Driver\IAdWinDriver.cs" />
+    <Compile Include="Driver\AdWinFunctions.cs" />
+    <Compile Include="Debug\FifoStatus.cs" />
+    <Compile Include="HardwareAdWin\DigitalCard.cs" />
+    <Compile Include="NamespaceGroupDoc.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="HardwareAdWin\ControlAdwinProcess.cs" />
+    <Compile Include="HardwareAdWin\AdwinHwGroup.cs" />
+    <Compile Include="HardwareAdWin\AnalogCard.cs" />
+    <Compile Include="HardwareAdWin\FIFOWriterThreadState.cs" />
+    <Compile Include="Simulator\ChannelsOutputAvailableEventArgs.cs" />
+    <Compile Include="Simulator\Decompression\DecompressionResult\AbstractFinishReachedDecompressionResult.cs" />
+    <Compile Include="Simulator\Decompression\DecompressionResult\AbstractNumericDecompressionResult.cs" />
+    <Compile Include="Simulator\Decompression\DecompressionResult\AnalogFinishReachedDecompressionResult.cs" />
+    <Compile Include="Simulator\Decompression\DecompressionResult\AnalogNumericDecompressionResult.cs" />
+    <Compile Include="Simulator\Decompression\DecompressionResult\DigitalFinishReachedDecompressionResult.cs" />
+    <Compile Include="Simulator\Decompression\DecompressionResult\DigitalNumericDecompressionResult.cs" />
+    <Compile Include="Simulator\Decompression\DecompressionResult\EmptyFIFODecompressionResult.cs" />
+    <Compile Include="Simulator\Decompression\DecompressionResult\IDecompressionResult.cs" />
+    <Compile Include="Simulator\Decompression\DecompressionUnit.cs" />
+    <Compile Include="Simulator\Dequeue\AbstractDequeue.cs" />
+    <Compile Include="Simulator\Dequeue\AnalogDequeue.cs" />
+    <Compile Include="Simulator\Dequeue\DigitalDequeue.cs" />
+    <Compile Include="Simulator\DummyAdWinHW.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Buffer\Buffer\Buffer.csproj">
+      <Project>{a4e6d34d-9407-40b7-a5e1-15c040584399}</Project>
+      <Name>Buffer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Communication\Communication\Communication.csproj">
+      <Project>{d7b1494d-a547-420f-8e79-a8746552686c}</Project>
+      <Name>Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Errors\Errors\Errors.csproj">
+      <Project>{60ae18b6-af6c-413a-b2e3-a7e04f4796f3}</Project>
+      <Name>Errors</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Generator\Generator\Generator.csproj">
+      <Project>{618f796e-6ed6-4f5d-8ba9-08929dd46038}</Project>
+      <Name>Generator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Model\Model\Model.csproj">
+      <Project>{8e3379f7-41fb-4a3b-b3ec-74451d7e9e6c}</Project>
+      <Name>Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ProjectClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Diagrams\Compressing data.xml" />
+    <Resource Include="Diagrams\decompressing Data.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

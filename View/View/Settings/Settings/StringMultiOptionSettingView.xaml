@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="View.Settings.Settings.StringMultiOptionSettingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:my="clr-namespace:View.Settings.Settings"
+             >
+	<my:SettingWithChildrenTemplate>
+		<Grid Width="{StaticResource NumericSettingWidth}" HorizontalAlignment="Left">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+			<Label Content="{Binding Name}" Grid.Row="0" />
+			<ComboBox Grid.Row="1" Margin="5,0,0,0" ItemsSource="{Binding Options}" SelectedValue="{Binding Value}" />
+			
+		</Grid>
+	</my:SettingWithChildrenTemplate>
+</UserControl>

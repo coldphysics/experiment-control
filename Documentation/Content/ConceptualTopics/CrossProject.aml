@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="581d44d9-6875-4d01-9fc8-200b4c841350" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-->
+    <summary>
+      
+    </summary>
+-->
+    <introduction>
+      <!-- Uncomment this to generate an outline of the section and sub-section
+           titles.  Specify a numeric value as the inner text to limit it to
+           a specific number of sub-topics when creating the outline.  Specify
+           zero (0) to limit it to top-level sections only.  -->
+
+      <para>In this section you can find figures and descriptions about the overall structure of the solution, as well as some of the important cross-project algorithms and concepts.</para>
+    </introduction>
+    <!-- Add one or more top-level section elements.  These are collapsible.
+         If using <autoOutline />, add an address attribute to identify it
+         and specify a title so that it can be jumped to with a hyperlink. -->
+    <relatedTopics>
+      <!-- One or more of the following:
+           - A local link
+           - An external link
+           - A code entity reference
+
+      <link xlink:href="Other Topic's ID"/>
+      <link xlink:href="Other Topic's ID">Link inner text</link>
+
+      <externalLink>
+          <linkText>Link text</linkText>
+          <linkAlternateText>Optional alternate link text</linkAlternateText>
+          <linkUri>URI</linkUri>
+      </externalLink>
+
+      <codeEntityReference>API member ID</codeEntityReference>
+
+      Examples:
+
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8270" />
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8278">Some other topic</link>
+
+      <externalLink>
+          <linkText>SHFB on CodePlex</linkText>
+          <linkAlternateText>Go to CodePlex</linkAlternateText>
+          <linkUri>http://shfb.codeplex.com</linkUri>
+      </externalLink>
+
+      <codeEntityReference>T:TestDoc.TestClass</codeEntityReference>
+      <codeEntityReference>P:TestDoc.TestClass.SomeProperty</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor(System.String,System.Int32)</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.ToString</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.FirstMethod</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.SecondMethod(System.Int32,System.String)</codeEntityReference>
+      -->
+
+      <externalLink>
+        <linkText>Using the MVVM pattern for building WPF applications</linkText>
+        <linkAlternateText>Go to the article</linkAlternateText>
+        <linkUri>https://msdn.microsoft.com/en-us/magazine/dd419663.aspx</linkUri>
+      </externalLink>
+      <externalLink>
+        <linkText>The wiki article about the experiment control</linkText>
+        <linkAlternateText>Go to the article</linkAlternateText>
+        <linkUri>https://www.pi5.physik.uni-stuttgart.de/mediawiki/index.php/SUP:Experiment_Control</linkUri>
+      </externalLink>
+      <externalLink>
+        <linkText>The wiki article about the user manual of experiment control application</linkText>
+        <linkAlternateText>Go to the article</linkAlternateText>
+        <linkUri>https://www.pi5.physik.uni-stuttgart.de/mediawiki/index.php/SUP:Experiment_Control_User_Manual</linkUri>
+      </externalLink>
+      
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

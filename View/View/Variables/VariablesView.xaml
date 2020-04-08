@@ -1,0 +1,130 @@
+﻿<Window x:Class="View.Variables.VariablesView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:VariableTypes="clr-namespace:View.Variables.VariableTypes"
+        xmlns:variables="clr-namespace:View.Variables"
+        xmlns:submitTextBox="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements"
+        Title="VariablesView" Height="300" Width="750"
+		xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+		xmlns:Control="clr-namespace:View.Control"
+        ShowInTaskbar="False" Name="theWindow">
+	<Window.Resources>
+		<ResourceDictionary Source="VariablesResources.xaml" />
+		
+		
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"></RowDefinition>
+			<RowDefinition Height="28"></RowDefinition>
+		</Grid.RowDefinitions>
+		<Grid Grid.Row="0">
+			<!--  PreviewMouseMove="VariablesControl_PreviewMouseMove">-->
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="200*"></ColumnDefinition>
+				<ColumnDefinition Width="180*"></ColumnDefinition>
+				<ColumnDefinition Width="200*"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="28"></RowDefinition>
+				<RowDefinition Height="23"></RowDefinition>
+				<RowDefinition Height="*"></RowDefinition>
+				<RowDefinition Height="25"></RowDefinition>
+			</Grid.RowDefinitions>
+			<Grid.Resources>
+				<DataTemplate x:Key="WindowsTemplate">
+					<Control:WindowsTemplate />
+				</DataTemplate>
+			</Grid.Resources>
+			<ListBox Grid.Row="0" Grid.ColumnSpan="3" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding WindowsList, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource WindowsTemplate}" Name="WindowsListBox" HorizontalContentAlignment="Stretch">
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Horizontal"/>
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+			</ListBox>
+			
+			<Button Name="addStatic" Grid.Row="3" Grid.Column="0" Command="{Binding AddStatic}">Add Static</Button>
+			<Grid Grid.Row="1" Grid.Column="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="50*"></ColumnDefinition>
+					<ColumnDefinition Width="50*"></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+				<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0">Name</TextBlock>
+				<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">Value</TextBlock>
+			</Grid>
+			<ListBox IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Source={StaticResource collectionViewSource}, UpdateSourceTrigger=PropertyChanged}" ItemTemplateSelector="{StaticResource myDataTemplateSelector}" Name="VariablesStaticsControl" Grid.Row="2" Grid.Column="0" HorizontalContentAlignment="Stretch">
+				<ListBox.GroupStyle>
+					<GroupStyle ContainerStyle="{StaticResource ListBoxStyle}"/>
+				</ListBox.GroupStyle>
+				<!--  PreviewMouseLeftButtonDown="VariablesControl_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="VariablesControl_PreviewMouseLeftButtonUp">-->
+				<ListBox.ItemContainerStyle>
+					<Style>
+						<Setter Property="FrameworkElement.Margin" Value="0,0,0,5"/>
+					</Style>
+				</ListBox.ItemContainerStyle>
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+
+						<!--<UniformGrid Columns="3" VerticalAlignment="Top" />-->
+						<WrapPanel Orientation="Vertical" DataContext="{Binding ElementName=theWindow, Path=DataContext}" MaxHeight="{Binding StaticGroupHeight}" ItemWidth="215" />
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+			</ListBox>
+
+			<Button Name="addIterator" Grid.Row="3" Grid.Column="1" Command="{Binding AddIterator}">Add Iterator</Button>
+			<Grid Grid.Row="1" Grid.Column="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="130*"></ColumnDefinition>
+					<ColumnDefinition Width="50*"></ColumnDefinition>
+					<ColumnDefinition Width="50*"></ColumnDefinition>
+					<ColumnDefinition Width="50*"></ColumnDefinition>
+					<ColumnDefinition Width="50*"></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+				<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0">Name</TextBlock>
+				<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">Curr.</TextBlock>
+				<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2">Start</TextBlock>
+				<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="3">Stop</TextBlock>
+				<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="4">Step</TextBlock>
+			</Grid>
+			<ListBox IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding VariablesIterator, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource VariableIteratorTemplate}" Name="VariablesIteratorsControl" Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Stretch">
+				<!-- PreviewMouseLeftButtonDown="VariablesControl_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="VariablesControl_PreviewMouseLeftButtonUp">-->
+				<ListBox.ItemContainerStyle>
+					<Style>
+						<Setter Property="FrameworkElement.Margin" Value="0,0,0,5"/>
+					</Style>
+				</ListBox.ItemContainerStyle>
+			</ListBox>
+			<!---->
+
+            <Button Name="addDynamic" Grid.Row="3" Grid.Column="2" Command="{Binding AddDynamic}">Add Dynamic</Button>
+            <Grid Grid.Row="1" Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130*"></ColumnDefinition>
+                    <ColumnDefinition Width="70*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0">Name</TextBlock>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">Value</TextBlock>
+            </Grid>
+            <ListBox IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding VariablesDynamic, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource VariableDynamicTemplate}" Name="VariablesDynamicsControl" Grid.Row="2" Grid.Column="2" HorizontalContentAlignment="Stretch">
+                <!-- PreviewMouseLeftButtonDown="VariablesControl_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="VariablesControl_PreviewMouseLeftButtonUp"> -->
+			<ListBox.ItemContainerStyle>
+				<Style>
+					<Setter Property="FrameworkElement.Margin" Value="0,0,0,5"/>
+				</Style>
+			</ListBox.ItemContainerStyle>
+			</ListBox>
+		</Grid>
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="100"></ColumnDefinition>
+				<ColumnDefinition Width="100"></ColumnDefinition>
+				<ColumnDefinition Width="100"></ColumnDefinition>
+				<ColumnDefinition Width="100"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<Button Command="{Binding Evaluate}">Evaluate</Button>
+			<Button Command="{Binding Iterate}" Grid.Column="1">Iterate</Button>
+			<Button Command="{Binding Check}" Grid.Column="2">Check Usage</Button>
+		</Grid>
+	</Grid>
+</Window>

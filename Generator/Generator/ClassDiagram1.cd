@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Generator.Cookbook.GeneratorRecipe" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Cookbook\GeneratorRecipe.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Card.AnalogCardOutputGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Generator\Card\AnalogCardOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Card.DigitalCardOutputGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.75" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Generator\Card\DigitalCardOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Channel.ChannelOutputGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Generator\Channel\ChannelOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Concatenator.AnalogCardOutput" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>DAIAAAAAAAAAAAAAAgEoAAAAQBAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generator\Concatenator\AnalogCardOutput.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Concatenator.DigitalCardOutput" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>DAIAAAAAAAAAAAAAAAEoAAAAQFAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generator\Concatenator\DigitalCardOutput.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Concatenator.ModelOutput" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="19.75" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAAASAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generator\Concatenator\ModelOutput.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Concatenator.OutputConcatenator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.5" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>KAABIAAAAAAAAAAQAAAIAAAAAAAAgAAAgAAAABAAAAA=</HashCode>
+      <FileName>Generator\Concatenator\OutputConcatenator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Generator.Generator.Cookbook.SequenceGroupGeneratorRecipe" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.5" Y="3.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAgAAAggAAAAA=</HashCode>
+      <FileName>Generator\Cookbook\SequenceGroupGeneratorRecipe.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.DataOutputGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Generator\DataOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Sequence.SequenceOutputGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="19.5" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Generator\Sequence\SequenceOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.SequenceGroup.SequenceGroupOutputGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Generator\SequenceGroup\SequenceGroupOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Step.Abstract.BasicFileStepOutputGenerator" Collapsed="true">
+    <Position X="4" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Generator\Step\Abstract\BasicFileStepOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Generator.Generator.Step.Abstract.BasicStepOutputGenerator" Collapsed="true">
+    <Position X="5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAgAAAAACAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Generator\Step\Abstract\BasicStepOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Generator.Generator.Step.AnalogStepFileOutputGenerator" Collapsed="true">
+    <Position X="6" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Generator\Step\AnalogStepFileOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Step.PythonStepException" Collapsed="true">
+    <Position X="17" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generator\Step\AnalogStepPythonOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Generator.Generator.Step.AnalogStepPythonOutputGenerator" Collapsed="true">
+    <Position X="0.5" Y="2" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAACEAAAAAAAAAAAEBQQAAAAAAIAAAACgASEAAAAA=</HashCode>
+      <FileName>Generator\Step\AnalogStepPythonOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Step.AnalogStepRampOutputGenerator" Collapsed="true">
+    <Position X="6.75" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAEAAAAA=</HashCode>
+      <FileName>Generator\Step\AnalogStepRampOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Step.DigitalStepFileOutputGenerator" Collapsed="true">
+    <Position X="2.75" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Generator\Step\DigitalStepFileOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Step.DigitalStepRampOutputGenerator" Collapsed="true">
+    <Position X="9.5" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAEAAAAA=</HashCode>
+      <FileName>Generator\Step\DigitalStepRampOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Generator.Generator.Step.PythonStepScriptAnalyzer" Collapsed="true">
+    <Position X="19.5" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAgAAAQCAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Generator\Step\PythonStepScriptAnalyzer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Generator.NamespaceGroupDoc" Collapsed="true">
+    <Position X="12" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>NamespaceGroupDoc.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Generator.RootOutputGenerator" Collapsed="true">
+    <Position X="12" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>RootOutputGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Communication.Interfaces.Generator.IWrapSequenceGroupGenerator" Collapsed="true">
+    <Position X="1.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

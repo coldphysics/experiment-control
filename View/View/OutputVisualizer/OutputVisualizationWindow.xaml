@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="View.OutputVisualizer.OutputVisualizationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:ce="clr-namespace:CustomElements.CheckableTreeView;assembly=CustomElements"
+             xmlns:vw="clr-namespace:View.OutputVisualizer"     
+         >
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition  Width="auto" >
+            </ColumnDefinition>
+            <ColumnDefinition Width="*">
+
+            </ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" ></RowDefinition>
+                <RowDefinition Height="10"></RowDefinition>
+                <RowDefinition Height="auto" ></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Button Content="Refresh" Grid.Row="0" Command="{Binding UserControlCollectionCommand}"/>
+            <ce:CheckableTreeView DataContext="{Binding VisualizationTreeViewController}" Grid.Row="3" />
+
+        </Grid>
+        
+        <GroupBox Grid.Column="1">
+            <ScrollViewer >
+                <ItemsControl   ItemsSource="{Binding OutputVisualizerCollectionUC}" Background="{x:Null}" >
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="1"></UniformGrid>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+
+
+                </ItemsControl>
+
+            </ScrollViewer>
+        </GroupBox>
+       
+    </Grid>
+
+
+</UserControl>

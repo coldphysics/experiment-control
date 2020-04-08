@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="bdbf227e-a5fe-400f-8940-b560ed76a1cb" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      
+      <para>
+        This project constitutes a part of the model of the MVVM design pattern (the entire solution follows the MVVM design pattern).
+      </para>
+      <para>
+        Some of the classes of this project constitute the data model derived from the user interface, while other classes are related to variables and timing-related settings.
+      </para>
+      <autoOutline />
+    </introduction>
+
+    <!-- Add one or more top-level section elements.  These are collapsible.
+         If using <autoOutline />, add an address attribute to identify it
+         and specify a title so that it can be jumped to with a hyperlink. -->
+    <section address="ClassDiagram">
+      <title>Class Diagram</title>
+      <content>
+        <para>
+          The classes that constitute the data model are:
+          
+        </para>
+        <list class="bullet">
+          <listItem>
+            <para>
+              <codeEntityReference>T:Model.Root.RootModel</codeEntityReference>: A high-level container.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>T:Model.Data.DataModel</codeEntityReference>: A high-level container with different responsibilities than <codeInline>RootModel</codeInline>.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>T:Model.Data.SequenceGroups.SequenceGroupModel</codeEntityReference>: This class holds the model for a single hardware system attached to the computer. Having multiple instances of this class at the same time supports the possibility of having multiple hardware systems attached to the computer (e.g., an AdWin and a NI).
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>T:Model.Data.Cards.CardBasicModel</codeEntityReference>: The model derived from an entire card window in the user interface. It could represent either a digital or an analog card.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>T:Model.Data.Sequences.SequenceModel</codeEntityReference>: The model derived from a single tab in some card's window in the user interface. 
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>T:Model.Data.Channels.ChannelBasicModel</codeEntityReference>: The model derived from a single channel in a single tab in some card's window in the user interface.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>T:Model.Data.Steps.StepBasicModel</codeEntityReference>: The model derived from a single step in a single channel in the user interface. A step can be defined from the UI (constant, ramp -only analog steps-, exponential -only analog steps-), or file-based (CSV, binary).
+            </para>
+          </listItem>
+        </list>
+        
+        <mediaLink>
+          <caption>The class diagram of the Model project</caption>
+          <image placement="center" xlink:href="ClassDiagram_Model"/>
+        </mediaLink>
+      </content>
+
+    </section>
+    <section address="Remarks">
+      <title>Remarks</title>
+      <content>
+        <list class="bullet">
+          <listItem>
+            <para>
+              The duration of a tab-sequence is the duration of the longest tab-sequence among all channels in all cards (see <codeEntityReference>M:AbstractController.Data.Sequence.AbstractSequenceController.LongestDurationAllSequences</codeEntityReference>).
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              The duration of a card is the sum of the durations of all tab-sequences that belong to the card (see <codeEntityReference>M:AbstractController.Data.Card.AbstractCardController.Duration</codeEntityReference>).
+            </para>
+          </listItem>
+        </list>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <!-- One or more of the following:
+           - A local link
+           - An external link
+           - A code entity reference
+
+      <link xlink:href="Other Topic's ID"/>
+      <link xlink:href="Other Topic's ID">Link inner text</link>
+
+      <externalLink>
+          <linkText>Link text</linkText>
+          <linkAlternateText>Optional alternate link text</linkAlternateText>
+          <linkUri>URI</linkUri>
+      </externalLink>
+
+      <codeEntityReference>API member ID</codeEntityReference>
+
+      Examples:
+
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8270" />
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8278">Some other topic</link>
+
+      <externalLink>
+          <linkText>SHFB on CodePlex</linkText>
+          <linkAlternateText>Go to CodePlex</linkAlternateText>
+          <linkUri>http://shfb.codeplex.com</linkUri>
+      </externalLink>
+
+      <codeEntityReference>T:TestDoc.TestClass</codeEntityReference>
+      <codeEntityReference>P:TestDoc.TestClass.SomeProperty</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor(System.String,System.Int32)</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.ToString</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.FirstMethod</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.SecondMethod(System.Int32,System.String)</codeEntityReference>
+      -->
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

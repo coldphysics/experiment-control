@@ -1,0 +1,353 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8E3379F7-41FB-4A3B-B3EC-74451D7E9E6C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Model</RootNamespace>
+    <AssemblyName>Model</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <DocumentationFile>bin\Debug\Model.XML</DocumentationFile>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\Model.XML</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseTypes\ValueDoubleModel.cs" />
+    <Compile Include="Builder\ModelBuilder.cs" />
+    <Compile Include="Data\Cards\CardBasicModel.cs" />
+    <Compile Include="Data\Cards\CardModel.cs" />
+    <Compile Include="Data\Channels\ChannelBasicModel.cs" />
+    <Compile Include="Data\Channels\ChannelModel.cs" />
+    <Compile Include="Data\Channels\ChannelSettingsModel.cs" />
+    <Compile Include="Data\Channels\ChannelSettingsSaveValues.cs" />
+    <Compile Include="Data\DataModel.cs" />
+    <Compile Include="Data\Cookbook\ModelRecipe.cs" />
+    <Compile Include="Data\Steps\StepPythonModel.cs" />
+    <Compile Include="Global.cs" />
+    <Compile Include="MeasurementRoutine\GlobalVariables\AbstractGlobalVariable.cs" />
+    <Compile Include="MeasurementRoutine\GlobalVariables\GlobalVariable.cs" />
+    <Compile Include="MeasurementRoutine\GlobalVariables\GlobalVariableNames.cs" />
+    <Compile Include="MeasurementRoutine\GlobalVariables\GlobalVariablesFactory.cs" />
+    <Compile Include="MeasurementRoutine\GlobalVariables\GlobalVariablesManager.cs" />
+    <Compile Include="MeasurementRoutine\MeasurementRoutineModel.cs" />
+    <Compile Include="MeasurementRoutine\ModelSpecificCounters.cs" />
+    <Compile Include="MeasurementRoutine\RoutineBasedRootModel.cs" />
+    <Compile Include="NamespaceGroupDoc.cs" />
+    <Compile Include="Options\OptionNames.cs" />
+    <Compile Include="Options\Builders\OptionsGroupBuilder.cs" />
+    <Compile Include="Options\Builders\DefaultOptionsFactory.cs" />
+    <Compile Include="Options\OptionsGroup.cs" />
+    <Compile Include="Options\OptionsManager.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Root\RootModel.cs" />
+    <Compile Include="Data\SequenceGroups\SequenceGroupModel.cs" />
+    <Compile Include="Data\Sequences\SequenceModel.cs" />
+    <Compile Include="Data\Steps\StepBasicModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Data\Steps\StepFileModel.cs" />
+    <Compile Include="Data\Steps\StepRampModel.cs" />
+    <Compile Include="Settings\Builders\BooleanSettingBuilder.cs" />
+    <Compile Include="Settings\Builders\NamespaceGroupDoc.cs" />
+    <Compile Include="Settings\Builders\ProfileBuilder.cs" />
+    <Compile Include="Settings\Builders\SettingsCollectionBuilder.cs" />
+    <Compile Include="Settings\Builders\SettingWithChildrenBuilder.cs" />
+    <Compile Include="Settings\Builders\StringMultiOptionSettingBuilder.cs" />
+    <Compile Include="Settings\DefaultProfilesManager.cs" />
+    <Compile Include="Settings\NamespaceGroupDoc.cs" />
+    <Compile Include="Settings\Profile.cs" />
+    <Compile Include="Settings\ProfilesManager.cs" />
+    <Compile Include="Settings\SettingsCollectionSearcher.cs" />
+    <Compile Include="Settings\Settings\AbstractSettings\BasicSetting.cs" />
+    <Compile Include="Settings\Settings\AbstractSettings\ISettingWithChildren.cs" />
+    <Compile Include="Settings\Settings\AbstractSettings\MultiOptionSetting.cs" />
+    <Compile Include="Settings\Settings\AbstractSettings\NumericSetting.cs" />
+    <Compile Include="Settings\Settings\AbstractSettings\Setting.cs" />
+    <Compile Include="Settings\Settings\AbstractSettings\SettingWithDynamicChildren.cs" />
+    <Compile Include="Settings\Settings\BooleanSetting.cs" />
+    <Compile Include="Settings\Settings\DatabaseConnectionSetting.cs" />
+    <Compile Include="Settings\Settings\DecimalSetting.cs" />
+    <Compile Include="Settings\Settings\FileSetting.cs" />
+    <Compile Include="Settings\Settings\FolderSetting.cs" />
+    <Compile Include="Settings\Settings\IntegerSetting.cs" />
+    <Compile Include="Settings\ProfilesManagerSnapshot.cs" />
+    <Compile Include="Settings\Settings\NamespaceGroupDoc.cs" />
+    <Compile Include="Settings\Settings\SampleRateSetting.cs" />
+    <Compile Include="Settings\Settings\StringMultiOptionSetting.cs" />
+    <Compile Include="Settings\Settings\StringSetting.cs" />
+    <Compile Include="Settings\TimeSettingsInfo.cs" />
+    <Compile Include="V1\BaseTypes\ValueDoubleModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\Cards\CardBasicModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\Cards\CardModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\Channels\ChannelBasicModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\Channels\ChannelModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\Channels\ChannelSettingsModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\Channels\ChannelSettingsSaveValues.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\Cookbook\ModelRecipe.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\DataModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\SequenceGroups\SequenceGroupModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\SequenceGroups\Settings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\Sequences\SequenceModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\Steps\StepBasicModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\Steps\StepFileModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Data\Steps\StepRampModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\ModelConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\NamespaceGroupDoc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Root\RootModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Variables\VariableModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V1\Variables\VariablesModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\BaseTypes\ValueDoubleModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\Cards\CardBasicModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\Cards\CardModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\Channels\ChannelBasicModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\Channels\ChannelModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\Channels\ChannelSettingsModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\Channels\ChannelSettingsSaveValues.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\Cookbook\ModelRecipe.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\DataModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\SequenceGroups\SequenceGroupModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\SequenceGroups\Settings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\Sequences\SequenceModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\Steps\StepBasicModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\Steps\StepFileModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Data\Steps\StepRampModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\ModelConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\NamespaceGroupDoc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Root\RootModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Variables\VariableModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V2\Variables\VariablesModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="V4\BaseTypes\ValueDoubleModel.cs" />
+    <Compile Include="V4\Data\Cards\CardBasicModel.cs" />
+    <Compile Include="V4\Data\Cards\CardModel.cs" />
+    <Compile Include="V4\Data\Channels\ChannelBasicModel.cs" />
+    <Compile Include="V4\Data\Channels\ChannelModel.cs" />
+    <Compile Include="V4\Data\Channels\ChannelSettingsModel.cs" />
+    <Compile Include="V4\Data\Channels\ChannelSettingsSaveValues.cs" />
+    <Compile Include="V4\Data\Cookbook\ModelRecipe.cs" />
+    <Compile Include="V4\Data\DataModel.cs" />
+    <Compile Include="V4\Data\SequenceGroups\SequenceGroupModel.cs" />
+    <Compile Include="V4\Data\Sequences\SequenceModel.cs" />
+    <Compile Include="V4\Data\Steps\StepBasicModel.cs" />
+    <Compile Include="V4\Data\Steps\StepFileModel.cs" />
+    <Compile Include="V4\Data\Steps\StepPythonModel.cs" />
+    <Compile Include="V4\Data\Steps\StepRampModel.cs" />
+    <Compile Include="V4\ModelConverter.cs" />
+    <Compile Include="V4\NamespaceGroupDoc.cs" />
+    <Compile Include="V3\BaseTypes\ValueDoubleModel.cs" />
+    <Compile Include="V3\Data\Cards\CardBasicModel.cs" />
+    <Compile Include="V3\Data\Cards\CardModel.cs" />
+    <Compile Include="V3\Data\Channels\ChannelBasicModel.cs" />
+    <Compile Include="V3\Data\Channels\ChannelModel.cs" />
+    <Compile Include="V3\Data\Channels\ChannelSettingsModel.cs" />
+    <Compile Include="V3\Data\Channels\ChannelSettingsSaveValues.cs" />
+    <Compile Include="V3\Data\Cookbook\ModelRecipe.cs" />
+    <Compile Include="V3\Data\DataModel.cs" />
+    <Compile Include="V3\Data\SequenceGroups\SequenceGroupModel.cs" />
+    <Compile Include="V3\Data\Sequences\SequenceModel.cs" />
+    <Compile Include="V3\Data\Steps\StepBasicModel.cs" />
+    <Compile Include="V3\Data\Steps\StepFileModel.cs" />
+    <Compile Include="V3\Data\Steps\StepRampModel.cs" />
+    <Compile Include="V3\ModelConverter.cs" />
+    <Compile Include="V3\NamespaceGroupDoc.cs" />
+    <Compile Include="V3\Root\RootModel.cs" />
+    <Compile Include="V3\Variables\VariableModel.cs" />
+    <Compile Include="V3\Variables\VariablesModel.cs" />
+    <Compile Include="V4\Root\RootModel.cs" />
+    <Compile Include="V4\Variables\VariableModel.cs" />
+    <Compile Include="V4\Variables\VariablesModel.cs" />
+    <Compile Include="Variables\VariableModel.cs" />
+    <Compile Include="Variables\VariablesModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="V1\Data\Settings\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Communication\Communication\Communication.csproj">
+      <Project>{d7b1494d-a547-420f-8e79-a8746552686c}</Project>
+      <Name>Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Errors\Errors\Errors.csproj">
+      <Project>{60ae18b6-af6c-413a-b2e3-a7e04f4796f3}</Project>
+      <Name>Errors</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ProjectClassDiagram.cd" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="V1\ProjectClassDiagram.cd" />
+    <None Include="V2\ProjectClassDiagram.cd" />
+    <None Include="V3\ProjectClassDiagram.cd" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AbstractController.AbstractRootController" Collapsed="true">
+    <Position X="6.25" Y="0.5" Width="2" />
+    <AssociationLine Name="DataController" Type="AbstractController.Data.AbstractDataController" FixedFromPoint="true">
+      <Path>
+        <Point X="6.938" Y="1.062" />
+        <Point X="6.938" Y="1.75" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIgCAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>AbstractRootController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="DataController" />
+      <Field Name="Model" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="AbstractController.Data.AbstractDataController" Collapsed="true">
+    <Position X="6.25" Y="1.75" Width="2" />
+    <AssociationLine Name="Model" Type="Model.Data.DataModel" FixedFromPoint="true">
+      <Path>
+        <Point X="8.25" Y="1.938" />
+        <Point X="10.5" Y="1.938" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Parent" Type="AbstractController.AbstractRootController" FixedToPoint="true">
+      <Path>
+        <Point X="7.438" Y="1.75" />
+        <Point X="7.438" Y="1.062" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.827" Y="0.06" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="SequenceGroups" Type="AbstractController.Data.SequenceGroup.AbstractSequenceGroupController" FixedFromPoint="true">
+      <Path>
+        <Point X="7" Y="2.312" />
+        <Point X="7" Y="3.5" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACQAAAAAAAQAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Data\AbstractDataController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Model" />
+      <Field Name="Parent" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="SequenceGroups" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="AbstractController.Data.Card.AbstractCardController" Collapsed="true">
+    <Position X="6.25" Y="5" Width="2.25" />
+    <AssociationLine Name="Parent" Type="AbstractController.Data.SequenceGroup.AbstractSequenceGroupController" FixedToPoint="true">
+      <Path>
+        <Point X="7.5" Y="5" />
+        <Point X="7.5" Y="4.062" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.755" Y="0.081" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Tabs" Type="AbstractController.Data.Sequence.AbstractSequenceController" FixedToPoint="true">
+      <Path>
+        <Point X="7.062" Y="5.562" />
+        <Point X="7.062" Y="6.25" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.1" Y="0.06" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAgQAAAAAACAAAAAAAAQAAAAAgAAUAEAAgAAAAAAAA=</HashCode>
+      <FileName>Data\Card\AbstractCardController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Model" />
+      <Field Name="Parent" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Tabs" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="AbstractController.Data.Channels.AbstractChannelController" Collapsed="true">
+    <Position X="6.25" Y="7.75" Width="2.25" />
+    <AssociationLine Name="Parent" Type="AbstractController.Data.Sequence.AbstractSequenceController" FixedToPoint="true">
+      <Path>
+        <Point X="7.562" Y="7.75" />
+        <Point X="7.562" Y="6.812" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.775" Y="0.039" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAABAEAAAAACAAAAAAAAQAAAAAgAAABAAAkAAAAAAAA=</HashCode>
+      <FileName>Data\Channels\AbstractChannelController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Model" />
+      <Field Name="Parent" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="AbstractController.Data.Sequence.AbstractSequenceController" Collapsed="true">
+    <Position X="6.25" Y="6.25" Width="2.25" />
+    <AssociationLine Name="Parent" Type="AbstractController.Data.Card.AbstractCardController" FixedToPoint="true">
+      <Path>
+        <Point X="7.562" Y="6.25" />
+        <Point X="7.562" Y="5.562" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.765" Y="0.102" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Channels" Type="AbstractController.Data.Channels.AbstractChannelController" FixedFromPoint="true">
+      <Path>
+        <Point X="7" Y="6.812" />
+        <Point X="7" Y="7.75" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AgAAQEAAAACACAAACAAAQAAAAAgAAAAAAAkAAAAAEAA=</HashCode>
+      <FileName>Data\Sequence\AbstractSequenceController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Model" />
+      <Field Name="Parent" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Channels" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="AbstractController.Data.SequenceGroup.AbstractSequenceGroupController" Collapsed="true">
+    <Position X="6.25" Y="3.5" Width="2.5" />
+    <AssociationLine Name="Parent" Type="AbstractController.Data.AbstractDataController" FixedToPoint="true">
+      <Path>
+        <Point X="7.5" Y="3.5" />
+        <Point X="7.5" Y="2.312" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.786" Y="0.05" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Windows" Type="AbstractController.Data.Card.AbstractCardController" FixedFromPoint="true">
+      <Path>
+        <Point X="7.083" Y="4.062" />
+        <Point X="7.083" Y="5" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAQAAAAAAAAAAAABgAAAAAAAA=</HashCode>
+      <FileName>Data\SequenceGroup\AbstractSequenceGroupController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Model" />
+      <Field Name="Parent" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="Windows" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="AbstractController.Data.Steps.AbstractStepController" Collapsed="true">
+    <Position X="6.25" Y="9.25" Width="2.25" />
+    <AssociationLine Name="Parent" Type="AbstractController.Data.Channels.AbstractChannelController" FixedToPoint="true">
+      <Path>
+        <Point X="7.25" Y="9.25" />
+        <Point X="7.25" Y="8.312" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.786" Y="0.102" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAQAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Steps\AbstractStepController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Parent" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Model.Data.SequenceGroups.SequenceGroupModel" Collapsed="true">
+    <Position X="10.5" Y="3.5" Width="1.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Model.Root.RootModel" Collapsed="true">
+    <Position X="10.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Model.Data.DataModel" Collapsed="true">
+    <Position X="10.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Model.Data.Cards.CardBasicModel" Collapsed="true">
+    <Position X="10.5" Y="5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Model.Data.Sequences.SequenceModel" Collapsed="true">
+    <Position X="10.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Model.Data.Channels.ChannelModel" Collapsed="true">
+    <Position X="10.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

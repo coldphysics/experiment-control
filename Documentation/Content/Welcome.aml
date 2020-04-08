@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="d8c06d5b-027b-49dd-a4e2-948a717b6a32" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        This documentation will help you understand the underlying functionality of the experiment computer control software.
+        Furthermore, it provides a reference for developers who want to understand the code and/or change it.
+      </para>
+    </introduction>
+
+    <section>
+      <title>Organization of Topics</title>
+      <content>
+        <para>
+          The documentation is generally divided into conceptual topics and a reference. Conceptual topics provide a general idea about the projects involved in the software, their class hierarchy as well as some remarkable algorithms.
+          On the other hand the reference section describes the purpose and some of the functionality of namespaces, interfaces, classes, and members and can be found below the conceptual topics.
+        </para>
+      </content>
+    </section>
+    <relatedTopics>
+      <link xlink:href="ba7a31fe-b67d-4ceb-83a6-18926d03dd09" />
+      <link xlink:href="85ac4421-5c69-4582-8a97-ad14ef50d30d" />
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

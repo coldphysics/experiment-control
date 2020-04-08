@@ -348,3 +348,15 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Libraries that must be manually added by the developer (in order not to have licensing issues)
+libs/ADwin.Driver.dll
+libs/mysql.data.dll
+libs/NationalInstruments.Common.dll
+libs/NationalInstruments.Common.msl
+libs/NationalInstruments.Common.Native.dll
+libs/NationalInstruments.DAQmx.dll
+libs/NationalInstruments.DAQmx.msl
+libs/NationalInstruments.DAQmx.xml
+libs/NationalInstruments.MStudioCLM.dll
+libs/NationalInstruments.NiLmClientDLL.dll

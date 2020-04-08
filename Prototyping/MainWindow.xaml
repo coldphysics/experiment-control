@@ -1,0 +1,30 @@
+﻿<Window x:Class="Prototyping.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:Prototyping"
+         xmlns:ctr="clr-namespace:CustomElements.CheckableTreeView;assembly=CustomElements"
+            xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+       
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70">
+               </ColumnDefinition>
+           
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Button> refresh</Button>
+        <CheckBox Grid.Row="1" IsChecked="{Binding CheckBox}">test</CheckBox>
+        
+        <ctr:CheckableTreeView DataContext="{Binding TreeViewVM}" Grid.Column="0" Grid.Row="2" />
+      
+        
+        <ContentControl Content="{Binding TestVM}" Grid.Column="1" Grid.RowSpan="2"/>
+
+    </Grid>
+</Window>

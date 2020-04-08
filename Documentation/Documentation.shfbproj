@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- The configuration and platform will be used to determine which assemblies to include from solution and
+				 project documentation sources -->
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>6e5ee547-0c44-4ecc-aae3-8ad3820016db</ProjectGuid>
+    <SHFBSchemaVersion>1.9.9.0</SHFBSchemaVersion>
+    <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual Studio adds them anyway -->
+    <AssemblyName>Documentation1</AssemblyName>
+    <RootNamespace>Documentation1</RootNamespace>
+    <Name>Documentation</Name>
+    <!-- SHFB properties -->
+    <FrameworkVersion>.NET Framework 4.5</FrameworkVersion>
+    <OutputPath>.\Help\</OutputPath>
+    <HtmlHelpName>Experiment Control Documentation</HtmlHelpName>
+    <Language>en-US</Language>
+    <TransformComponentArguments>
+      <Argument Key="logoFile" Value="Help.png" xmlns="" />
+      <Argument Key="logoHeight" Value="" xmlns="" />
+      <Argument Key="logoWidth" Value="" xmlns="" />
+      <Argument Key="logoAltText" Value="" xmlns="" />
+      <Argument Key="logoPlacement" Value="left" xmlns="" />
+      <Argument Key="logoAlignment" Value="left" xmlns="" />
+      <Argument Key="maxVersionParts" Value="" xmlns="" />
+    </TransformComponentArguments>
+    <DocumentationSources>
+      <DocumentationSource sourceFile="..\Model\Model\Model.csproj" xmlns="" />
+      <DocumentationSource sourceFile="..\Communication\Communication\Communication.csproj" />
+      <DocumentationSource sourceFile="..\AbstractController\AbstractController\AbstractController.csproj" />
+      <DocumentationSource sourceFile="..\Generator\Generator\Generator.csproj" />
+      <DocumentationSource sourceFile="..\HardwareAdWin\HardwareAdWin\HardwareAdWin.csproj" />
+      <DocumentationSource sourceFile="..\Buffer\Buffer\Buffer.csproj" />
+      <DocumentationSource sourceFile="..\AdWinSimulator\AdWinSimulator.csproj" />
+      <DocumentationSource sourceFile="..\HardwareDAQmx\HardwareDAQmx\HardwareDAQmx.csproj" />
+    </DocumentationSources>
+    <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
+    <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
+    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
+    <IndentHtml>False</IndentHtml>
+    <KeepLogFile>True</KeepLogFile>
+    <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
+    <CleanIntermediates>True</CleanIntermediates>
+    <SccProjectName>
+    </SccProjectName>
+    <SccProvider>
+    </SccProvider>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccLocalPath>
+    </SccLocalPath>
+    <HelpFileVersion>1.0.0.0</HelpFileVersion>
+    <MaximumGroupParts>10</MaximumGroupParts>
+    <NamespaceGrouping>True</NamespaceGrouping>
+    <SyntaxFilters>C#, Visual Basic, Managed C++</SyntaxFilters>
+    <SdkLinkTarget>Blank</SdkLinkTarget>
+    <RootNamespaceTitle>Experiment Control Software</RootNamespaceTitle>
+    <RootNamespaceContainer>False</RootNamespaceContainer>
+    <PresentationStyle>VS2013</PresentationStyle>
+    <Preliminary>True</Preliminary>
+    <NamingMethod>Guid</NamingMethod>
+    <HelpTitle>Documentation for the Experiment Computer Control</HelpTitle>
+    <ContentPlacement>AboveNamespaces</ContentPlacement>
+    <VisibleItems>InheritedMembers, Internals, Privates, PrivateFields, Protected, SealedProtected, ProtectedInternalAsProtected</VisibleItems>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, TypeParameter, AutoDocumentDispose</MissingTags>
+    <ProjectSummary>This solution is designed to control certain pulse generators %28AdWin PRO-II T12 &amp;amp%3b T11 and NationalInstruments DAQ%29 by providing the ability to specify, in fine details, the output on all analog and digitial channels and the ability to loop the specified sequence and have iterating variables that change from one loop to the next and many more features.</ProjectSummary>
+    <ApiFilter>
+      <Filter entryType="Namespace" fullName="" isExposed="True" xmlns="">
+        <Filter entryType="Class" fullName="&lt;Module&gt;" isExposed="False" />
+      </Filter>
+    </ApiFilter>
+  </PropertyGroup>
+  <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
+			 the build.  The others are optional common platform types that may appear. -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Win32' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Win32' ">
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Content" />
+    <Folder Include="Content\ConceptualTopics\" />
+    <Folder Include="Content\ConceptualTopics\CrossProject\" />
+    <Folder Include="Content\ConceptualTopics\Projects\" />
+    <Folder Include="icons" />
+    <Folder Include="media" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\ConceptualTopics\Generator.aml" />
+    <None Include="Content\ConceptualTopics\HardwareAdWin.aml" />
+    <None Include="Content\ConceptualTopics\Projects\Buffer.aml" />
+    <None Include="Content\Welcome.aml" />
+    <None Include="Content\Reference.aml" />
+    <None Include="Content\Conceptual Topics.aml" />
+    <None Include="Content\ConceptualTopics\Projects\AbstractController.aml" />
+    <None Include="Content\ConceptualTopics\CrossProject.aml" />
+    <None Include="Content\ConceptualTopics\Projects.aml" />
+    <None Include="Content\ConceptualTopics\Projects\Model.aml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ContentLayout Include="ContentLayout.content" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icons\Help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="media\Algotrithm_Calibration.png">
+      <ImageId>Calibration</ImageId>
+      <AlternateText>Calibration</AlternateText>
+    </Image>
+    <Image Include="media\ClassDiagram_AbstractController.jpg">
+      <ImageId>ClassDiagram_AbstractController</ImageId>
+      <AlternateText>Class Diagram for Abstract Controller Project</AlternateText>
+      <CopyToMedia>False</CopyToMedia>
+    </Image>
+    <Image Include="media\ClassDiagram_buffer.PNG">
+      <ImageId>ClassDiagram_buffer</ImageId>
+      <AlternateText>Class Diagram buffer</AlternateText>
+    </Image>
+    <Image Include="media\ClassDiagram_Generator.PNG">
+      <ImageId>ClassDiagram_Generator</ImageId>
+      <AlternateText>Class Diagram Generator</AlternateText>
+    </Image>
+    <Image Include="media\ClassDiagram_HardwareAdWin.png">
+      <ImageId>ClassDiagram_HardwareAdWin</ImageId>
+      <AlternateText>Class Diagram Hardware Ad Win</AlternateText>
+    </Image>
+    <Image Include="media\ClassDiagram_Model.jpg">
+      <ImageId>ClassDiagram_Model</ImageId>
+      <AlternateText>Class Diagram Model</AlternateText>
+    </Image>
+    <Image Include="media\Data_Compression_source.png">
+      <ImageId>Data_Compression_source</ImageId>
+      <AlternateText>Data Compression source</AlternateText>
+    </Image>
+    <Image Include="media\Data_Decompression.png">
+      <ImageId>Data_Decompression</ImageId>
+      <AlternateText>Data Decompression</AlternateText>
+    </Image>
+    <Image Include="media\output_loop.png">
+      <ImageId>output_loop</ImageId>
+      <AlternateText>output loop</AlternateText>
+    </Image>
+    <Image Include="media\ThreadView.jpg">
+      <ImageId>ThreadView</ImageId>
+      <AlternateText>General Functionality</AlternateText>
+      <CopyToMedia>True</CopyToMedia>
+    </Image>
+  </ItemGroup>
+  <!-- Import the SHFB build targets -->
+  <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
+  <!-- The pre-build and post-build event properties must appear *after* the targets file import in order to be
+			 evaluated correctly. -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+</Project>

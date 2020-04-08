@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="View.Data.Channels.DigitalSettingsUserControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:submitTextBox="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements"
+		x:Name="DigitalSettings"
+        Height="125" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"></RowDefinition>
+
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0">Invert</TextBlock>
+        <CheckBox HorizontalAlignment="Left"
+                                      VerticalAlignment="Center" Padding="0" IsChecked="{Binding Invert}" Grid.Row="0" Grid.Column="1"/>
+		<Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding CloseWindowCommand, Mode=OneWay}"
+				>Close</Button>
+    </Grid>
+</UserControl>

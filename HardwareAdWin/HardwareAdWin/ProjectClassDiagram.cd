@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="HardwareAdWin.Debug.FifoStatus" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4.25" Y="5" Width="1.5" />
+    <AssociationLine Name="adwin" Type="ADwin.Driver.ADwinSystem" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.5" Y="5" />
+        <Point X="5.5" Y="4.625" />
+        <Point X="5.875" Y="4.625" />
+        <Point X="5.875" Y="3.941" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.091" Y="0.079" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAACACAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Debug\FifoStatus.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="adwin" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HardwareAdWin.AdWinFunctions" Collapsed="true">
+    <Position X="2.25" Y="3.25" Width="1.5" />
+    <AssociationLine Name="_adwin" Type="ADwin.Driver.ADwinSystem" FixedToPoint="true">
+      <Path>
+        <Point X="3.75" Y="3.625" />
+        <Point X="5.25" Y="3.625" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.079" Y="0.102" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAACAAAAEAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>HardwareAdWin\AdWinFunctions.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_adwin" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="HardwareAdWin.HardwareAdWin.AdWinHwGroup" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <AssociationLine Name="_analogCards" Type="HardwareAdWin.HardwareAdWin.AnalogCard" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.875" Y="1.062" />
+        <Point X="5.875" Y="1.437" />
+        <Point X="4.938" Y="1.437" />
+        <Point X="4.938" Y="1.75" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_digitalCards" Type="HardwareAdWin.HardwareAdWin.DigitalCard" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.125" Y="1.062" />
+        <Point X="6.125" Y="1.437" />
+        <Point X="7" Y="1.437" />
+        <Point X="7" Y="1.75" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.065" Y="0.1" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>gABBEAADACgAARAAAQYAAAAAAAAAQAAAgAAAABAQAAA=</HashCode>
+      <FileName>HardwareAdWin\AdwinHwGroup.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="adwinFunctions" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="_analogCards" />
+      <Field Name="_digitalCards" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HardwareAdWin.HardwareAdWin.AnalogCard" Collapsed="true">
+    <Position X="4.25" Y="1.75" Width="1.5" />
+    <AssociationLine Name="adwin" Type="ADwin.Driver.ADwinSystem" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5" Y="2.312" />
+        <Point X="5" Y="2.687" />
+        <Point X="5.812" Y="2.687" />
+        <Point X="5.812" Y="3.25" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.06" Y="0.214" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAEAQEAAAAAQABAAQAQgACAAEEgBBAAAACAAAAAAA=</HashCode>
+      <FileName>HardwareAdWin\AnalogCard.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="adwin" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="HardwareAdWin.HardwareAdWin.ControlAdwinProcess" Collapsed="true">
+    <Position X="6" Y="5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAEAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>HardwareAdWin\ControlAdwinProcess.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HardwareAdWin.HardwareAdWin.DigitalCard" Collapsed="true">
+    <Position X="6.25" Y="1.75" Width="1.5" />
+    <AssociationLine Name="adwin" Type="ADwin.Driver.ADwinSystem" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="7" Y="2.312" />
+        <Point X="7" Y="2.687" />
+        <Point X="6.25" Y="2.687" />
+        <Point X="6.25" Y="3.25" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.732" Y="0.141" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAEAAEEAAAAQABAAQAQgACAAEEgBBAAAAAAAAAAAA=</HashCode>
+      <FileName>HardwareAdWin\DigitalCard.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="adwin" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="HardwareAdWin.HardwareAdWin.FIFOWriterThreadState">
+    <Position X="1.25" Y="4.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAgAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>HardwareAdWin\FIFOWriterThreadState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ADwin.Driver.ADwinSystem" Collapsed="true">
+    <Position X="5.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="Communication.Interfaces.Hardware.IHardwareGroup" Collapsed="true">
+    <Position X="1.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="c72ec7fd-0cf6-42a5-ad16-66dca6b63074" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <para>This project provides the ability to convert user-input voltage to Adwin friendly-format, compress and transfer the output as FIFOs to the Hardware side. In addition the project provides an accessibility to AdWin parameters in order to start and stop Adwin outputting or ask about the status  </para>
+      <para>the output is handled by having one FIFO array for each analog channel or for each digital card </para>
+      <autoOutline />
+    </introduction>
+    <!-- Add one or more top-level section elements.  These are collapsible.
+         If using <autoOutline />, add an address attribute to identify it
+         and specify a title so that it can be jumped to with a hyperlink. -->
+    <section address="ClassDiagram">
+      <title>Class Diagram</title>
+      <content>
+        <para>
+          two main classes AnalogCard and DigitalCard provide functions for converting input, compression and sending. Both classes have a relationship with ADwinSystem, a class library
+          provided by the Hardware system. AdWinHwGroup class includes two dictionaries for all analog and digital cards
+        </para>
+        <mediaLink>
+          <caption>The class diagram of the HardwareAdWin project</caption>
+          <image placement="center" xlink:href="ClassDiagram_HardwareAdWin"/>
+        </mediaLink>
+      </content>
+    </section>
+    
+    <section address="Data_Compression">
+      <title>Data compression</title>
+      <content>
+        <para>
+          This flow diagram describes the mechanism of how the compression is handled in the software side for each analog channel. The main benefit is to compress repeated values which helps in reducing the FIFO size and save the network bandwidth.
+          The compression contains some special characters to distinguish the end value(FFFF) or to indicate whenever we have an upcoming repeated sequence (0001).
+        </para>
+        <mediaLink>
+          <caption>The Flow diagram of the analog output compression</caption>
+          <image placement="center" xlink:href="Data_Compression_source"/>
+        </mediaLink>
+      </content>
+    </section>
+
+    <section address="DataDecompression">
+      <title>Data Decompression</title>
+      <content>
+        <para>
+          This flow diagram describes the mechanism of how the de-compression is handled in the hardware side for each analog channel. 
+        </para>
+        <mediaLink>
+          <caption>The Flow diagram of the analog output decompression</caption>
+          <image placement="center" xlink:href="Data_Decompression"/>
+        </mediaLink>
+      </content>
+    </section>
+    
+    <section address="Remarks">
+      <title>Remarks</title>
+      <content>
+        <list class="bullet">
+          <listItem>
+            <para>
+              
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              
+            </para>
+          </listItem>
+        </list>
+      </content>
+    </section>
+    <relatedTopics>
+      <codeEntityReference></codeEntityReference>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

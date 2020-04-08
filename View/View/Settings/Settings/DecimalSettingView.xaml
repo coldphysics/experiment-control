@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="View.Settings.Settings.DecimalSettingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:my="clr-namespace:View.Settings.Settings"
+			 xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             >
+	<my:SettingTemplate>
+		<Grid Width="{StaticResource NumericSettingWidth}" HorizontalAlignment="Left">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="2*"/>
+				<ColumnDefinition Width="*"/>
+
+			</Grid.ColumnDefinitions>
+			<Label Content="{Binding Name}" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"/>
+			<xctk:DecimalUpDown Grid.Row="1" Grid.Column="0"  Value="{Binding Value, Mode=TwoWay}" Minimum="{Binding MinimumValue}" Maximum="{Binding MaximumValue}" Margin="5,0,0,0" Increment="1.0" FormatString="F2"/>
+			<Label Content="{Binding Unit}" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"/>
+		</Grid>
+	</my:SettingTemplate>
+</UserControl>

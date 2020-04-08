@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="ba7a31fe-b67d-4ceb-83a6-18926d03dd09" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        The conceptual topics are divided into project-specific topics, and cross-project topics, and in both cases the aim is describing the structure and important algorithms.
+      </para>
+    </introduction>
+
+
+    <relatedTopics>
+      <link xlink:href="581d44d9-6875-4d01-9fc8-200b4c841350" />
+      <link xlink:href="581d44d9-6875-4d01-9fc8-200b4c841349" />
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

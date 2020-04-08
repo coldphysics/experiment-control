@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="HardwareAdWin.Debug.FifoStatus" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAACACAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Debug\FifoStatus.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HardwareAdWin.Driver.AdWinDriverFactory" Collapsed="true">
+    <Position X="13" Y="6.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAgAAAAAAAAAQEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Driver\AdWinDriverFactory.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="realAdWin" />
+      <Field Name="dummyAdWin" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="HardwareAdWin.Driver.AdWinFunctions" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACABBAAAAQAgAAYAgAAAAAAIgSAAAAABAABABAA=</HashCode>
+      <FileName>Driver\AdWinFunctions.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HardwareAdWin.Driver.DummyAdWinDriver" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.5" Y="5.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAACABBAAAAQAgAAYAgAAAAAEIgSAAAAABAABAAAA=</HashCode>
+      <FileName>Driver\DummyAdWinDriver.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HardwareAdWin.HardwareAdWin.AdWinHwGroup" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gABBEAADACgAARAAAQYAAAAAAAAAQAAAgAAAABAQAAA=</HashCode>
+      <FileName>HardwareAdWin\AdwinHwGroup.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HardwareAdWin.HardwareAdWin.AnalogCard" Collapsed="true">
+    <Position X="20.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAQEAAAAAQABAAQAQgACAAEEgBBAAAACAAAAAAA=</HashCode>
+      <FileName>HardwareAdWin\AnalogCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HardwareAdWin.HardwareAdWin.ControlAdwinProcess" Collapsed="true">
+    <Position X="20" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAEAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>HardwareAdWin\ControlAdwinProcess.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HardwareAdWin.HardwareAdWin.DigitalCard" Collapsed="true">
+    <Position X="18.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAEEAAAAQABAAQAQgACAAEEgBBAAAAAAAAAAAA=</HashCode>
+      <FileName>HardwareAdWin\DigitalCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HardwareAdWin.HardwareAdWin.FIFOWriterThreadState" Collapsed="true">
+    <Position X="20.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAgAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>HardwareAdWin\FIFOWriterThreadState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HardwareAdWin.NamespaceGroupDoc" Collapsed="true">
+    <Position X="20" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>NamespaceGroupDoc.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="HardwareAdWin.Driver.IAdWinDriver" Collapsed="true">
+    <Position X="13" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACABBAAAAQAgAAYAgAAAAAAIgSAAAAABAABAAAA=</HashCode>
+      <FileName>Driver\IAdWinDriver.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

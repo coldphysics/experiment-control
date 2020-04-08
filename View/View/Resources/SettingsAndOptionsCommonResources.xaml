@@ -1,0 +1,55 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:vms="clr-namespace:Controller.Settings.Settings;assembly=Controller"
+					xmlns:vws="clr-namespace:View.Settings.Settings"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					>
+	<DataTemplate DataType="{x:Type vms:StringSettingController}">
+		<vws:StringSettingView />
+	</DataTemplate>
+
+	<DataTemplate DataType="{x:Type vms:IntegerSettingController}">
+		<vws:IntegerSettingView />
+	</DataTemplate>
+
+	<DataTemplate DataType="{x:Type vms:DecimalSettingController}">
+		<vws:DecimalSettingView />
+	</DataTemplate>
+
+	<DataTemplate DataType="{x:Type vms:BooleanSettingController}">
+		<vws:BooleanSettingView />
+	</DataTemplate>
+
+	<DataTemplate DataType="{x:Type vms:StringMultiOptionSettingController}">
+		<vws:StringMultiOptionSettingView />
+	</DataTemplate>
+
+	<DataTemplate DataType="{x:Type vms:FileSettingController}">
+		<vws:FileFolderSettingView />
+	</DataTemplate>
+
+	<DataTemplate DataType="{x:Type vms:FolderSettingController}">
+		<vws:FileFolderSettingView />
+	</DataTemplate>
+
+	<DataTemplate DataType="{x:Type vms:DatabaseConnectionSettingController}">
+		<vws:DatabaseConnectionSettingView />
+	</DataTemplate>
+	<Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+		<Style.Triggers>
+			<Trigger Property="Validation.HasError" Value="true">
+				<Setter Property="ToolTip"
+              Value="{Binding (Validation.Errors).CurrentItem.ErrorContent, RelativeSource={x:Static RelativeSource.Self}}"/>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style x:Key="listBoxInError" TargetType="{x:Type ListBox}">
+		<Style.Triggers>
+			<Trigger Property="Validation.HasError" Value="true">
+				<Setter Property="ToolTip"
+              Value="{Binding (Validation.Errors).CurrentItem.ErrorContent, RelativeSource={x:Static RelativeSource.Self}}"/>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+</ResourceDictionary>

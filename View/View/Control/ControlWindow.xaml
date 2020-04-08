@@ -1,0 +1,227 @@
+﻿<Window x:Class="View.Control.ControlWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  Title="Experiment Control" Height="550"
+        xmlns:Control="clr-namespace:View.Control"
+        Width="400" Closing="ShutdownApplication" Loaded="Window_Loaded">
+    <Window.Resources>
+        <DataTemplate x:Key="SettingsTemplate">
+            <Control:SettingsTemplate />
+        </DataTemplate>
+        <DataTemplate x:Key="WindowsTemplate">
+            <Control:WindowsTemplate />
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <TabControl Grid.Row="0">
+            <TabItem Header="Run">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="108" />
+
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="23" />
+                        <RowDefinition Height="23" />
+                        <RowDefinition Height="23" />
+                        <RowDefinition Height="23" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+
+
+
+                    
+                    <Button Content="Start" Grid.Row="1" HorizontalAlignment="Left" Name="StartButton"
+                VerticalAlignment="Center" Width="90" Command="{Binding StartCommand}"/>
+                    
+                    <Button Content="Stop" HorizontalAlignment="Left" Name="StopButton" Width="90" 
+                            Grid.Row="2" Command="{Binding StopCommand}" VerticalAlignment="Center"/>
+
+                    <Button Content="Save" HorizontalAlignment="Left" Name="SaveButton" Width="90"
+                Grid.Row="3" Command="{Binding SaveCommand}"  VerticalAlignment="Center" />
+
+                    <Button Content="Load" Grid.Row="4" HorizontalAlignment="Left" Name="LoadButton"
+                VerticalAlignment="Center" Width="90" Command="{Binding LoadCommand}"/>
+
+
+
+                    <TextBlock Text="duration of cycle (s): " Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"
+               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" Text="{Binding Duration, Mode=OneWay}"
+                   VerticalAlignment="Center"/>
+
+                    <TextBlock Text="duration of scan (h:m): " Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right"
+               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" Text="{Binding DurationTotal, Mode=OneWay}"
+                   VerticalAlignment="Center" />
+
+
+
+                    <TextBlock Text="start time: " Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right"
+               VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Grid.Row="3" HorizontalAlignment="Left" Text="{Binding StartTime, Mode=OneWay}"
+                   VerticalAlignment="Center" />
+
+
+                    <TextBlock Text="end time: " Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right"
+               VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Grid.Row="4" HorizontalAlignment="Left" Text="{Binding EndTime, Mode=OneWay}"
+                   VerticalAlignment="Center" />
+                    
+                    
+                    
+                    <TextBlock Grid.Column="0"  Grid.ColumnSpan="3"  Grid.Row="5" HorizontalAlignment="Right"  Text="{Binding FileName, Mode=OneWay}"
+                   VerticalAlignment="Center" />
+
+
+                    <CheckBox Content="control Lecroy"  Grid.Row="6" HorizontalAlignment="Left" Grid.Column="1"
+                    	x:Name="ControlLecroyCheckBox"  VerticalAlignment="Top"  IsChecked="{Binding ControlLecroy}"  />
+
+
+
+                    <ToggleButton Content="Iterate + Save" Grid.Row="7"  HorizontalAlignment="Left" Grid.Column="0" Width="90"
+                  Name="IterateAndSaveButton" VerticalAlignment="Top" Command="{Binding IterateAndSaveCommand}" IsChecked="{Binding IsIterateAndSaveChecked, Mode=OneWay}" />
+
+                    <CheckBox Content="scan only once" Grid.Row="7" HorizontalAlignment="Left" Grid.Column="1"
+                  Name="CycleOnceCheckBox" VerticalAlignment="Top" Command="{Binding OnlyOnceCommand}" IsChecked="{Binding IsOnceChecked, Mode=OneWay}"/>
+
+                    <CheckBox Content="stop after scan" Grid.Row="7" HorizontalAlignment="Left" Grid.Column="1"
+                    	x:Name="StopAfterScanCheckBox" VerticalAlignment="Top" IsChecked="{Binding StopAfterScan}" Margin="0,25,0,0" />
+
+                    <CheckBox Content="shuffle Iterations" HorizontalAlignment="Left" Margin="0,50,0,0" Grid.Row="7" Grid.Column="1"
+                              VerticalAlignment="Top" IsChecked="{Binding shuffleIterations}"/>
+                    
+                    <CheckBox Content="pause" HorizontalAlignment="Left" Margin="0,75,0,0" Grid.Row="7" Grid.Column="1"
+                              VerticalAlignment="Top" IsChecked="{Binding pause}"/>
+                    
+                    
+
+                    <TextBlock Text="global counter: " Grid.Row="8"  HorizontalAlignment="Right" Name="label1"
+               VerticalAlignment="Top"/>
+                    <TextBlock Grid.Column="1" Grid.Row="8" HorizontalAlignment="Left"  Name="globalCount" Text="{Binding GlobalCounter, Mode=OneWay}"
+                   VerticalAlignment="Top"/>
+
+                    <CheckBox Content="always increase" HorizontalAlignment="Left" Margin="0,25,0,0" Grid.Row="8" Grid.Column="1"
+                              VerticalAlignment="Top" IsChecked="{Binding alwaysIncrease}" />
+
+
+
+                    <TextBlock Text="number of iterations: " Grid.Row="9" HorizontalAlignment="Right" Grid.Column="0"
+               VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Grid.Row="9" HorizontalAlignment="Left" Text="{Binding NumberOfIterations, Mode=OneWay}"
+                   VerticalAlignment="Center" />
+
+                    <TextBlock Text="next iteration: " Grid.Row="10" HorizontalAlignment="Right" Grid.Column="0"
+               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Grid.Row="10" HorizontalAlignment="Left" Text="{Binding IterationOfScan, Mode=OneWay}"
+                   VerticalAlignment="Center" />
+
+                    <TextBlock Text="completed scans: " Grid.Row="11" HorizontalAlignment="Right" Grid.Column="0"
+        	VerticalAlignment="Center"  />
+                    <TextBlock Grid.Column="1" Grid.Row="11" HorizontalAlignment="Left" Text="{Binding CompletedScans, Mode=OneWay}"
+        	VerticalAlignment="Center" />
+
+                    <TextBlock Text="start counter of scans: " Grid.Row="12" HorizontalAlignment="Right" Name="label2" Grid.Column="0"
+               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Grid.Row="12"  HorizontalAlignment="Left" Name="startCount" Text="{Binding StartCounterOfScans, Mode=OneWay}"
+                   VerticalAlignment="Center" />
+                    
+                    
+                    
+                    
+                    
+                    
+                    <TextBlock Grid.Column="2" Grid.Row="12" HorizontalAlignment="Left"  x:Name="LastStartCount" Text="{Binding LastStartCounterOfScans, Mode=OneWay}"
+                    	VerticalAlignment="Center"/>
+                    
+                    
+
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Settings">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <!--<RowDefinition Height="25"></RowDefinition>-->
+                        <RowDefinition Height="*"></RowDefinition>
+                        <!--<RowDefinition Height="25"></RowDefinition>-->
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row ="0" Grid.Column="0" Command="{Binding RefreshCommand}">Refresh</Button>
+                    <Button Grid.Row ="0" Grid.Column="1" Command="{Binding SaveSettingsCommand}">Save</Button>
+                    <!--<Button Grid.Row ="1" Grid.Column="0" Click="CycleScriptClick" >CycleScript</Button>
+                    <Button Grid.Row ="1" Grid.Column="1" Click="LoopScriptClick">LoopScript</Button>-->
+                    <ListBox IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding SettingsList, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource SettingsTemplate}" Name="SettingsListBox" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalContentAlignment="Stretch">
+                    </ListBox>
+                </Grid>
+
+            </TabItem>
+            <TabItem Header="View">
+                <ListBox IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding WindowsList, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource WindowsTemplate}" Name="WindowsListBox" HorizontalContentAlignment="Stretch">
+                </ListBox>
+            </TabItem>
+            <TabItem Header="Debug">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Button Content="Show Switch Window" HorizontalAlignment="Center" VerticalAlignment ="Center"  Name="ShowSwitchWindow" 
+               Command="{Binding ShowSwitchWindowCommand}" Grid.Row="0"/>
+
+					<Button  HorizontalAlignment="Center" VerticalAlignment ="Center"  Name="ClearAllDurationZeroStepsButton" Content="Clear All Zero-Duration Steps" 
+               Command="{Binding ClearAllDurationZeroSteps}" Grid.Row="1"/>
+
+                    <Button Content="Refresh Windows" HorizontalAlignment="Center" VerticalAlignment ="Center"  Name="RefreshWindows" 
+               Command="{Binding RefreshWindows}" Grid.Row="2"/>
+                </Grid>
+                
+            </TabItem>
+        </TabControl>
+        <StatusBar Grid.Row="1" Height="25" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Margin="0,0,0,0" Name="statusBar"
+                   VerticalAlignment="Top">
+            <StatusBarItem>
+                <TextBlock>Generator:</TextBlock>
+            </StatusBarItem>
+            <ProgressBar Name="GeneratorProgressBar" Foreground="{Binding GeneratorStateColor}" Value="100" HorizontalAlignment="Left" Height="10" VerticalAlignment="Top" Width="10"/>
+            <StatusBarItem>
+                <TextBlock Width="120" Text="{Binding GeneratorState}" Name="GeneratorStateTextBlock"></TextBlock>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock>Output:</TextBlock>
+            </StatusBarItem>
+            <ProgressBar Name="OutputProgressBar" Foreground="{Binding OutputCycleColor}" Value="100" HorizontalAlignment="Left" Height="10" VerticalAlignment="Top" Width="10"/>
+            <StatusBarItem>
+                <TextBlock Text="{Binding OutputCycleState}" Name="OutputStateTextBlock"></TextBlock>
+            </StatusBarItem>
+            <!--            <StatusBarItem HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+                <TextBlock Name="bufferStatus" Height="19" HorizontalAlignment="Stretch" Text="{Binding bufferStatus}"></TextBlock>
+            </StatusBarItem>-->
+            <!--<Separator Width="3" />
+        <StatusBarItem Width="180" HorizontalContentAlignment="Stretch" HorizontalAlignment="Left">
+            <TextBlock Name="guiStatus" HorizontalAlignment="Stretch" Height="19">GuiStatus</TextBlock>
+        </StatusBarItem>-->
+        </StatusBar>
+    </Grid>
+</Window>

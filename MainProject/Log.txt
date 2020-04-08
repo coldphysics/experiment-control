@@ -1,0 +1,19 @@
+﻿/*Group Meeting on 23.05.2017 Outcome*/
+
+1- Add enable/disable sequence button:
+	* a check box within the tab
+	* the same value for the same tab in all windows (a sequence spans all cards)
+	* change the color of the tab header based on the check value (green=checked, red=unchecked)
+	* the choices should be saved within the model
+
+2- Add a new kind of steps (Python Step):
+	* You can specify a Python script in a pop-up editor and specify the duration in the same way other kinds of steps have.
+	* In the script a special set of python variables are predefined:
+		** "out" is the output value for the current time step
+		** "t" represents the current time within the step measured in ms
+		** "T" represents the whole duration of the step in ms
+		** "t0" represents the absolute current time measured in ms
+		** "u0" the value of the last time-step of the previous step (usually in Volts) // what if there is no previous step?
+		** "u1" the value of the first time-step of the next step (usually in Volts) //what if there is no next step? 
+							//or the next step is Python script that depends on the last step of this one (circular dependency)?
+	* For each time-step contained in the step the output value is calculated based on the Python script.

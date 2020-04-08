@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="91eef49a-af36-475a-bd43-186a9f3cddff" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <para>This project represents the coordinator of the whole program. It controls cycle execution states.</para>
+      <para>For each cycle there might (in case of UI modification or iterations variable existence) be a new data model cooked in background and will be used in the next cycle.</para>
+      <autoOutline />
+    </introduction>
+    <section address="ClassDiagram">
+      <title> Class Diagram</title>
+      <content>
+        <para>
+         
+        </para>
+        <mediaLink>
+          <caption>The class diagram of the Buffer project</caption>
+          <image placement="center" xlink:href="ClassDiagram_Buffer"/>
+        </mediaLink>
+      </content>
+    </section>
+    <!-- Add one or more top-level section elements.  These are collapsible.
+         If using <autoOutline />, add an address attribute to identify it
+         and specify a title so that it can be jumped to with a hyperlink. -->
+      
+    <section address="output_loop">
+      <title>OutputHandler</title>
+      <content>
+        <para>
+          Output loop is the main part of <codeEntityReference>T:Buffer.Basic.OutputHandler</codeEntityReference>  where each cycle time is kept, data model file and data rows are created, python script is executed, output sequence is generated and sent to Hardware, and when the hardware start outputting. 
+          the following figure shows precisely how the cycles phases are organized in order.
+        </para>
+        <mediaLink>
+          <caption>cycle phases</caption>
+          <image placement="center" xlink:href="output_loop"/>
+        </mediaLink>
+      </content>
+    </section>
+
+    <section address="DoubleBuffer">
+      <title>Double Buffer Class</title>
+      <content>
+        <para>
+          The <codeEntityReference>T:Buffer.Basic.DoubleBuffer</codeEntityReference> class is responsible for isolating the changes being made to the model in the user interface from the actual model being output to the hardware system.
+          And with the help of the <codeEntityReference>G:Generator</codeEntityReference> project, it also converts the model into a format understandable by the corresponding hardware system (for AdWin-based HW systems, it performs compression, 
+          whereas for NI-based HW systems, it performs multiple steps of calibration), and gives the result of the conversion to the <codeEntityReference>T:Buffer.Basic.OutputHandler</codeEntityReference> class.
+      </para>
+        
+      </content>
+      <sections>
+        <section address="Calibration">
+          <title>Calibration</title>
+          <content>
+            <para>
+              Calibration is done only when the hardware system is NI-based; it contains many steps, one of which is based on a calibration file that contains mappings from raw output values to calibrated output values, 
+              and it is done in the <codeEntityReference>M:Buffer.Basic.DoubleBuffer.ApplyAnalogCalibrationList(System.Object, System.Int32, System.Collections.Generic.Dictionary&lt;System.Double, System.Double&gt;)</codeEntityReference> method which is described by the following algorithm:
+            </para>
+            <mediaLink>
+              <caption>File-Based Calibration Algorithm</caption>
+              <image xlink:href="Calibration" placement="center"/>
+            </mediaLink>
+          </content>
+        </section>
+      </sections>
+    </section>
+    <section address="Remarks">
+      <title>Remarks</title>
+      <content>
+        <list class="bullet">
+          <listItem>
+            <para>
+              The duration of a tab-sequence is the duration of the longest tab-sequence among all channels in all cards (see <codeEntityReference>M:AbstractController.Data.Sequence.AbstractSequenceController.LongestDurationAllSequences</codeEntityReference>).
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              The duration of a card is the sum of the durations of all tab-sequences that belong to the card (see <codeEntityReference>M:AbstractController.Data.Card.AbstractCardController.Duration</codeEntityReference>).
+            </para>
+          </listItem>
+        </list>
+      </content>
+    </section>
+    <relatedTopics>
+      <codeEntityReference>G:AbstractController</codeEntityReference>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

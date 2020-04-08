@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="View.Main.MeasurementRoutineSampleScriptView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+			 Name="UC"
+             d:DesignHeight="300" d:DesignWidth="300">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition Height="1"/>
+			<RowDefinition Height="50"/>
+		</Grid.RowDefinitions>
+
+		<StackPanel Orientation="Vertical" Grid.Row="0">
+			<Label  Content="Initialization Script:" FontWeight="Bold" FontSize="13"/>
+			<TextBox IsReadOnly="True" Margin="5" Text="{Binding SampleInitializationScript, Mode=OneTime}" />
+
+			<Label  Content="Repetitive Script:" FontWeight="Bold" FontSize="13"/>
+			<TextBox IsReadOnly="True" Margin="5" Text="{Binding SampleRepetitiveScript, Mode=OneTime}" />
+		</StackPanel>
+
+		<Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"  Stroke="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Margin="5,0,5,0"/>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"  Grid.ColumnSpan="2" >
+			<Button Content="Close" Width="70" Height="25" VerticalAlignment="Top" Margin="25,15,10,5" Command="{Binding CloseCommand}" CommandParameter="{Binding ElementName=UC}"/>
+			<Button Content="Copy to My Script"   Height="25" VerticalAlignment="Top" Margin="0,15,0,5" Command="{Binding SaveCommand}" CommandParameter="{Binding ElementName=UC}" />
+		</StackPanel>
+	</Grid>
+	
+
+</UserControl>
