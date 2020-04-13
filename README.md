@@ -1,4 +1,5 @@
-# Software Control
+# Cold Physics Experiments Control Software (CPECS)
+
 This repository maintains a software used to control physical experiments related to very cold molecules and atoms.
 
 ## Features
@@ -9,13 +10,21 @@ A short description of the main features of this software should be placed here
 ### Details
 The features of this software are documented in the [Wiki](https://github.com/coldphysics/software-control/wiki).
 
-## How Tos
+## Information for Users
 
-### How to setup the software control for regular use?
-TODO
+### Prerequesits
+#### Programs that must be installed alongside CPECS
+  1. [IronPython](https://github.com/IronLanguages/ironpython2/releases/download/ipy-2.7.9/IronPython-2.7.9.msi)
+  2. 
 
-### How to setup the codebase for code contributions?
-TODO
+#### Additional prerequisits for AdWin users
+  1. Download and install the [ADwin software package](https://www.adwin.de/us/download/cdrom.html)
+
+#### Additional prerequesets for NationalInstruments users
+  1. Install the driver software [NI-DAQmx 19.6](https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html)
+  2. Ensure that the analog and digital cards are named according to the expectations of CPECS, i.e, digital cards are named DO1, DO2, .. while 
+     analog cards are named: AO1, AO2, ...
+  3. Configure the master card (depends on the setup).
 
 ### How to add a new issue?
   0. Make sure the issue is not added already.
