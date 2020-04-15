@@ -22,9 +22,9 @@ namespace Controller.Variables
     {
         // ******************** variables ********************
         private VariablesController _parent;
-        
 
-       
+
+
         public VariableModel _model;
         /// <summary>
         /// A list of string representations of the locations in which this variable is being used.
@@ -44,7 +44,7 @@ namespace Controller.Variables
         public ICommand MoveDown { get; private set; }
         public ICommand RemoveGroup { get; private set; }
         // ******************** properties ********************
-       
+
         /// <summary>
         /// Gets a value indicating whether this <see cref="VariableController"/> is used.
         /// </summary>
@@ -147,7 +147,7 @@ namespace Controller.Variables
             }
         }
 
-        public static String NOVARIABLE
+        public static string NOVARIABLE
         {
             get { return ""; }
         }
@@ -163,10 +163,7 @@ namespace Controller.Variables
         }
         public void DoLoseFocus()
         {
-            if (this.LoseFocus != null)
-            {
-                this.LoseFocus(null, null);
-            }
+            this.LoseFocus?.Invoke(null, null);
         }
 
         public SolidColorBrush VariableUsage
@@ -247,10 +244,10 @@ namespace Controller.Variables
                 // System.Console.Write("val: {0}\n", value);
                 if (_model.VariableValue == value)
                 {
-                    
+
                     return;
                 }
-                
+
                 // prevent inconsistencies and multiple updates on the buffer
                 Object variableLock = _parent.VariableUpdateStart();
 
@@ -365,8 +362,10 @@ namespace Controller.Variables
             set
             {
                 Object bufferUpdateLock = _parent.VariableUpdateStart();
+                VariableType oldType = _model.TypeOfVariable;
                 _model.TypeOfVariable = value;
-                if (value == VariableType.VariableTypeIterator)
+                // we need to newly calculate the number of iterations when we have a new iterator, or we remove one
+                if (value == VariableType.VariableTypeIterator || oldType == VariableType.VariableTypeIterator)
                 {
                     _parent.countTotalNumberOfIterations();
                 }
@@ -415,7 +414,6 @@ namespace Controller.Variables
                         }
                     }
                 }
-
 
                 return false;
             }
@@ -530,7 +528,7 @@ namespace Controller.Variables
         /// </summary>
         public void updateVariablesListFromParent()
         {
-            System.Console.Write("Update!\n");
+            System.Console.WriteLine("Update variable list");
             _parent.UpdateVariablesList();
         }
 

@@ -351,7 +351,7 @@ namespace Controller.Variables
         /// re-enables and triggers the CopyToBuffer function if the object in the argument matches the _variableUpdateLockObject
         /// </summary>
         /// <param name="lockObject">lock/unlock object</param>
-        public void VariableUpdateDone(Object lockObject)
+        public bool VariableUpdateDone(Object lockObject)
         {
             //if (_variableUpdateLockObject == lockObject)
             //{
@@ -359,7 +359,7 @@ namespace Controller.Variables
             //    _parentController.EnableCopyToBufferAndCopyChanges();
             //}
 
-            _parentController.BulkUpdateEnd(lockObject);
+            return _parentController.BulkUpdateEnd(lockObject);
         }
 
         void LockIterators(object sender, EventArgs e)
@@ -369,7 +369,7 @@ namespace Controller.Variables
             // ResetIteratorValues();
             evaluate(null);
             _iteratorsLocked = true;
-            System.Console.Write("Lock!\n");
+            System.Console.WriteLine("Locked iterators");
             foreach (VariableController iterator in VariablesIterator)
             {
                 iterator.VariableLocked = true;
@@ -383,7 +383,7 @@ namespace Controller.Variables
             {
                 iterator.VariableLocked = false;
             }
-            System.Console.Write("UnLock!\n");
+            System.Console.WriteLine("Unlocked iterators");
         }
 
         private bool _iteratorsLocked = false;
@@ -440,7 +440,6 @@ namespace Controller.Variables
             numberOfIterations = count;
             _outputHandler.NumberOfIterations = count;
            
-            //System.Console.Write("countTotalNumberOfIterations: {0}\n", count);
         }
 
         /// <summary>
@@ -478,9 +477,7 @@ namespace Controller.Variables
         /// <param name="e">unused</param>
         public void IterateVariablesFromBuffer(object sender, EventArgs e)
         {
-            //System.Console.Write("HEYHO Var Update From Buffer!\n");
             iterate(null);
-            //System.Console.Write("ITERATE?\n");
         }
 
         /// <summary>
@@ -490,27 +487,22 @@ namespace Controller.Variables
         /// <param name="e">unused</param>
         public void EvaluateVariablesFromBuffer(object sender, EventArgs e)
         {
-            //System.Console.Write("HEYHO Var Evaluate From Buffer!\n");
             evaluate(null);
         }
 
-        
         public void ResetIteratorValuesFromBuffer(object sender, EventArgs e)
         {
-            //System.Console.Write("HEYHO Var Evaluate From Buffer!\n");
             ResetIteratorValues();
             evaluate(null);
         }
 
         public void moveUp(VariableController variable)
         {
-            //System.Console.WriteLine("Start");
             DateTime first = DateTime.Now;
             if (variable.TypeOfVariable == VariableType.VariableTypeIterator || variable.TypeOfVariable == VariableType.VariableTypeDynamic)
             {
                 if (_variablesModel.VariablesList.IndexOf(variable._model) > 0)
                 {
-                    //System.Console.Write("MoveUp! Index {0} not at the edge!\n", _variablesModel.VariablesList.IndexOf(variable._model));
                     VariableModel tempVar =
                         _variablesModel.VariablesList[_variablesModel.VariablesList.IndexOf(variable._model) - 1];
                     while (_variablesModel.VariablesList.IndexOf(tempVar) >= 0)
@@ -668,24 +660,15 @@ namespace Controller.Variables
 
         public void updateStatics()
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("VariablesStatic"));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesStatic"));
         }
         public void updatIterators()
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("VariablesIterator"));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesIterator"));
         }
         public void updateDynamics()
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("VariablesDynamic"));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesDynamic"));
         }
 
 
@@ -693,10 +676,7 @@ namespace Controller.Variables
         /* refresh the gui */
         public void RefreshVariableValuesInGUI(bool refreshStatics, bool refreshIterators, bool refreshDynamics)
         {
-            if (VariablesListChanged != null)
-            {
-                VariablesListChanged(this, new VariablesChangedEventArgs() {RefreshDynamics=refreshDynamics, RefreshIterators=refreshIterators, RefreshStatics=refreshStatics });
-            }
+            VariablesListChanged?.Invoke(this, new VariablesChangedEventArgs() { RefreshDynamics = refreshDynamics, RefreshIterators = refreshIterators, RefreshStatics = refreshStatics });
         }
 
         public void DoVariablesValueChanged(VariableController variable)
@@ -822,7 +802,7 @@ namespace Controller.Variables
         }
 
         /// <summary>
-        /// Adds a static Variable
+        /// Adds an iterator variable
         /// </summary>
         /// <param name="parameter">unused</param>
         public void addIterator(object parameter)
@@ -839,7 +819,7 @@ namespace Controller.Variables
         }
 
         /// <summary>
-        /// Adds a static Variable
+        /// Adds a dynamic variable
         /// </summary>
         /// <param name="parameter">unused</param>
         public void addDynamic(object parameter)
@@ -991,9 +971,6 @@ namespace Controller.Variables
                 shuffleIterationsCounter++;
             }
 
-
-            //System.Console.Write("Iterate!!!!!\n");
-
             if (!_outputHandler.shuffleIterations)
             {
                 bool lastVariableOverflowed = true;
@@ -1093,7 +1070,6 @@ namespace Controller.Variables
             VariableUpdateDone(bufferUpdateLock);
             RefreshVariableValuesInGUI(false, true, true);
             System.Console.Write("Eval done!\n");
-           
         }
 
         /// <summary>
