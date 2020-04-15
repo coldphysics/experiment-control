@@ -10,7 +10,7 @@
 
 
 
-        <SubmitTextBox:SubmitTextBox Name="VariableName" Text="{Binding VariableName, Mode=TwoWay}"  Background="{Binding VariableUsage, Mode=OneWay}">
+        <SubmitTextBox:SubmitTextBox Name="VariableName" Text="{Binding VariableName, Mode=TwoWay}" PreviewKeyDown="VariableName_PreviewKeyDown" Background="{Binding VariableUsage, Mode=OneWay}">
 			<SubmitTextBox:SubmitTextBox.ContextMenu>
 				<ContextMenu>
 					<MenuItem Name="Static" Header="Static" Command="{Binding SwitchToStatic}"></MenuItem>
