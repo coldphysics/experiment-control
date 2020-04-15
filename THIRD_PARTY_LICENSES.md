@@ -40,7 +40,6 @@ https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/LICENCE
 License: MIT
 https://github.com/intrueder/Control.Draggable/blob/master/LICENSE
 
-
 ### LumenWorks.Framework.IO
 License: MIT
 http://www.opensource.org/licenses/mit-license.php
