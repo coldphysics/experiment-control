@@ -95,7 +95,7 @@ namespace Controller.Variables
 
         private bool _isGroupHeader = false;
 
-        public bool isGroupHeader
+        public bool IsGroupHeader
         {
             get { return _isGroupHeader; }
             set { _isGroupHeader = value; }
@@ -170,7 +170,6 @@ namespace Controller.Variables
         {
             get
             {
-                //System.Console.Write("Color Asked!\n");
                 if (this.Used)
                 {
                     return Brushes.LightGreen;
@@ -241,15 +240,13 @@ namespace Controller.Variables
             get { return _model.VariableValue; }
             set
             {
-                // System.Console.Write("val: {0}\n", value);
                 if (_model.VariableValue == value)
                 {
-
                     return;
                 }
 
                 // prevent inconsistencies and multiple updates on the buffer
-                Object variableLock = _parent.VariableUpdateStart();
+                object lockObject = _parent.VariableUpdateStart();
 
                 System.Console.Write("variable {0}: {1}\n", _model.VariableName, value);
                 _model.VariableValue = value;
@@ -262,7 +259,7 @@ namespace Controller.Variables
                     _parent.evaluate(null);
                 }
                 // re-enable the Buffer updateVariablesListFromParent
-                _parent.VariableUpdateDone(variableLock);
+                _parent.VariableUpdateDone(lockObject);
             }
         }
 
@@ -274,12 +271,9 @@ namespace Controller.Variables
             get { return _model.VariableStartValue; }
             set
             {
-                _model.VariableStartValue = value;
-
+                _model.VariableStartValue = value;          
                 _parent.ResetIteratorValues();
-
                 _parent.countTotalNumberOfIterations();
-
             }
         }
 
@@ -299,7 +293,6 @@ namespace Controller.Variables
         {
             get
             {
-                //System.Console.Write("Color Asked!\n");
                 if (this.VariableLocked)
                 {
                     return Brushes.LightGray;
@@ -460,7 +453,7 @@ namespace Controller.Variables
         /// <param name="parameter">not used</param>
         private void DoRemoveGroup(object parameter)
         {
-            if (isGroupHeader)
+            if (IsGroupHeader)
             {
                 _parent.RemoveGroup(GroupIndex);
             }

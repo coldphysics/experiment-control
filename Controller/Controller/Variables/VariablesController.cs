@@ -255,7 +255,7 @@ namespace Controller.Variables
                     VariableController vC = new VariableController(vM, this);
                     vM.TypeOfVariable = VariableType.VariableTypeStatic;
                     vM.groupIndex = group.Key;
-                    vC.isGroupHeader = true;
+                    vC.IsGroupHeader = true;
                     returnCollection.Add(vC);
                 }
 
@@ -268,7 +268,7 @@ namespace Controller.Variables
                         w.TypeOfVariable.Equals(
                             VariableType.
                                 VariableTypeStatic)))//order the result
-                                                                 orderby tempVarController.GroupName ascending, tempVarController.isGroupHeader descending, tempVarController.VariableName ascending
+                                                                 orderby tempVarController.GroupName ascending, tempVarController.IsGroupHeader descending, tempVarController.VariableName ascending
                                                                  select tempVarController);
             }
         }
