@@ -67,6 +67,7 @@ In this section, various information for developers are provided.
      5. National Instruments Common: ``NationalInstruments.Common.dll`` - Version: 9.1.40.159
      6. ``NationalInstruments.MStudioCLM.dll`` - Version: 15.1.40.49152
      7. ``NationalInstruments.NiLmClientDLL`` - Version: 15.1.40.49152 
+     8. MySql .Net Connector: ``mysql.data.dll`` - Version: 6.9.10
   3. Install an IDE __that supports building .Net Framework 4.5 applications, and that supports [NuGet](https://www.nuget.org/)__:
      - Both _Visual Studio 2013 Professional_, and _Visual Studio 2017 Enterprise_ were tested.
      - _Visual Studio Community_ editions are supposed to work as well.
@@ -89,6 +90,7 @@ Nonetheless, they are required for the successful building and publishing of CPE
   - Otherwise, please obtain them from the original providers:
     - [ADwin software package](https://www.adwin.de/us/download/cdrom.html)
     - [NI-DAQmx 19.6](https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html). Further details: [here](https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019Ma3SAE&l=en-US), and [here](https://www.ni.com/en-us/support/documentation/supplemental/13/national-instruments--net-support.html)
+    - [MySQL Connector/NET](https://downloads.mysql.com/archives/get/p/6/file/mysql-connector-net-6.9.10-noinstall.zip)
 
 Make sure you obtain class libraries, i.e., dlls, that are compatible with the x64 architecture. [see details here for NI dlls](http://zone.ni.com/reference/en-XX/help/370473J-01/ninetdaqmxfx40/netdaqmx64bitsupport/). 
 
