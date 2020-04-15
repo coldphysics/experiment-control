@@ -953,11 +953,8 @@ namespace Buffer.Basic
                     ModelIndex = eventArgs.NextModelIndex; // this is used to save the model number in the database.
                     if (eventArgs.ModelWillChange)//A new model will be loaded
                     {
-
-
                         _waitForGeneratedData = true;
                         DoAfterIteratingVariables();
-
                     }
                     else//we might have an iterated model
                     {
@@ -965,10 +962,12 @@ namespace Buffer.Basic
                         if (NumberOfIterations <= 1)
                             _waitForGeneratedData = false;
                     }
-                 
-                   
+
+                    Console.WriteLine("End of current OutputLoop, NumberOfIterations ={0}", NumberOfIterations);
                     
 
+
+          
                 }
 
                

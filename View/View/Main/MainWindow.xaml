@@ -56,10 +56,10 @@
 
                                 <Separator/>
                                 <!--Look -->
-                                <MenuItem Header=" Output-Visualizer" Command="{Binding OpenVisualizeWindowCommand}"/>
+                                <MenuItem Header="Output _Visualizer" Command="{Binding OpenVisualizeWindowCommand}"/>
 
-                                <MenuItem Header="AdWin-Specific">
-                                    <MenuItem Header="A_dWin Simulator" Command="{Binding ShowSimulatorCommand}"/>
+                                <MenuItem Header="_AdWin-Specific">
+                                    <MenuItem Header="AdWin _Simulator" Command="{Binding ShowSimulatorCommand}"/>
                                     <MenuItem Header="AdWin FIFOs _Debugger" Command="{Binding ShowFifoDebugWindowCommand}"/>
                                 </MenuItem>
                                 <MenuItem Header="_Switch Window" Command="{Binding ShowSwitchWindowCommand}"/>

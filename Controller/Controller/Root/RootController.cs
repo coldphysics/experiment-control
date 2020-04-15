@@ -5,7 +5,7 @@ using Communication.Interfaces.Controller;
 using Model.Root;
 using Errors.Error;
 using Model.MeasurementRoutine;
-
+using System;
 
 namespace Controller.Root
 {
@@ -14,7 +14,7 @@ namespace Controller.Root
         private readonly IBuffer _buffer;
         public Variables.VariablesController Variables;
         public int TimesToReplicateOutput { set; get; }
-       
+
 
 
         public RootController(RootModel model, IBuffer buffer)
@@ -61,13 +61,17 @@ namespace Controller.Root
         /// Unlock the buffer to allow one of the threads to acess it.
         /// </summary>
         /// <param name="updateLock">The lock object.</param>
-        public void BulkUpdateEnd(object updateLock)
+        public bool BulkUpdateEnd(object updateLock)
         {
             if (updateLock == _actualLock)
             {
                 _actualLock = null;
                 EnableCopyToBufferAndCopyChanges();
+                return true;
             }
+
+            return false;
+
         }
         /// <summary>
         /// reenables the CopyToBuffer function and triggers it once
@@ -78,6 +82,10 @@ namespace Controller.Root
             if (_pendingChanges)
             {
                 CopyToBuffer();
+            }
+            else
+            {
+                Console.WriteLine("Copying to buffer enabled but no pending changes were found!");
             }
         }
         public void DisableCopyToBuffer()

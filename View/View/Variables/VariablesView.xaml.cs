@@ -273,7 +273,7 @@ namespace View.Variables
                 VariableController taskitem = item as VariableController;
 
                 //System.Console.Write("Iswhat: {0}\n", taskitem.isGroupHeader);
-                if (taskitem.isGroupHeader == true)
+                if (taskitem.IsGroupHeader == true)
                     return
                         element.FindResource("VariableStaticGroupHeaderTemplate") as DataTemplate;
                 else
