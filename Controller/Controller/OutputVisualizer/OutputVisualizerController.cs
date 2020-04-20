@@ -4,6 +4,7 @@ using LiveCharts.Configurations;
 using LiveCharts.Defaults;
 using LiveCharts.Events;
 using LiveCharts.Wpf;
+using Model.Options;
 using Model.Settings;
 using Model.Settings.Settings;
 using System;
@@ -17,10 +18,6 @@ namespace Controller.OutputVisualizer
     /// <seealso cref="Controller.BaseController" />
     public class OutputVisualizerController : BaseController
     {
-
-
-        // ******************** Variables/Objects ********************   
-        #region attributes        
         /// <summary>
         /// Event handler for the [UserTriggeredAlignHandler] event 
         /// </summary>
@@ -28,38 +25,31 @@ namespace Controller.OutputVisualizer
         /// <param name="args">The <see cref="RangeChangedEventArgs"/> instance containing the event data.</param>
         public delegate void UserTriggeredAlignHandler(object sender, RangeChangedEventArgs args);
 
+
+        // ******************** Variables/Objects ********************   
+        #region attributes        
         /// <summary>
         /// Occurs when [align triggered].
         /// </summary>
-        public event UserTriggeredAlignHandler AlignTriggered;
-
-
-
-        /// <summary>
-        ///  the smallest time step in miliisecond (it's calculated from the sample rate that the user puts in the profile settings.
-        /// </summary>
-        public static double TIME_STEP_SIZE;
-
-
+        public event UserTriggeredAlignHandler alignTriggered;
 
         /// <summary>
         ///  the array that holds the generated output converted to the DateTimePoint type.
         /// </summary>
-        public ChartValues<DateTimePoint> OutputArray = new ChartValues<DateTimePoint>();
-
-       /// <summary>
-        /// holds the smallest time step but in 100 nanoseconds (The mapper converts this value to millisecond to be displayed).
-       /// </summary>
-
-        static long STEP;
-       
-        
-        //TODO     
-        //It could be an option specified by the user 
+        public ChartValues<DateTimePoint> outputArray = new ChartValues<DateTimePoint>();
         /// <summary>
-        /// The number of samples.
+        ///  the smallest time step in miliisecond (it's calculated from the sample rate that the user puts in the profile settings).
         /// </summary>
-        const int NUM_OF_SAMPLES = 1000;
+        private double stepSizeMillis;
+        /// <summary>
+        /// holds the smallest time step but in 100 nanoseconds (The mapper converts this value to millisecond to be displayed).
+        /// </summary>
+        private long stepSize100Nanos;
+
+        /// <summary>
+        /// The number of samples shown at once in the chart
+        /// </summary>
+        private readonly int NUMBER_OF_SAMPLES;
 
         #endregion
 
@@ -208,7 +198,6 @@ namespace Controller.OutputVisualizer
             }
         }
 
-
         /// <summary>
         /// The command triggered when the Align button is clicked.
         /// </summary>
@@ -241,7 +230,7 @@ namespace Controller.OutputVisualizer
                 rangeChangedCommand = value;
             }
         }
-       
+
 
         #endregion
 
@@ -252,24 +241,24 @@ namespace Controller.OutputVisualizer
 
         public OutputVisualizerController(double[] tempList)
         {
+            NUMBER_OF_SAMPLES = OptionsManager.GetInstance().GetOptionValueByName<int>(OptionNames.VISUALIZED_SAMPLES);
             // Maps the 100 nanosecond values that are passed as datetime type to millisecond, and display the y values without any change (in volt)
-            var dayConfig = Mappers.Xy<DateTimePoint>()
+            var toMillisMapper = Mappers.Xy<DateTimePoint>()
             .X(dayModel => (double)((dayModel.DateTime.Ticks) * 0.00000001))
             .Y(dayModel => dayModel.Value);
 
-           // This method saves the configuration at your application level, 
-            //every time LiveCharts detects this type in a Chart Values instance, it will use the dayConfig mapper
-            LiveCharts.Charting.For<DateTimePoint>(dayConfig);
-            GetStepSize();
+            // This method saves the mapper at your application level, 
+            //every time LiveCharts detects the DateTimePoint type in a Chart Values instance, it will use the toMillisMapper.
+            Charting.For<DateTimePoint>(toMillisMapper);
+            CalculateStepSize();
             SetData(tempList);
-            MaxValue = Double.NaN;
-            MinValue = Double.NaN;
-            ButtonVisibility = false; 
+            MaxValue = double.NaN;
+            MinValue = double.NaN;
+            LabelFormatter = x => string.Format("{0:0.000}", x);
+            ButtonVisibility = false;
             RangeChangedCommand = new RelayCommand(AxisChanged);
             //align
             AlignTriggeredCommand = new RelayCommand(AlignUserControls);
-            LabelFormatter = x => string.Format("{0:0.000}", x);
-       
         }
         #endregion
 
@@ -279,42 +268,39 @@ namespace Controller.OutputVisualizer
         #region Methods
 
         /// <summary>
-        /// Gets the size of the step size in millisecond.
+        /// Gets the size of the step in millisecond.
         /// It's calculated from the sampleRate which is entered by the user in the profile settings.
         /// </summary>
-        private void GetStepSize() 
+        private void CalculateStepSize()
         {
             ProfilesManager pm = ProfilesManager.GetInstance();
             double stepSize = ((IntegerSetting)pm.ActiveProfile.GetSettingByName(SettingNames.SAMPLE_RATE)).Value;
             //double result;
             switch (((SampleRateSetting)pm.ActiveProfile.GetSettingByName(SettingNames.SAMPLE_RATE)).UnitOfSampleRate)
             {
-                
                 case SampleRateUnit.Hz:
-                    {
-                        TIME_STEP_SIZE = 1000 / stepSize;
-                        break;
-                    }
-                case SampleRateUnit.kHz: { TIME_STEP_SIZE = 1 / stepSize; break; }
-               
-                default: { TIME_STEP_SIZE = stepSize; break; }
+                    stepSizeMillis = 1000 / stepSize;
+                    break;
+
+                case SampleRateUnit.kHz:
+                    stepSizeMillis = 1 / stepSize;
+                    break;
+
+                default:
+                    stepSizeMillis = stepSize;
+                    break;
             }
-           
-            STEP = (long)(TIME_STEP_SIZE * 100000000);//the smallest time step in 100 nanosecond
-          
 
-
+            stepSize100Nanos = (long)(stepSizeMillis * 100000000);//the smallest time step in 100 nanosecond
         }
 
 
-     
-     
+
+
         //align
         protected void OnAlignTriggered(RangeChangedEventArgs args)
         {
-            if (AlignTriggered != null)
-                AlignTriggered(this, args);
-
+            alignTriggered?.Invoke(this, args);
         }
 
 
@@ -324,19 +310,14 @@ namespace Controller.OutputVisualizer
         /// <param name="eventargs">The <see cref="RangeChangedEventArgs"/> instance containing the event data.</param>
         public void ChangeAxis(RangeChangedEventArgs eventargs)
         {
-            
-            double max = ((LiveCharts.Wpf.Axis)eventargs.Axis).MaxValue;
-            double min = ((LiveCharts.Wpf.Axis)eventargs.Axis).MinValue;
+            double max = ((Axis)eventargs.Axis).MaxValue;
+            double min = ((Axis)eventargs.Axis).MinValue;
             double range = eventargs.Range;
             min = Math.Max(0, min);
-            int arrayMin = (int)Math.Round(min / TIME_STEP_SIZE);
-            int arrayMax = (int)Math.Round(max / TIME_STEP_SIZE);
-            arrayMax = Math.Min(arrayMax, OutputArray.Count);
-            ArrayManipulation(arrayMin, arrayMax);
-           
-       //     SomeEvent = String.Format("Arraymin={0}, Arraymax={1} , maxAxis={2} , minAxis={3}, Range ={4} SamplingRate={5}", arrayMin, arrayMax, max, min, range, t);
-
-
+            int arrayMin = (int)Math.Round(min / stepSizeMillis);
+            int arrayMax = (int)Math.Round(max / stepSizeMillis);
+            arrayMax = Math.Min(arrayMax, outputArray.Count);
+            SampleOutput(arrayMin, arrayMax);
         }
 
         /// <summary>
@@ -345,70 +326,63 @@ namespace Controller.OutputVisualizer
         /// <param name="parameter">The parameter.</param>
         public void AxisChanged(object parameter)
         {
-
             RangeChangedEventArgs eventargs = (RangeChangedEventArgs)parameter;
             Args = eventargs;
             ButtonVisibility = true;
             ChangeAxis(eventargs);
-            
         }
 
         //align
         public void AlignUserControls(object parameter)
         {
-
             OnAlignTriggered(Args);
         }
 
 
         /// <summary>
-        /// This method gets the converts the values of the output array into Datetype type to be converted later to millisecond
+        /// This method converts the values of the output array into DateTimePoint type to be converted later to millisecond
         /// </summary>
         /// <param name="output">The output.</param>
         public void SetData(double[] output)
         {
             int sizeOfArray = output.Length;
 
-
             for (int i = 0; i < sizeOfArray; i++)
             {
-                DateTime dt = new DateTime(i * STEP);
+                DateTime dt = new DateTime(i * stepSize100Nanos);
                 DateTimePoint dtp = new DateTimePoint(dt, output[i]);
-                OutputArray.Add(dtp);
+                outputArray.Add(dtp);
             }
-            ArrayManipulation(0, OutputArray.Count);
+
+            SampleOutput(0, outputArray.Count);
         }
 
-        //TODO (the number of points to display could be an option )
         /// <summary>
-        /// Does sampling for the currently displayed array in such a way that 1000 array values are displayed 
+        /// Samples the currently displayed array in such a way that at most NUMBER_OF_SAMPLES values are displayed
+        /// picked with equal intervals.
         /// </summary>
-        /// <param name="min">The minimum.</param>
-        /// <param name="max">The maximum.</param>
-        public void ArrayManipulation(int min, int max)
+        /// <param name="min">The minimum shown time value.</param>
+        /// <param name="max">The maximum shown time value.</param>
+        public void SampleOutput(int min, int max)
         {
-
-
             ChartValues<DateTimePoint> tempArray = new ChartValues<DateTimePoint>();
-            double temp = (max - min) / NUM_OF_SAMPLES;
-            int samplingRate = (int)Math.Ceiling(temp);
-            if (samplingRate == 0)
-            { samplingRate = 1; }
+            double temp = (max - min) / NUMBER_OF_SAMPLES;
+            int samplingStep = (int)Math.Ceiling(temp);
 
+            if (samplingStep == 0)
+            {
+                samplingStep = 1;
+            }
+            
             int k = min;
 
-            for (int j = 0; j < NUM_OF_SAMPLES && k < max; j++)
+            for (int j = 0; j < NUMBER_OF_SAMPLES && k < max; j++)
             {
-
-                tempArray.Add(OutputArray[k]);
-                k += samplingRate;
-
+                tempArray.Add(outputArray[k]);
+                k += samplingStep;
             }
 
             ManipulatedArray = tempArray;
-
-
-
         }
         #endregion
 
