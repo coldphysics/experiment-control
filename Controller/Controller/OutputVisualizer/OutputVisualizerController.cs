@@ -397,7 +397,7 @@ namespace Controller.OutputVisualizer
 
             int k = min;
 
-            for (int j = 0; j < 1000 && k < max; j++)
+            for (int j = 0; j < NUM_OF_SAMPLES && k < max; j++)
             {
 
                 tempArray.Add(OutputArray[k]);
