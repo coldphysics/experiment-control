@@ -17,7 +17,6 @@ namespace Controller.Data.Channels
         {
             Constant,
             Linear,
-            Exponential,
             Binary,
             Csv,
             Python
@@ -216,8 +215,5 @@ namespace Controller.Data.Channels
         {
             return Model.Setting.Name;
         }
-        //public event PropertyChangedEventHandler PropertyChanged;
-
-
     }
 }
