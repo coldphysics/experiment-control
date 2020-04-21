@@ -12,7 +12,7 @@
     </UserControl.Resources>
 
 
-    <Border BorderBrush="Gray" BorderThickness="1" KeyDown="Border_KeyDown">
+    <Border BorderBrush="Gray" BorderThickness="1">
         <Grid>
 
             <Grid.RowDefinitions>

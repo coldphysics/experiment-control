@@ -8,15 +8,17 @@
         /// <summary>
         /// The constant name for the icon path option
         /// </summary>
-        public const string ICON_PATH = "Icon File Path";
+        public const string ICON_PATH = "Icon file path";
         /// <summary>
         /// The constant name for the option that specifies the maximum number of variables that fit in a single column of a static variables group.
         /// </summary>
-        public const string VARIABLES_STATIC_GROUP_HEIGHT = "Max # of Static Variables per Group Column";
+        public const string VARIABLES_STATIC_GROUP_HEIGHT = "Max # of static variables per group column";
         /// <summary>
         /// The constant name for the option that specifies whether the program should open all windows (variables, errors, and cards) automatically at startup.
         /// </summary>
-        public const string AUTOMATICALLY_OPEN_WINDOWS = "Automatically Open All Windows at Startup";
+        public const string AUTOMATICALLY_OPEN_WINDOWS = "Automatically open all windows at startup";
+
+        public const string VISUALIZED_SAMPLES = "The number of output values that are visualized";
 
         /// <summary>
         /// Gets a collection of all option names
@@ -27,7 +29,8 @@
             return new string[] { 
                 ICON_PATH,
                 VARIABLES_STATIC_GROUP_HEIGHT,
-                AUTOMATICALLY_OPEN_WINDOWS
+                AUTOMATICALLY_OPEN_WINDOWS,
+                VISUALIZED_SAMPLES
             };
         }
     }

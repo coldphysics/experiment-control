@@ -398,7 +398,6 @@ namespace Buffer.Basic
             }
            
             private set
-            
             {
                 if (value == 0 && _startCounterOfScans != 0)
                 {
@@ -1425,11 +1424,11 @@ namespace Buffer.Basic
         /// <summary>
         /// Queries the database for the last global counter if access to the database is allowed, otherwise returns 1
         /// </summary>
-        /// <returns>last global counter if access to DB is allowed, 1 otherwise.</returns>
+        /// <returns>last global counter if access to DB is allowed, 0 otherwise.</returns>
         public int LoadGlobalCounter()
         {
             if (!Global.CanAccessDatabase())
-                return 1;
+                return 0;
 
             int globalCounter = -1;
             DatabaseConnectionSetting setting = (DatabaseConnectionSetting)ProfilesManager.GetInstance().ActiveProfile.GetSettingByName(SettingNames.DATABASE_CONNECTION);
