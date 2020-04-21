@@ -23,6 +23,7 @@ Please consider the following prerequisits before installing CPECS.
 
 #### Additional prerequisits for AdWin users
   1. Download and install the [ADwin software package](https://www.adwin.de/us/download/cdrom.html)
+  2. Make sure that the adwin device #1 is set and available.
 
 #### Additional prerequesets for NationalInstruments users
   1. Install the driver software [NI-DAQmx 19.6](https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html)
