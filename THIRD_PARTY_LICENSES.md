@@ -50,3 +50,11 @@ License: MIT
 ### MySql.Data.MySqlClient .Net Core Class Library
 License: GPL v2.0
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+### MSTest.TestAdapter
+License: MIT
+https://www.nuget.org/packages/MSTest.TestAdapter/2.1.1/license
+
+### MSTest.TestFramework
+License: MIT
+https://www.nuget.org/packages/MSTest.TestFramework/2.1.1/license
