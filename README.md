@@ -105,6 +105,16 @@ Make sure you obtain class libraries, i.e., dlls, that are compatible with the x
   7. Restore NuGet packages. This will retrieve dynamically referenced DLL files from online repositories (Right-click on the solution node in the solution explorer and click on ``Restore NuGet Packages``).
   8. Press `F6` to start building the solution.
   9. Cross your fingers. Die Daumen drucken. Say some prayers.. And hopefully this will work!
+  
+#### How to run all unit tests?
+Unit testing allows to make sure that existing application features are still functioning as expected despite newly introduced features.
+CPECS includes a set of unit tests that should be executed before any new release.
+To execute all unit tests in the solution follow these steps:
+
+  1. Ensure that the default testing processor architecture and the solution platform match, i.e., x64:
+![Tests configuration](docs/tests-config.png)
+  2. Click on the `Test` menu button then `Run>All Tests`, or simply use the key combination `Ctrl+R,A`.
+  3. Ensure that all tests shown in the `Test Explorer` window run successfully, otherwise, fix the causing errors.
 
 #### How to create a new release of CPECS?
 __TODO__
