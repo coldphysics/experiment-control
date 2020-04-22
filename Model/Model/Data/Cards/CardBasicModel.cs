@@ -121,7 +121,8 @@ namespace Model.Data.Cards
         {
             SequenceModel previousSequence = PreviousSequence(sequence);
 
-            while (previousSequence.Channels[channel.Index()].Steps.Count == 0)
+            // skip disabled or empty sequences
+            while (!previousSequence.IsEnabled || previousSequence.Channels[channel.Index()].Steps.Count == 0)
             {
                 if (previousSequence.Index() == 0)
                 {

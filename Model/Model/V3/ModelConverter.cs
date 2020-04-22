@@ -136,9 +136,14 @@ namespace Model.V3
         private ChannelSettingsModel ConvertChannelSettings(CardBasicModel parent, int channel, V3.Data.Channels.ChannelSettingsModel channelSettings)
         {
             ChannelSettingsModel result = new ChannelSettingsModel(channel, parent);
-            
+
             //result.InitValue = channelSettings.InitValue;
-            result.InitValue = 0;
+            // result.InitValue = 0;
+            if (channelSettings.InitValue != 0)
+            {
+                Console.WriteLine("Warning! Ignoring a non-zero init value for channel {0}", channel);
+            }
+
             result.Invert = channelSettings.Invert;
             result.LowerLimit = channelSettings.LowerLimit;
             result.Name = channelSettings.Name;

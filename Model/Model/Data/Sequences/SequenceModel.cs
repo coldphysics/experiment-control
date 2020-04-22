@@ -87,7 +87,7 @@ namespace Model.Data.Sequences
         /// <summary>
         /// Delegates the task to the parent <see cref="CardBasicModel"/> 
         /// </summary>
-        /// <returns>The sequence before this one in the same card.</returns>
+        /// <returns>The sequence before this one in the same card regardless whether it is enabled or not!.</returns>
         /// <exception cref="System.Exception"></exception>
         public SequenceModel PreviousSequence()
         {
