@@ -3,7 +3,6 @@ using Buffer.Basic;
 using Buffer.HardwareManager;
 using Communication.Interfaces.Hardware;
 using Generator.Cookbook;
-using Generator.Generator.Cookbook;
 using HardwareAdWin.HardwareAdWin;
 using HardwareDAQmx.Dy4thFloor;
 using HardwareDAQmx.SuperAtoms5thFloor;

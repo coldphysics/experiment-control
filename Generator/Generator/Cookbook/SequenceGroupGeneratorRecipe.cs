@@ -1,5 +1,6 @@
 ﻿using Communication.Interfaces.Generator;
 using Communication.Interfaces.Model;
+using Generator.Generator;
 using Generator.Generator.Card;
 using Generator.Generator.Channel;
 using Generator.Generator.Sequence;
@@ -12,7 +13,7 @@ using Model.Data.Sequences;
 using Model.Data.Steps;
 using System;
 
-namespace Generator.Generator.Cookbook
+namespace Generator.Cookbook
 {
     /// <summary>
     /// The factory (cook-book) for  sequence group generators.

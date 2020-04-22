@@ -99,44 +99,29 @@ namespace Generator.Generator.Concatenator
                 if (indexTimeStep == _iDuration)
                     continue;
 
-                double lastValueOfChannel;//Will store the value to be copied in place of the missing time-steps.
+                // Will store the value to be copied in place of the missing time-steps.
+                // We assume the value 0.0 to consider all cases in which no previous step exists
+                double lastValueOfChannel = 0.0;
 
                 /*Determining the value to be copied in place of the missing time-steps*/
                 /////////////////////////////////////////////////////////////////////////
-                //RECO enhance the if-else logic
 
+                //special case: last known step in the current sequence has a zero duration!
+                // if the model indicates that there are steps in the current channel for the current sequence and
+                // the duration of the last provided step is zero (which means that its value is not present in the 
+                // output array), then copy its value field.
+                if (_model.Sequences[sequenceIndex].Channels[(int)iChannel].Steps.Count > 0
+                    && _model.Sequences[sequenceIndex].Channels[(int)iChannel].Steps.Last().Duration.Value == 0)
+                {
+
+                    lastValueOfChannel =
+                        _model.Sequences[sequenceIndex].Channels[(int)iChannel].Steps.Last().Value.Value;
+                }
                 //do we have any non-zero-duration steps provided for the current channel?
-                if (indexTimeStep > 0)
+                else if (indexTimeStep > 0)
                 {
                     //then the value to copy is the last provided value
                     lastValueOfChannel = _output[iChannel, indexTimeStep - 1];
-                }
-                else
-                {
-                    //RECO here we might want to look for the last value of the previous sequence
-                    //this is equivalent to lastValueOfChannel = 0.0;
-                    lastValueOfChannel = _output[iChannel, indexTimeStep];
-                }
-
-                //newly added
-
-                //if the model indicates that there are steps in the current channel for the current sequence
-                if (_model.Sequences[sequenceIndex].Channels[(int)iChannel].Steps.Count > 0)
-                {
-                    //if the duration of the last provided step in the current channel is zero (which means that its value is not present in the output array),
-                    //then copy its value field.
-                    if (_model.Sequences[sequenceIndex].Channels[(int)iChannel].Steps.Last().Duration.Value == 0)
-                    {
-                        lastValueOfChannel =
-                            _model.Sequences[sequenceIndex].Channels[(int)iChannel].Steps.Last().Value.Value;
-                    }
-                }
-
-                //if the current sequence is the first and it does not have any steps, then copy the init value 
-                if (sequenceIndex == 0 && _model.Sequences[sequenceIndex].Channels[(int)iChannel].Steps.Count == 0)
-                {
-                    lastValueOfChannel = _model.Sequences[sequenceIndex].Channels[(int)iChannel].Setting.InitValue;
-
                 }
 
                 /* Filling the missing values*/

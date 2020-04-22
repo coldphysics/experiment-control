@@ -98,7 +98,7 @@
     <Compile Include="Generator\Concatenator\DigitalCardOutput.cs" />
     <Compile Include="Generator\Concatenator\ModelOutput.cs" />
     <Compile Include="Generator\Concatenator\OutputConcatenator.cs" />
-    <Compile Include="Generator\Cookbook\SequenceGroupGeneratorRecipe.cs" />
+    <Compile Include="Cookbook\SequenceGroupGeneratorRecipe.cs" />
     <Compile Include="Generator\DataOutputGenerator.cs" />
     <Compile Include="Generator\SequenceGroup\SequenceGroupOutputGenerator.cs" />
     <Compile Include="Generator\Sequence\SequenceOutputGenerator.cs" />

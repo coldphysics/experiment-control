@@ -30,6 +30,7 @@ namespace Model.Data.Channels
         /// The initial value of the channel in an analog card for all <see cref=" Model.Data.Sequences.SequenceModel"/>s
         /// </summary>
         [DataMember]
+        [Obsolete("Should not be used. Explicitly use 0.0 instead.")]
         public double InitValue { set { } get { return 0.0; } }
         /// <summary>
         /// The lower limit value of the channel in an analog card for all <see cref=" Model.Data.Sequences.SequenceModel"/>s

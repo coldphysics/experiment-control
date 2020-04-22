@@ -2010,17 +2010,6 @@ namespace Controller.MainWindow
                                                              channelNew.Setting.UpperLimit +
                                                              "\n");
                                         }
-                                        if (channel.Setting.InitValue !=
-                                            channelNew.Setting.InitValue)
-                                        {
-                                            LogString.Append("Channel Init value not equal in \"" + card.Name + "\", \"" + channel.Setting.Name +
-                                                             "\"\t" +
-                                                             channel.Setting.InitValue +
-                                                             " --> " +
-                                                             channelNew.Setting.InitValue +
-                                                             "\n");
-                                        }
-
                                         if (channel.Setting.Invert !=
                                             channelNew.Setting.Invert)
                                         {
