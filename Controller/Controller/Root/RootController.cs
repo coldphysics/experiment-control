@@ -15,8 +15,6 @@ namespace Controller.Root
         public Variables.VariablesController Variables;
         public int TimesToReplicateOutput { set; get; }
 
-
-
         public RootController(RootModel model, IBuffer buffer)
             : base(model)
         {

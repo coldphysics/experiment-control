@@ -1870,9 +1870,9 @@ namespace Controller.MainWindow
                 if (_iterateAndSave)
                 {
                     if (_once)
-                        OutputHandler.OutputCycleState = Buffer.Basic.OutputHandler.CycleStates.ScanningOnce;
+                        OutputHandler.OutputCycleState = OutputHandler.CycleStates.ScanningOnce;
                     else
-                        OutputHandler.OutputCycleState = Buffer.Basic.OutputHandler.CycleStates.Scanning;
+                        OutputHandler.OutputCycleState = OutputHandler.CycleStates.Scanning;
 
                     _startTime = DateTime.Now;
 
@@ -1880,7 +1880,7 @@ namespace Controller.MainWindow
                     OnPropertyChanged("StartTime");
                 }
                 else
-                    OutputHandler.OutputCycleState = Buffer.Basic.OutputHandler.CycleStates.Running;
+                    OutputHandler.OutputCycleState = OutputHandler.CycleStates.Running;
             }
         }
 

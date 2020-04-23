@@ -341,8 +341,13 @@ namespace Controller.MainWindow.MeasurementRoutine
 
         public void SetPrimaryModel(RootModel newModel, string filePath = "")
         {
-            this.PrimaryModel.RoutineModel.ActualModel = newModel;
-            this.PrimaryModel.FilePath = filePath;
+            // creating a new routine based root model ensures resetting the counters object
+            RoutineBasedRootModel rbrm = new RoutineBasedRootModel();
+            rbrm.ActualModel = newModel;
+            rbrm.FilePath = filePath;
+            rbrm.TimesToReplicate = this.PrimaryModel.TimesToReplicate;
+
+            this.PrimaryModel.RoutineModel = rbrm;
 
             if (CurrentRoutineModel == null)
                 CurrentRoutineModel = PrimaryModel;
