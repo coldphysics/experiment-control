@@ -41,6 +41,7 @@ using HardwareAdWin.Debug;
 using System.Windows.Threading;
 using Controller.MainWindow.MeasurementRoutine;
 using Controller.OutputVisualizer;
+using Model.MeasurementRoutine;
 
 namespace Controller.MainWindow
 {
@@ -108,8 +109,8 @@ namespace Controller.MainWindow
         public static Window visualizationWindow;
         //look
         private static bool isVisualizationWindowOpen = false;
-       
-       
+
+
 
         #endregion
 
@@ -519,8 +520,8 @@ namespace Controller.MainWindow
 
         public bool StopAfterScan
         {
-            get { return _outputHandler.StopAfterScan; }
-            set { _outputHandler.StopAfterScan = value; }
+            get { return _outputHandler.stopAfterScan; }
+            set { _outputHandler.stopAfterScan = value; }
         }
 
         public bool ControlLecroy
@@ -572,20 +573,20 @@ namespace Controller.MainWindow
         public bool IsOnceChecked
         {
             get { return _once; }
-           
+
         }
 
-       
 
-       
+
+
         public bool IsIterateAndSaveChecked
         {
             get
             {
                 return _iterateAndSave;
             }
-            set 
-            { 
+            set
+            {
                 _iterateAndSave = value;
                 OnPropertyChanged("IsIterateAndSaveChecked");
             }
@@ -664,13 +665,9 @@ namespace Controller.MainWindow
             get { return _outputHandler.GlobalCounter; }
         }
 
-        public int StartCounterOfScans
-        {
-            get { return _outputHandler.StartCounterOfScans; }
-        }
 
         //Ebaa 11.06
-      
+
         /// <summary>
         /// Gets the start counter of scans of current model.
         /// </summary>
@@ -722,14 +719,14 @@ namespace Controller.MainWindow
         private bool _incrementIteratorsIsEnabled;
         public bool IncrementIteratorsIsEnabled
         {
-            get 
-            { 
-                return _incrementIteratorsIsEnabled; 
+            get
+            {
+                return _incrementIteratorsIsEnabled;
             }
-            set 
-            { 
+            set
+            {
                 _incrementIteratorsIsEnabled = value;
-                OnPropertyChanged("IncrementIteratorsIsEnabled");                
+                OnPropertyChanged("IncrementIteratorsIsEnabled");
             }
         }
 
@@ -881,7 +878,7 @@ namespace Controller.MainWindow
             OnPropertyChanged("globalCounter");
 
             //Ebaa 11.06
-           // IterationManagerController.NotifyPropertyChanged("StartCounterOfScans");
+            // IterationManagerController.NotifyPropertyChanged("StartCounterOfScans");
             IterationManagerController.NotifyPropertyChanged("StartCounterOfScansOfCurrentModel");
             IterationManagerController.NotifyPropertyChanged("LastStartCounterOfScans");
             IterationManagerController.NotifyPropertyChanged("NumberOfIterations");
@@ -968,7 +965,7 @@ namespace Controller.MainWindow
 
         public void loader_ModelVersionMismatchDetected(object sender, ModelVersionMismatchEventArgs e)
         {
-           // MessageBox.Show("You are using an old version of the model" + "\n" + "In this version python scripts are model-specific\n"  + "Note: In order to modify python scripts, load the model as a primary model", "Warning", MessageBoxButton.OK);
+            // MessageBox.Show("You are using an old version of the model" + "\n" + "In this version python scripts are model-specific\n"  + "Note: In order to modify python scripts, load the model as a primary model", "Warning", MessageBoxButton.OK);
         }
 
 
@@ -1263,7 +1260,7 @@ namespace Controller.MainWindow
 
             if (result != null)
             {
-                
+
                 FileName = result;
             }
         }
@@ -1319,7 +1316,7 @@ namespace Controller.MainWindow
             about.HyperlinkText = "Click here to check recent updates of the software!";
             about.Publisher = "Pi5 - University of Stuttgart";
             about.AdditionalNotes = "Development of this code was started by Stephan Jennewein to control the NI hardware of the SuperAtoms experiment, supervised by Michael Schlagmüller. Since then main contributors have been Udo Hermann, Majd Abdo, Ghareeb Falazi , Ebaa Alnazer (ghareeb.falazi@hotmail.com, ebaa.alnazer@hotmail.com).";
-            
+
             // setting several properties here
             about.ApplicationLogo = new BitmapImage(new System.Uri("pack://application:,,,/View;component/Resources/cr.png"));
             // ...
@@ -1742,28 +1739,27 @@ namespace Controller.MainWindow
         public void LoadModel(RootModel model, int timesToReplicate, GenerationFinishedCallback callback = null)
         {
             _model = model;
+            ModelSpecificCounters counters = MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters;
 
-   
             // Set StartCounterOfScansOfCurrentModel if it is not set before.
-            if (!MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters.GCIsSet)
+            if (!counters.GCIsSet)
             {
-                MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters.GCIsSet = true;
-                MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters.StartCounterOfScansOfCurrentModel = _outputHandler.GlobalCounter;
+                counters.GCIsSet = true;
+                counters.StartCounterOfScansOfCurrentModel = _outputHandler.GlobalCounter;
                 _outputHandler.UpdateIteratorState();
             }
+            else
+            {
+                Console.WriteLine("Global counter is already set, avoiding setting it again!");
+            }
 
-
-            GetRootController().SetModelCounters(MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters);
-            
+            GetRootController().SetModelCounters(counters);
             _variables.SetNewVariablesModel(model.Data.variablesModel);
             _variables.SetNewRootModel(model);
-            
-            
             _controllerRecipe.Cook(_model, _variables);
 
-         
             //Trigger the callback if needed
-            if (callback != null )
+            if (callback != null)
             {
                 DoubleBuffer.FinishedModelGenerationEventHandler handler = null;
 
@@ -1779,14 +1775,11 @@ namespace Controller.MainWindow
 
                 _buffer.FinishedModelGeneration += handler;
             }
-           
 
             GetRootController().TimesToReplicateOutput = timesToReplicate;
-           // Debug.Assert(GetRootController()._enableCopyToBuffer == false);
+            // Debug.Assert(GetRootController()._enableCopyToBuffer == false);
             GetRootController().CopyToBuffer(); // to ensure copying to the buffer for the first time after start (this sets pending changes to true for the first time).
-            GetRootController().EnableCopyToBufferAndCopyChanges(); 
-
-
+            GetRootController().EnableCopyToBufferAndCopyChanges();
 
             //The following block of code ensures that if a none-UI thread tries to create the windows no exception will occur
             Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
@@ -2193,12 +2186,13 @@ namespace Controller.MainWindow
                 OutputHandler.IsMeasurementRoutineMode = true;
                 OutputHandler.StartGlobalCounterOfMeasurementRoutine = GlobalCounter;
                 OutputHandler.ModelIndex = MeasurementRoutineController.CurrentRoutineModelIndex;
-                
+
                 IsIterateAndSaveChecked = true;
                 IncrementIteratorsIsEnabled = false;
                 //Ebaa 11.06
                 if (IsStarted)
-                ProfileManagerController.IsSaveButtonEnabled = false;
+                    ProfileManagerController.IsSaveButtonEnabled = false;
+
                 IterationManagerController.IsPreviousStartGCOfScansVisible = Visibility.Hidden;
                 IterationManagerController.NameOfTheCurrentStartGCOfScans = "Start counter of routine: ";
                 IterationManagerController.IsScanOnlyOnceEnabled = false;
@@ -2206,13 +2200,13 @@ namespace Controller.MainWindow
                 IterationManagerController.IsShuffleIterationsEnabled = false;
                 IterationManagerController.IsPauseEnabled = false;
                 IterationManagerController.IsAlwaysIncreaseEnabled = false;
-               
-                
+
+
             }
             else
             {
                 //Ebaa 12.06
-               // OutputHandler.StartCounterOfScans = 0;
+                // OutputHandler.StartCounterOfScans = 0;
                 OutputHandler.IsMeasurementRoutineMode = false;
                 OutputHandler.ModelIndex = MeasurementRoutineController.CurrentRoutineModelIndex;
                 OutputHandler.StartGlobalCounterOfMeasurementRoutine = 0;

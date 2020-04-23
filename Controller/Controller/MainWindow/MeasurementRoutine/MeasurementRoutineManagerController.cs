@@ -571,19 +571,15 @@ namespace Controller.MainWindow.MeasurementRoutine
                         CurrentStartStopButtonLabel = "Stop";
                     }
                 });
-
-
-
-
             }
             else
             {
-
                 Parent.ProfileManagerController.IsSaveButtonEnabled = true;// re-enable (ok) button in the profile manager window to allow altering settings.
                 Parent.StopOutput(parameter);
                 manager.Reset();
 
                 //Reset all iterators and model-specific counters in all models.
+
                 foreach (RoutineModelController rmc in SecondaryModels)
                 {
                     rmc.RoutineModel.Reset();
@@ -754,14 +750,9 @@ namespace Controller.MainWindow.MeasurementRoutine
             if (NextRoutineModel != null)
             {
                 CurrentRoutineModel = NextRoutineModel;
-
-
                 Parent.LoadModel(NextRoutineModel.ActualModel, NextRoutineModel.TimesToReplicate);
-
-                //Parent.GetRootController().SetModelCounters(NextRoutineModel.RoutineModel.Counters);
                 Parent.FileName = NextRoutineModel.FilePath;
                 Parent.GetRootController().BulkUpdateEnd(bufferUpdatesLock);
-
             }
 
         }
