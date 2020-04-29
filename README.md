@@ -31,7 +31,9 @@ Please consider the following prerequisits before installing CPECS.
      analog cards are named: AO1, AO2, ...
   3. Configure the master card (depends on the setup).
 
-### How to add a new issue?
+### How To's
+
+#### How to add a new issue?
   0. Make sure the issue is not added already.
   1. Go to the [`Issues`](https://github.com/coldphysics/software-control/issues) tab.
   2. Click on `New Issue`.
@@ -39,7 +41,7 @@ Please consider the following prerequisits before installing CPECS.
   4. Fill-in the proposed template with the bug details. Remove any unused sections.
   5. Add additional labels if necessary, e.g., AdWin or NationalInstuments or both.
   
-### How to add a new feature request?
+#### How to add a new feature request?
   0. Make sure the feature request is not added already.
   1. Go to the [`Issues`](https://github.com/coldphysics/software-control/issues) tab.
   2. Click on `New Issue`.
@@ -47,10 +49,13 @@ Please consider the following prerequisits before installing CPECS.
   4. Fill-in the proposed template with the bug details. Remove any unused sections.
   5. Add additional labels if necessary, e.g., AdWin or NationalInstuments or both.
   
-### How to document a feature?
+#### How to document a feature?
 Please use the [Wiki](https://github.com/coldphysics/software-control/wiki).
 
-### How to obtain an executable installer for CPECS?
+#### How to obtain an executable installer for CPECS?
+__TODO__
+
+#### How to configure the database?
 __TODO__
   
 ## Information for Developers
@@ -82,7 +87,7 @@ In this section, various information for developers are provided.
   4. If you want to get the `Documentation` project recognized by visual studio, you must install [Sandcastle Help File Builder and Tools](https://github.com/EWSoftware/SHFB). The latest release that still supports Visual Studio 2013 [can be obtained here](https://github.com/EWSoftware/SHFB/releases/tag/v2017.1.28.0).
 
 
-### How Tos
+### How To's
 
 #### How to obtain the additional DLLs required for building the project?
 A set of DLLs have strict usage licenses that prevents providing access to them in a public repository.
