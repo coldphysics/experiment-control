@@ -23,6 +23,8 @@
         /// <summary>
         /// indicates whether the <see cref="StartCounterOfScansOfCurrentModel"/> is set or not.
         /// it is used to prevent setting the <see cref=" StartCounterOfScansOfCurrentModel"/> multiple times.
+        /// Details: in a routine, each model should have its own counters object, so the StartCounterOfScans should not be set 
+        /// every time LoadModel method is invoked. Only the first time (or the first time we start iterating)
         /// </summary>
         public bool GCIsSet { set; get; }
 

@@ -395,6 +395,7 @@ namespace Buffer.Basic
             }
             set
             {
+                // This is done when stopping the whole experiment or stopping the iteration only
                 if (value == 0 && ModelCounters.StartCounterOfScansOfCurrentModel != 0)
                 {
                     LastStartCounterOfScans = ModelCounters.StartCounterOfScansOfCurrentModel;
@@ -982,8 +983,7 @@ namespace Buffer.Basic
         //  *********************************** set / get / update **********************************************************
         private void DoBeforeIteratingVariables(BeforeIteratingVariablesEventArgs e)
         {
-            if (BeforeIteratingVariables != null)
-                BeforeIteratingVariables(this, e);
+            BeforeIteratingVariables?.Invoke(this, e);
         }
 
         private void DoAfterIteratingVariables()
@@ -1016,10 +1016,7 @@ namespace Buffer.Basic
         /// </summary>
         private void UpdateOutputLoopState()
         {
-            if (OnOuputLoopStateChange != null)
-            {
-                OnOuputLoopStateChange(this, null);
-            }
+            OnOuputLoopStateChange?.Invoke(this, null);
         }
 
         /// <summary>
@@ -1043,7 +1040,7 @@ namespace Buffer.Basic
 
 
                 _waitForGeneratedData = false;//this stops the busy waiting
-                // increase the global counter if it has not been increased already
+                // increase the global counter (since the model has changed) if it has not been increased already
                 if (!iteratedInLastCycle)
                 {
                     GlobalCounter++;
@@ -1240,10 +1237,7 @@ namespace Buffer.Basic
 
             // add additional variables
             variablesList.Add("cntGlobal" + "\t" + model.GlobalCounter);
-
-
             variablesList.Add("StartCounterOfScans" + "\t" + StartCounterOfScansOfCurrentModel);
-
             variablesList.Add("StartCounterOfRoutine" + "\t" + StartGlobalCounterOfMeasurementRoutine);
 
             // variablesList.Add("StartCounterOfScans" + "\t" + StartCounterOfScans);
