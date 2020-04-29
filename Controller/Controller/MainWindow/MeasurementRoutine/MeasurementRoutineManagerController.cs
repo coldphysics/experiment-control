@@ -341,8 +341,13 @@ namespace Controller.MainWindow.MeasurementRoutine
 
         public void SetPrimaryModel(RootModel newModel, string filePath = "")
         {
-            this.PrimaryModel.RoutineModel.ActualModel = newModel;
-            this.PrimaryModel.FilePath = filePath;
+            // creating a new routine based root model ensures resetting the counters object
+            RoutineBasedRootModel rbrm = new RoutineBasedRootModel();
+            rbrm.ActualModel = newModel;
+            rbrm.FilePath = filePath;
+            rbrm.TimesToReplicate = this.PrimaryModel.TimesToReplicate;
+
+            this.PrimaryModel.RoutineModel = rbrm;
 
             if (CurrentRoutineModel == null)
                 CurrentRoutineModel = PrimaryModel;
@@ -571,19 +576,15 @@ namespace Controller.MainWindow.MeasurementRoutine
                         CurrentStartStopButtonLabel = "Stop";
                     }
                 });
-
-
-
-
             }
             else
             {
-
                 Parent.ProfileManagerController.IsSaveButtonEnabled = true;// re-enable (ok) button in the profile manager window to allow altering settings.
                 Parent.StopOutput(parameter);
                 manager.Reset();
 
                 //Reset all iterators and model-specific counters in all models.
+
                 foreach (RoutineModelController rmc in SecondaryModels)
                 {
                     rmc.RoutineModel.Reset();
@@ -754,14 +755,9 @@ namespace Controller.MainWindow.MeasurementRoutine
             if (NextRoutineModel != null)
             {
                 CurrentRoutineModel = NextRoutineModel;
-
-
                 Parent.LoadModel(NextRoutineModel.ActualModel, NextRoutineModel.TimesToReplicate);
-
-                //Parent.GetRootController().SetModelCounters(NextRoutineModel.RoutineModel.Counters);
                 Parent.FileName = NextRoutineModel.FilePath;
                 Parent.GetRootController().BulkUpdateEnd(bufferUpdatesLock);
-
             }
 
         }

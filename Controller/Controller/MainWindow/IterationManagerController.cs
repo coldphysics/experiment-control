@@ -132,15 +132,13 @@ namespace Controller.MainWindow
         }
 
 
-        public int StartCounterOfScans
-        {
-            get { return Parent.StartCounterOfScans; }
-        }
-
         //Ebaa 11.06
         public int StartCounterOfScansOfCurrentModel
         {
-            get { return Parent.StartCounterOfScansOfCurrentModel; }
+            get
+            {
+                return Parent.StartCounterOfScansOfCurrentModel;
+            }
         }
 
         public int LastStartCounterOfScans
