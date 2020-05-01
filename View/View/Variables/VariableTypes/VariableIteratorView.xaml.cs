@@ -38,5 +38,11 @@ namespace View.Variables.VariableTypes
             catch
             { }
         }
+
+        private void UserControl_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ListBoxItem item = Utilities.FindParentByType<ListBoxItem>(this);
+            item.IsSelected = true;
+        }
     }
 }

@@ -176,38 +176,12 @@ namespace Controller.Variables
         }
         public ObservableCollection<VariableController> VariablesDynamic
         {
-            get
-            {
-                return new ObservableCollection<VariableController>(from varCtrl in
-                                                                        new
-                                                                        ObservableCollection
-                                                                            <VariableController>(
-                                                                        Variables.Where(
-                                                                            w =>
-                                                                            w.TypeOfVariable.Equals(
-                                                                                VariableType.
-                                                                                    VariableTypeDynamic)))
-                                                                    orderby varCtrl.getModelIndex ascending
-                                                                    select varCtrl);
-            }
+            set; get;
         }
 
         public ObservableCollection<VariableController> VariablesIterator
         {
-            get
-            {
-                return new ObservableCollection<VariableController>(from varCtrl in
-                                                                        new
-                                                                        ObservableCollection
-                                                                            <VariableController>(
-                                                                        Variables.Where(
-                                                                            w =>
-                                                                            w.TypeOfVariable.Equals(
-                                                                                VariableType.
-                                                                                    VariableTypeIterator)))
-                                                                    orderby varCtrl.getModelIndex ascending
-                                                                    select varCtrl);
-            }
+            set; get;
         }
 
         /// <summary>
@@ -726,13 +700,24 @@ namespace Controller.Variables
                         && nextModelIndex < _variablesModel.VariablesList.Count - 1);
 
                     // if we managed to find a suitable step, swap it with the current one
-                    if (nextModelIndex < _variablesModel.VariablesList.Count - 1)
+                    if (nextModelIndex < _variablesModel.VariablesList.Count)
                     {
                         VariableModel currentVariable = _variablesModel.VariablesList[currentModelIndex];
                         _variablesModel.VariablesList[currentModelIndex] = nextVariable;
                         _variablesModel.VariablesList[nextModelIndex] = currentVariable;
-                        updatIterators();
-                        updateDynamics();
+                        // we also swap controllers
+                        int controllerIndex;
+
+                        if (variableController.TypeOfVariable == VariableType.VariableTypeDynamic)
+                        {
+                            controllerIndex = VariablesDynamic.IndexOf(variableController);
+                            VariablesDynamic.Move(controllerIndex, controllerIndex + 1);
+                        }
+                        else
+                        {
+                            controllerIndex = VariablesIterator.IndexOf(variableController);
+                            VariablesIterator.Move(controllerIndex, controllerIndex + 1);
+                        }
                         countTotalNumberOfIterations();
                     }
                 }
@@ -765,13 +750,25 @@ namespace Controller.Variables
                     while (!previousVariable.TypeOfVariable.Equals(variableController.TypeOfVariable) && previousModelIndex > 0);
 
                     // if we managed to find a suitable step, swap it with the current one
-                    if (previousModelIndex > 0)
+                    if (previousModelIndex >= 0)
                     {
                         VariableModel currentVariable = _variablesModel.VariablesList[currentModelIndex];
                         _variablesModel.VariablesList[currentModelIndex] = previousVariable;
                         _variablesModel.VariablesList[previousModelIndex] = currentVariable;
-                        updatIterators();
-                        updateDynamics();
+                        // we also swap controllers
+                        int controllerIndex;
+
+                        if (variableController.TypeOfVariable == VariableType.VariableTypeDynamic)
+                        {
+                            controllerIndex = VariablesDynamic.IndexOf(variableController);
+                            VariablesDynamic.Move(controllerIndex, controllerIndex - 1);
+                        }
+                        else
+                        {
+                            controllerIndex = VariablesIterator.IndexOf(variableController);
+                            VariablesIterator.Move(controllerIndex, controllerIndex - 1);
+                        }
+
                         countTotalNumberOfIterations();
                     }
                 }
@@ -915,10 +912,12 @@ namespace Controller.Variables
         {
             this._variablesModel = variablesModel;
             Variables.Clear();
+
             foreach (VariableModel variable in variablesModel.VariablesList)
             {
                 Variables.Add(new VariableController(variable, this));
             }
+
             UpdateVariablesList();
             countTotalNumberOfIterations();
         }
@@ -933,6 +932,17 @@ namespace Controller.Variables
 
         public void updateDynamics()
         {
+            VariablesDynamic = new ObservableCollection<VariableController>(from varCtrl in
+                                                                        new
+                                                                        ObservableCollection
+                                                                            <VariableController>(
+                                                                        Variables.Where(
+                                                                            w =>
+                                                                            w.TypeOfVariable.Equals(
+                                                                                VariableType.
+                                                                                    VariableTypeDynamic)))
+                                                                            orderby varCtrl.getModelIndex ascending
+                                                                            select varCtrl);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesDynamic"));
         }
 
@@ -946,24 +956,15 @@ namespace Controller.Variables
         /// </summary>
         public void UpdateVariablesList()//This function deletes the focus of an input field
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("VariablesStatic"));
-                PropertyChanged(this, new PropertyChangedEventArgs("VariablesIterator"));
-                PropertyChanged(this, new PropertyChangedEventArgs("VariablesDynamic"));
-            }
-
+            UpdateVariablesListNoValues();
             VariablesListChanged?.Invoke(this, new VariablesChangedEventArgs() { RefreshStatics = true, RefreshIterators = true, RefreshDynamics = true });
         }
 
         public void UpdateVariablesListNoValues()//This function deletes the focus of an input field
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("VariablesStatic"));
-                PropertyChanged(this, new PropertyChangedEventArgs("VariablesIterator"));
-                PropertyChanged(this, new PropertyChangedEventArgs("VariablesDynamic"));
-            }
+            updateStatics();
+            updatIterators();
+            updateDynamics();
         }
 
         public void UpdateWindowsList()
@@ -973,6 +974,17 @@ namespace Controller.Variables
 
         public void updatIterators()
         {
+            this.VariablesIterator = new ObservableCollection<VariableController>(from varCtrl in
+                                                                        new
+                                                                        ObservableCollection
+                                                                            <VariableController>(
+                                                                        Variables.Where(
+                                                                            w =>
+                                                                            w.TypeOfVariable.Equals(
+                                                                                VariableType.
+                                                                                    VariableTypeIterator)))
+                                                                                  orderby varCtrl.getModelIndex ascending
+                                                                                  select varCtrl);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesIterator"));
         }
 

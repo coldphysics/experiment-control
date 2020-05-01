@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:SubmitTextBox="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements"
              xmlns:VariableTypes="clr-namespace:View.Variables.VariableTypes" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="200">
+             d:DesignHeight="300" d:DesignWidth="200" PreviewMouseDown="UserControl_MouseDown">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -16,7 +16,7 @@
             <ColumnDefinition Width="70*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <VariableTypes:VariableBasicView Grid.Column ="0"></VariableTypes:VariableBasicView>
-        <SubmitTextBox:SubmitTextBox Grid.Column="1" Name="VariableValue" Text="{Binding VariableValue, Mode=TwoWay}"></SubmitTextBox:SubmitTextBox>
+        <SubmitTextBox:SubmitTextBox Grid.Column="1" Name="VariableValue" Text="{Binding VariableValue, Mode=TwoWay}" ></SubmitTextBox:SubmitTextBox>
         <SubmitTextBox:SubmitTextBox Grid.ColumnSpan="2" Grid.Row="1" Name="VariableCode" Text="{Binding VariableCode, Mode=TwoWay}" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" AcceptsReturn="True"></SubmitTextBox:SubmitTextBox>
     </Grid>
 </UserControl>

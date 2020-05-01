@@ -36,7 +36,7 @@ namespace View.Variables
         }
         #endregion
 
-        Controller.Variables.VariablesController _controller;
+        VariablesController _controller;
         public VariablesView(Controller.Variables.VariablesController controller)
             :this()
         {
@@ -187,6 +187,8 @@ namespace View.Variables
 
             return null;
         }
+
+
         #endregion
 
         //private bool dragging = false;
