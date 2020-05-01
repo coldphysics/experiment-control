@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Controller.Data.Steps;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,25 @@ namespace View.Data.Steps
         public StepBasicView()
         {
             InitializeComponent();
+        }
+
+        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            var realSender = (TextBox)sender;
+            var dataContext = (StepBasicController)realSender.DataContext;
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                if (e.Key == Key.Left)
+                {
+                    dataContext.DoMoveLeft(dataContext);
+                    e.Handled = true;
+                }
+                else if (e.Key == Key.Right)
+                {
+                    dataContext.DoMoveRight(dataContext);
+                    e.Handled = true;
+                }
+            }
         }
     }
 }
