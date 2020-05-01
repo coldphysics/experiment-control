@@ -87,8 +87,8 @@
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="3">Stop</TextBlock>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="4">Step</TextBlock>
             </Grid>
-            <ListBox IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding VariablesIterator, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource VariableIteratorTemplate}" Name="VariablesIteratorsControl" Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Stretch">
-                <!-- PreviewMouseLeftButtonDown="VariablesControl_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="VariablesControl_PreviewMouseLeftButtonUp">-->
+            <ListBox IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding VariablesIterator, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource VariableIteratorTemplate}" Name="VariablesIteratorsControl" Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Stretch" PreviewKeyDown="VariablesIteratorsControl_PreviewKeyDown">
+                
                 <ListBox.ItemContainerStyle>
                     <Style>
                         <Setter Property="FrameworkElement.Margin" Value="0,0,0,5"/>
@@ -106,7 +106,7 @@
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0">Name</TextBlock>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">Value</TextBlock>
             </Grid>
-            <ListBox IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding VariablesDynamic, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource VariableDynamicTemplate}" Name="VariablesDynamicsControl" Grid.Row="2" Grid.Column="2" HorizontalContentAlignment="Stretch">
+            <ListBox IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding VariablesDynamic, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource VariableDynamicTemplate}" Name="VariablesDynamicsControl" Grid.Row="2" Grid.Column="2" HorizontalContentAlignment="Stretch" PreviewKeyDown="VariablesDynamicsControl_PreviewKeyDown">
                 <!-- PreviewMouseLeftButtonDown="VariablesControl_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="VariablesControl_PreviewMouseLeftButtonUp"> -->
             <ListBox.ItemContainerStyle>
                 <Style>

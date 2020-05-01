@@ -42,10 +42,10 @@ namespace View.Helper
                 {
                     itemsControl.Items.Insert(insertionIndex, itemToInsert);
                 }
-                    // Is the ItemsSource IList or IList<T>? If so, insert the dragged item in the list.
+                // Is the ItemsSource IList or IList<T>? If so, insert the dragged item in the list.
                 else if (itemsSource is IList)
                 {
-                    ((IList) itemsSource).Insert(insertionIndex, itemToInsert);
+                    ((IList)itemsSource).Insert(insertionIndex, itemToInsert);
                 }
                 else
                 {
@@ -53,7 +53,7 @@ namespace View.Helper
                     Type genericIListType = type.GetInterface("IList`1");
                     if (genericIListType != null)
                     {
-                        type.GetMethod("Insert").Invoke(itemsSource, new[] {insertionIndex, itemToInsert});
+                        type.GetMethod("Insert").Invoke(itemsSource, new[] { insertionIndex, itemToInsert });
                     }
                 }
             }
@@ -73,10 +73,10 @@ namespace View.Helper
                     {
                         itemsControl.Items.RemoveAt(indexToBeRemoved);
                     }
-                        // Is the ItemsSource IList or IList<T>? If so, remove the item from the list.
+                    // Is the ItemsSource IList or IList<T>? If so, remove the item from the list.
                     else if (itemsSource is IList)
                     {
-                        ((IList) itemsSource).RemoveAt(indexToBeRemoved);
+                        ((IList)itemsSource).RemoveAt(indexToBeRemoved);
                     }
                     else
                     {
@@ -84,7 +84,7 @@ namespace View.Helper
                         Type genericIListType = type.GetInterface("IList`1");
                         if (genericIListType != null)
                         {
-                            type.GetMethod("RemoveAt").Invoke(itemsSource, new object[] {indexToBeRemoved});
+                            type.GetMethod("RemoveAt").Invoke(itemsSource, new object[] { indexToBeRemoved });
                         }
                     }
                 }
@@ -96,9 +96,9 @@ namespace View.Helper
         {
             if (hasVerticalOrientation)
             {
-                return clickedPoint.Y < container.ActualHeight/2;
+                return clickedPoint.Y < container.ActualHeight / 2;
             }
-            return clickedPoint.X < container.ActualWidth/2;
+            return clickedPoint.X < container.ActualWidth / 2;
         }
 
         public static bool IsMovementBigEnough(Point initialMousePosition, Point currentPosition)
