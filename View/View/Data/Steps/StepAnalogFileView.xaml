@@ -36,7 +36,7 @@
             </DockPanel>
 
             <SubmitTextBox:SubmitTextBox HorizontalContentAlignment="Right" VerticalContentAlignment="Center"
-                                         HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  VerticalAlignment="Stretch" Margin="0,1,1,1" Padding="0" Text="{Binding FileName}"/>
+                                         HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  VerticalAlignment="Stretch" Margin="1" Padding="0" Text="{Binding FileName}"/>
             <NonFadingButton:NonFadingButton FontSize="10" Content="Open" Grid.Row="1" Grid.Column="2" Padding="0"
                                              Margin="1" Command="{Binding OpenFileDialog}"/>
             <TextBlock Text="Dur.:" TextAlignment="Right" HorizontalAlignment="Stretch" Grid.Row="2"
