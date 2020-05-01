@@ -1116,10 +1116,7 @@ namespace Controller.Variables
 
         public void UpdateWindowsList()
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("WindowsList"));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("WindowsList"));
         }
 
         #region IController Members
