@@ -21,14 +21,18 @@ namespace View.Variables.VariableTypes
             var realSender = (SubmitTextBox)sender;
             var dataContext = (VariableController)realSender.DataContext;
 
-            if (e.Key == Key.Up)
+            if (Keyboard.Modifiers == ModifierKeys.Control)
             {
-                dataContext.moveUp(dataContext);
-                e.Handled = true;
-            } else if (e.Key == Key.Down)
-            {
-                dataContext.moveDown(dataContext);
-                e.Handled = true;
+                if (e.Key == Key.Up)
+                {
+                    dataContext.moveUp(dataContext);
+                    e.Handled = true;
+                }
+                else if (e.Key == Key.Down)
+                {
+                    dataContext.moveDown(dataContext);
+                    e.Handled = true;
+                }
             }
         }
     }

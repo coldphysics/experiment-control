@@ -21,7 +21,7 @@ using PythonUtils.ScriptExecution;
 
 namespace Controller.Variables
 {
-    public class VariablesChangedEventArgs:EventArgs
+    public class VariablesChangedEventArgs : EventArgs
     {
         public bool RefreshStatics { set; get; }
         public bool RefreshIterators { set; get; }
@@ -78,7 +78,7 @@ namespace Controller.Variables
         public RootModel _rootModel;
         public VariablesModel _variablesModel;
         private readonly OutputHandler _outputHandler;
-       
+
         public int numberOfIterations;
 
         private Dictionary<int, bool> groupsExpandState;
@@ -133,7 +133,7 @@ namespace Controller.Variables
 
 
         // ******************** properties ********************
-        
+
         public ObservableCollection<ShowableWindow> WindowsList
         {
             get
@@ -174,9 +174,9 @@ namespace Controller.Variables
         {
             List<MenuItem> menuList = new List<MenuItem>();
             MenuItem item;
-            List<KeyValuePair<int, string>> dictionaryAsList = new List<KeyValuePair<int,string>>(GroupNames);
+            List<KeyValuePair<int, string>> dictionaryAsList = new List<KeyValuePair<int, string>>(GroupNames);
             dictionaryAsList.Sort(
-                (item1, item2)=>
+                (item1, item2) =>
                 {
                     return item1.Value.CompareTo(item2.Value);
                 }
@@ -272,7 +272,7 @@ namespace Controller.Variables
                                                                  select tempVarController);
             }
         }
-        public  ObservableCollection<VariableController> VariablesIterator
+        public ObservableCollection<VariableController> VariablesIterator
         {
             get
             {
@@ -439,7 +439,7 @@ namespace Controller.Variables
             }
             numberOfIterations = count;
             _outputHandler.NumberOfIterations = count;
-           
+
         }
 
         /// <summary>
@@ -496,107 +496,84 @@ namespace Controller.Variables
             evaluate(null);
         }
 
-        public void moveUp(VariableController variable)
+        public void moveUp(VariableController variableController)
         {
-            DateTime first = DateTime.Now;
-            if (variable.TypeOfVariable == VariableType.VariableTypeIterator || variable.TypeOfVariable == VariableType.VariableTypeDynamic)
+            if (variableController.TypeOfVariable == VariableType.VariableTypeIterator
+                || variableController.TypeOfVariable == VariableType.VariableTypeDynamic)
             {
-                if (_variablesModel.VariablesList.IndexOf(variable._model) > 0)
+                int currentModelIndex = _variablesModel.VariablesList.IndexOf(variableController._model);
+
+                if (currentModelIndex > 0)
                 {
-                    VariableModel tempVar =
-                        _variablesModel.VariablesList[_variablesModel.VariablesList.IndexOf(variable._model) - 1];
-                    while (_variablesModel.VariablesList.IndexOf(tempVar) >= 0)
+                    // find the variable to swap with   
+                    VariableModel previousVariable = null;
+                    int previousModelIndex = currentModelIndex;
+
+                    do
                     {
-                        //System.Console.Write("new index: {0}\n", _variablesModel.VariablesList.IndexOf(tempVar));
-                        if (tempVar.TypeOfVariable.Equals(variable.TypeOfVariable))
-                        {
-                            VariableModel tempModel =
-                                _variablesModel.VariablesList[_variablesModel.VariablesList.IndexOf(variable._model)];
-                            int indexA = _variablesModel.VariablesList.IndexOf(variable._model);
-                            int indexB = _variablesModel.VariablesList.IndexOf(tempVar);
-                            _variablesModel.VariablesList[indexA] = tempVar;
-                            _variablesModel.VariablesList[indexB] = tempModel;
-                            //_variablesModel.VariablesList[_variablesModel.VariablesList.IndexOf(variable._model)] = _variablesModel.VariablesList[_variablesModel.VariablesList.IndexOf(tempVar)];
-                            //_variablesModel.VariablesList[_variablesModel.VariablesList.IndexOf(tempVar)] = _variablesModel.VariablesList[_variablesModel.VariablesList.IndexOf(tempModel)];
-                            //System.Console.Write("Ok, new index! Variables swapped!\n");
-                            /*Variable.Clear();
-                        foreach (VariableModel var in _variablesModel.VariablesList)
-                        {
-                            Variables.Add(new VariableController(var, this));
-                        }*/
-                            updatIterators();
-                            updateDynamics();
-                            countTotalNumberOfIterations();
-                            break;
-                        }
-                        if (_variablesModel.VariablesList.IndexOf(tempVar) - 1 >= 0)
-                        {
-                            tempVar = _variablesModel.VariablesList[_variablesModel.VariablesList.IndexOf(tempVar) - 1];
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        --previousModelIndex;
+                        previousVariable = _variablesModel.VariablesList[previousModelIndex];
+                    }
+                    while (!previousVariable.TypeOfVariable.Equals(variableController.TypeOfVariable) && previousModelIndex > 0);
+
+                    // if we managed to find a suitable step, swap it with the current one
+                    if (previousModelIndex > 0)
+                    {
+                        VariableModel currentVariable = _variablesModel.VariablesList[currentModelIndex];
+                        _variablesModel.VariablesList[currentModelIndex] = previousVariable;
+                        _variablesModel.VariablesList[previousModelIndex] = currentVariable;
+                        updatIterators();
+                        updateDynamics();
+                        countTotalNumberOfIterations();
                     }
                 }
             }
-
-            if (variable.TypeOfVariable == VariableType.VariableTypeStatic)
+            else if (variableController.TypeOfVariable == VariableType.VariableTypeStatic)
             {
-                if (variable.GroupIndex > 0)
+                if (variableController.GroupIndex > 0)
                 {
-                    variable.GroupIndex--;
+                    variableController.GroupIndex--;
                     updateStatics();
                 }
             }
-            /*DateTime last = DateTime.Now;
-            TimeSpan span = last - first;
-            System.Console.WriteLine("End");
-            System.Console.WriteLine("Time: {0}", span.TotalMilliseconds);*/
         }
 
-        public void moveDown(VariableController variable)
+        public void moveDown(VariableController variableController)
         {
-            if (variable.TypeOfVariable == VariableType.VariableTypeIterator || variable.TypeOfVariable == VariableType.VariableTypeDynamic)
+            if (variableController.TypeOfVariable == VariableType.VariableTypeIterator
+                || variableController.TypeOfVariable == VariableType.VariableTypeDynamic)
             {
-                if (_variablesModel.VariablesList.IndexOf(variable._model) < _variablesModel.VariablesList.Count - 1)
+                int currentModelIndex = _variablesModel.VariablesList.IndexOf(variableController._model);
+
+                if (currentModelIndex < _variablesModel.VariablesList.Count - 1)
                 {
-                    VariableModel tempVar =
-                        _variablesModel.VariablesList[_variablesModel.VariablesList.IndexOf(variable._model) + 1];
-                    while (_variablesModel.VariablesList.IndexOf(tempVar) < _variablesModel.VariablesList.Count)
+                    // find the variable to swap with   
+                    VariableModel nextVariable = null;
+                    int nextModelIndex = currentModelIndex;
+
+                    do
                     {
-                        if (tempVar.TypeOfVariable.Equals(variable.TypeOfVariable))
-                        {
-                            VariableModel tempModel =
-                                _variablesModel.VariablesList[_variablesModel.VariablesList.IndexOf(variable._model)];
-                            int indexA = _variablesModel.VariablesList.IndexOf(variable._model);
-                            int indexB = _variablesModel.VariablesList.IndexOf(tempVar);
-                            _variablesModel.VariablesList[indexA] = tempVar;
-                            _variablesModel.VariablesList[indexB] = tempModel;
-                            /*Variables.Clear();
-                        foreach (VariableModel var in _variablesModel.VariablesList)
-                        {
-                            Variables.Add(new VariableController(var, this));
-                        }*/
-                            updatIterators();
-                            updateDynamics();
-                            countTotalNumberOfIterations();
-                            break;
-                        }
-                        if (_variablesModel.VariablesList.IndexOf(tempVar) + 1 < _variablesModel.VariablesList.Count)
-                        {
-                            tempVar = _variablesModel.VariablesList[_variablesModel.VariablesList.IndexOf(tempVar) + 1];
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        ++nextModelIndex;
+                        nextVariable = _variablesModel.VariablesList[nextModelIndex];
+                    }
+                    while (!nextVariable.TypeOfVariable.Equals(variableController.TypeOfVariable)
+                        && nextModelIndex < _variablesModel.VariablesList.Count - 1);
+
+                    // if we managed to find a suitable step, swap it with the current one
+                    if (nextModelIndex < _variablesModel.VariablesList.Count - 1)
+                    {
+                        VariableModel currentVariable = _variablesModel.VariablesList[currentModelIndex];
+                        _variablesModel.VariablesList[currentModelIndex] = nextVariable;
+                        _variablesModel.VariablesList[nextModelIndex] = currentVariable;
+                        updatIterators();
+                        updateDynamics();
+                        countTotalNumberOfIterations();
                     }
                 }
             }
-            if (variable.TypeOfVariable == VariableType.VariableTypeStatic)
+            if (variableController.TypeOfVariable == VariableType.VariableTypeStatic)
             {
-                variable.GroupIndex++;
+                variableController.GroupIndex++;
                 updateStatics();
             }
         }
@@ -644,7 +621,7 @@ namespace Controller.Variables
             }
             if (VariablesListChanged != null)
             {
-                VariablesListChanged(this, new VariablesChangedEventArgs() { RefreshStatics = true, RefreshIterators=true, RefreshDynamics=true});
+                VariablesListChanged(this, new VariablesChangedEventArgs() { RefreshStatics = true, RefreshIterators = true, RefreshDynamics = true });
             }
         }
 
@@ -790,11 +767,11 @@ namespace Controller.Variables
             variable.TypeOfVariable = VariableType.VariableTypeStatic;
             Variables.Add(variable);
 
-            if(!GroupNames.ContainsKey(0))
+            if (!GroupNames.ContainsKey(0))
             {
                 GroupNames.Add(0, "Default Group");
 
-                if(!GroupsExpandState.ContainsKey(0))
+                if (!GroupsExpandState.ContainsKey(0))
                     GroupsExpandState.Add(0, true);
             }
             //UpdateSpecificVarialbesCollection(VariableType.VariableTypeStatic);
@@ -832,34 +809,34 @@ namespace Controller.Variables
             //UpdateSpecificVarialbesCollection(VariableType.VariableTypeDynamic);
             UpdateVariablesList();
         }
-        
-      
+
+
         public void ResetIteratorValues()
         {
             // Ebaa 18.06.2018
             // prevent inconsistencies and multiple updates on the buffer
-           // Object bufferUpdateLock = VariableUpdateStart();
+            // Object bufferUpdateLock = VariableUpdateStart();
             foreach (VariableController iterator in VariablesIterator)
             {
-               
+
                 iterator.VariableValue = iterator.VariableStartValue;
 
-               // //test 11.06
-               // VariableModel VariableModelToBeReset = _outputHandler.Model.Data.variablesModel.VariablesList.Find(x => x.VariableName == iterator._model.VariableName);
+                // //test 11.06
+                // VariableModel VariableModelToBeReset = _outputHandler.Model.Data.variablesModel.VariablesList.Find(x => x.VariableName == iterator._model.VariableName);
 
 
                 ////test 11.06
-               // if (VariableModelToBeReset != null)
-              //  {
+                // if (VariableModelToBeReset != null)
+                //  {
 
-             //      VariableModelToBeReset.VariableValue = iterator.VariableStartValue;
-              //  }
-               ////// MessageBox.Show("Iterator:"+ iterator._model.VariableName+"\n Value:"+ iterator.VariableValue+ "\n Model Vlaue:"+iterator._model.VariableValue);
+                //      VariableModelToBeReset.VariableValue = iterator.VariableStartValue;
+                //  }
+                ////// MessageBox.Show("Iterator:"+ iterator._model.VariableName+"\n Value:"+ iterator.VariableValue+ "\n Model Vlaue:"+iterator._model.VariableValue);
             }
             RefreshVariableValuesInGUI(false, true, true);
             // Ebaa 18.06.2018
             // reenable buffer updates
-           // VariableUpdateDone(bufferUpdateLock);
+            // VariableUpdateDone(bufferUpdateLock);
         }
         List<List<VariableModel>> iterationPattern = new List<List<VariableModel>>();
         public void createIterationPattern()
@@ -935,8 +912,8 @@ namespace Controller.Variables
         //private bool shuffleIterations = true;
         //private bool pause = false;
         private int shuffleIterationsCounter = 0;
-       
-        
+
+
         /// <summary>
         /// Iterates the variables
         /// </summary>
@@ -978,8 +955,8 @@ namespace Controller.Variables
 
                 foreach (VariableController iterator in VariablesIterator)
                 {
-                  //  to be deleted
-                  //  VariableModel VariableModelToBeReset = _outputHandler.Model.Data.variablesModel.VariablesList.Find(x => x.VariableName == iterator._model.VariableName);
+                    //  to be deleted
+                    //  VariableModel VariableModelToBeReset = _outputHandler.Model.Data.variablesModel.VariablesList.Find(x => x.VariableName == iterator._model.VariableName);
                     // only increase variable if the one before had an overflow
                     if (lastVariableOverflowed)
                     {
@@ -989,24 +966,24 @@ namespace Controller.Variables
                             lastVariableOverflowed = true;
                             iterator.VariableValue = iterator.VariableStartValue;
                             //to be deleted
-                          //  VariableModelToBeReset.VariableValue = VariableModelToBeReset.VariableStartValue;
+                            //  VariableModelToBeReset.VariableValue = VariableModelToBeReset.VariableStartValue;
                             continue;
                         }
 
                         double nextValue = iterator.VariableValue + iterator.VariableStepValue;
                         //to be deleted
-                      //  nextValue = VariableModelToBeReset.VariableValue + VariableModelToBeReset.VariableStepValue;
+                        //  nextValue = VariableModelToBeReset.VariableValue + VariableModelToBeReset.VariableStepValue;
                         const double FLOATMARGIN = 1E-7;
                         if ((nextValue <= iterator.VariableEndValue + FLOATMARGIN && iterator.VariableStepValue > 0) ||
                             (nextValue >= iterator.VariableEndValue - FLOATMARGIN && iterator.VariableStepValue < 0))
                         {
                             lastVariableOverflowed = false;
                             iterator.VariableValue = nextValue;
-                          //  _outputHandler.Model.Data.variablesModel.VariablesList.ElementAt(0).VariableValue = nextValue;
+                            //  _outputHandler.Model.Data.variablesModel.VariablesList.ElementAt(0).VariableValue = nextValue;
                             //to be deleted
-                       //     VariableModelToBeReset.VariableValue = nextValue;
-                        //   MessageBox.Show("inside iterate method"+iterator.VariableValue.ToString() + "\n");
-                          //  MessageBox.Show( "inside iterate method variableModel: " + _rootModel.Data.variablesModel.VariablesList.ElementAt(0).VariableValue.ToString());
+                            //     VariableModelToBeReset.VariableValue = nextValue;
+                            //   MessageBox.Show("inside iterate method"+iterator.VariableValue.ToString() + "\n");
+                            //  MessageBox.Show( "inside iterate method variableModel: " + _rootModel.Data.variablesModel.VariablesList.ElementAt(0).VariableValue.ToString());
 
                         }
                         else
@@ -1043,7 +1020,7 @@ namespace Controller.Variables
             builder.SetModelVariableValues(_parentController.returnModel.Data, false);
             builder.AddGlobalVariablesToScope();
             builder.SetScript("pass");
-            HighPerformancePythonScriptExecutor executer = (HighPerformancePythonScriptExecutor) builder.Build();//One executer for all variables
+            HighPerformancePythonScriptExecutor executer = (HighPerformancePythonScriptExecutor)builder.Build();//One executer for all variables
 
             foreach (VariableController dynamicVariable in VariablesDynamic)
             {

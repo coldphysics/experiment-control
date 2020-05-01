@@ -30,6 +30,7 @@ namespace View.Data.Steps
         {
             var realSender = (TextBox)sender;
             var dataContext = (StepBasicController)realSender.DataContext;
+
             if (Keyboard.Modifiers == ModifierKeys.Control)
             {
                 if (e.Key == Key.Left)
