@@ -489,9 +489,8 @@ namespace Controller.Data.Steps
         {
             get
             {
-                double startTime = GetStartTime();
-                _model.SetStartTime(startTime);
-
+                double startTime = ((ChannelBasicController)Parent).StartTimeOf(this);
+                
                 return startTime;
             }
         }
@@ -878,7 +877,6 @@ namespace Controller.Data.Steps
         public void DoMoveLeft(object parameter)
         {
             _parent.MoveStep(this, ChannelBasicController.LeftRightEnum.Left);
-            GetStartTime();
         }
 
         /// <summary>
@@ -1066,17 +1064,6 @@ namespace Controller.Data.Steps
             }
         }
 
-
-        /// <summary>
-        /// Gets the start time.
-        /// </summary>
-        /// <returns>The start time in millis.</returns>
-        private double GetStartTime()
-        {
-            return ((ChannelBasicController)Parent).StartTimeOf(this);
-            //Console.WriteLine("###########" + output + "#################");
-
-        }
 
         /// <summary>
         /// Gets the value of the step
