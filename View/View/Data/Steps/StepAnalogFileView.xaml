@@ -6,6 +6,7 @@
              xmlns:CustomElements="clr-namespace:CustomElements.CloseButton;assembly=CustomElements"
              xmlns:SubmitTextBox="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements"
              xmlns:NonFadingButton="clr-namespace:CustomElements.NonFadingButton;assembly=CustomElements" mc:Ignorable="d"
+             xmlns:steps="clr-namespace:View.Data.Steps"
              d:DesignHeight="80" MinWidth="120" MaxWidth="120" Width="119.532">
     <UserControl.Resources>
         <ResourceDictionary Source="pack://application:,,,/CustomElements;component/CustomDictionary.xaml" />
@@ -16,17 +17,15 @@
         <Grid>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="20*" />
-                <RowDefinition Height="20*" />
-                <RowDefinition Height="20*" />
-                <RowDefinition Height="20*" />
-                <!--<RowDefinition Height="21*"/>-->
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="32*"/>
+                <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="47*" />
-                <ColumnDefinition Width="38*"/>
+                <ColumnDefinition Width="35"/>
             </Grid.ColumnDefinitions>
             <DockPanel Grid.ColumnSpan="4" VerticalAlignment="Stretch">
                 <NonFadingButton:NonFadingButton Width="20" Command="{Binding SetMessage}"  Background="{Binding SetMessageColor}" ToolTipService.IsEnabled="{Binding SetMessageShowTooltip}" ToolTip="{Binding SetMessageMessage}"/>
@@ -37,27 +36,15 @@
             </DockPanel>
 
             <SubmitTextBox:SubmitTextBox HorizontalContentAlignment="Right" VerticalContentAlignment="Center"
-                                         HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"  VerticalAlignment="Stretch" Margin="0,1,1,1" Padding="0" Text="{Binding FileName}"/>
-            <NonFadingButton:NonFadingButton FontSize="10" Content="Open" Grid.Row="1" Grid.Column="3" Padding="0"
+                                         HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  VerticalAlignment="Stretch" Margin="0,1,1,1" Padding="0" Text="{Binding FileName}"/>
+            <NonFadingButton:NonFadingButton FontSize="10" Content="Open" Grid.Row="1" Grid.Column="2" Padding="0"
                                              Margin="1" Command="{Binding OpenFileDialog}"/>
             <TextBlock Text="Dur.:" TextAlignment="Right" HorizontalAlignment="Stretch" Grid.Row="2"
-                       VerticalAlignment="Stretch" Margin="0,1,1,2" Padding="0" Grid.Column="1" />
-            <TextBox TextAlignment="Center" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="2" Padding="0"
-                       Margin="1,2" Text="{Binding Duration, Mode=OneWay}" Background="LightGray" IsReadOnly="True"/>
-            <TextBlock Text="Start:" TextAlignment="Right" HorizontalAlignment="Stretch" Grid.Row="3"
-                       VerticalAlignment="Stretch" Padding="1" Foreground="Blue" Grid.ColumnSpan="2">
-                <TextBlock.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Insert" HorizontalAlignment="Left" Command="{Binding Insert}"></MenuItem>
-                        <MenuItem Header="Move left" HorizontalAlignment="Left" Command="{Binding MoveLeft}"></MenuItem>
-                        <MenuItem Header="Move right"  HorizontalAlignment="Left" Command="{Binding MoveRight}"></MenuItem>
-                    </ContextMenu>
-                </TextBlock.ContextMenu>
-            </TextBlock>
-            <TextBox TextAlignment="Center" HorizontalAlignment="Stretch" Grid.Row="3" Grid.Column="2" Padding="0"
-                       Margin="1,0" Text="{Binding StartTime, Mode=OneWay}" Background="LightGray" IsReadOnly="True"/>
-            <TextBlock TextAlignment="Left" Grid.Column="3" Margin="1,1,0,2" Grid.Row="2" TextWrapping="Wrap" Text="{Binding Unit}" Padding="0"/>
-            <TextBlock TextAlignment="Left" Grid.Column="3" Margin="1,0,1,1" Grid.Row="3" TextWrapping="Wrap" Text="{Binding Unit}" Padding="0"/>
+                       VerticalAlignment="Stretch" Margin="0,1,1,2" Padding="0" Grid.Column="0" />
+            <TextBox TextAlignment="Center" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="1" Padding="0"
+                       Margin="1" Text="{Binding Duration, Mode=OneWay}" Background="LightGray" IsReadOnly="True"/>
+            <TextBlock TextAlignment="Left" Grid.Column="2" Margin="1,1,0,2" Grid.Row="2" TextWrapping="Wrap" Text="{Binding Unit}" Padding="0"/>
+            <steps:StepBasicView Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3"></steps:StepBasicView>
         </Grid>
     </Border>
 </UserControl>

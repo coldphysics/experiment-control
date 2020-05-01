@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="View.Data.Steps.StepBasicView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.Data.Steps"
+             mc:Ignorable="d" 
+             d:DesignHeight="40" d:DesignWidth="120">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="35" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="35" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Start:" TextAlignment="Right" HorizontalAlignment="Stretch" Grid.Column="0"
+                       VerticalAlignment="Center" Padding="1" Margin="0" Foreground="Blue">
+            <TextBlock.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Insert" Command="{Binding Insert}"></MenuItem>
+                    <MenuItem Header="Move left" Command="{Binding MoveLeft}"></MenuItem>
+                    <MenuItem Header="Move right"  Command="{Binding MoveRight}"></MenuItem>
+                </ContextMenu>
+            </TextBlock.ContextMenu>
+        </TextBlock>
+        <TextBox TextAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="1" Padding="0" 
+                       Margin="1" Text="{Binding StartTime, Mode=OneWay}" Background="LightGray" IsReadOnly="True"/>
+        <TextBlock TextAlignment="Left" Grid.Column="2" Margin="1,0,1,1" TextWrapping="Wrap" Text="{Binding Unit}" Padding="0"/>
+    </Grid>
+</UserControl>
