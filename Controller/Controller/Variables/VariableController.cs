@@ -533,7 +533,7 @@ namespace Controller.Variables
         /// <returns><c>true</c> if the name is already in use; <c>false</c> therwise.</returns>
         private bool IsNameUsed(string variableName)
         {
-            foreach (VariableController variable in _parent.Variables)
+            foreach (VariableModel variable in _parent._variablesModel.VariablesList)
             {
                 if (variable.VariableName.Equals(variableName) && !variable.Equals(this))
                 {
