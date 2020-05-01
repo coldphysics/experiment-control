@@ -619,10 +619,8 @@ namespace Controller.Variables
                 PropertyChanged(this, new PropertyChangedEventArgs("VariablesIterator"));
                 PropertyChanged(this, new PropertyChangedEventArgs("VariablesDynamic"));
             }
-            if (VariablesListChanged != null)
-            {
-                VariablesListChanged(this, new VariablesChangedEventArgs() { RefreshStatics = true, RefreshIterators = true, RefreshDynamics = true });
-            }
+
+            VariablesListChanged?.Invoke(this, new VariablesChangedEventArgs() { RefreshStatics = true, RefreshIterators = true, RefreshDynamics = true });
         }
 
         public void UpdateVariablesListNoValues()//This function deletes the focus of an input field
