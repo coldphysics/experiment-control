@@ -40,7 +40,7 @@ namespace Controller.Variables
         //ObservableCollections containing all Variables and only show specified Variables if needed.
         public ObservableCollection<VariableController> Variables = new ObservableCollection<VariableController>();
 
-        // ******************** variables ********************
+        // ******************** Variables ********************
         private const double FLOATMARGIN = 1E-7;
 
         /// <summary>
@@ -58,8 +58,6 @@ namespace Controller.Variables
 
         private List<List<VariableModel>> iterationPattern = new List<List<VariableModel>>();
 
-        //private bool shuffleIterations = true;
-        //private bool pause = false;
         private int shuffleIterationsCounter = 0;
 
         /// <summary>
@@ -67,7 +65,7 @@ namespace Controller.Variables
         /// </summary>
         private int staticVariablesPerGroupColumn;
 
-        // ******************** constructor ********************
+        // ******************** Constructor ********************
         /// <summary>
         /// Public constructor for the Variables Controller.
         /// </summary>
@@ -91,6 +89,7 @@ namespace Controller.Variables
             ReadOptions();
         }
 
+        // ******************** Delegates and Events ********************
         public delegate void LoseFocusOnIterators(object sender, EventArgs e);
 
         public delegate void VariablesListChangedEventHandler(object sender, VariablesChangedEventArgs e);
@@ -99,13 +98,16 @@ namespace Controller.Variables
 
         public event LoseFocusOnIterators LoseFocus;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public event EventHandler RefreshWindows;
 
         public event VariablesListChangedEventHandler VariablesListChanged;
 
-        //Events that occur when the Variables are changed (Values) or the order and Variable Types are changed (List).
+        // Events that occur when the Variables are changed (Values) or the order and Variable Types are changed (List).
         public event VariablesValueChangedEventHandler VariablesValueChanged;
 
+        // ******************** Properties ********************
         public ICommand AddDynamic { get; private set; }
 
         public ICommand AddIterator { get; private set; }
@@ -172,25 +174,6 @@ namespace Controller.Variables
                 OnPropertyChanged("StaticGroupHeight");
             }
         }
-
-        // ******************** events ********************
-
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Called when [property changed].
-        /// </summary>
-        /// <param name="propertyName">Name of the property.</param>
-        public void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion INotifyPropertyChanged Members
-
         public ObservableCollection<VariableController> VariablesDynamic
         {
             get
@@ -276,6 +259,7 @@ namespace Controller.Variables
 
         private ICommand MoveVariableToNewGroupCommand { set; get; }
 
+        // ******************** Public Methods ********************
         /// <summary>
         /// Adds a dynamic variable
         /// </summary>
@@ -403,6 +387,14 @@ namespace Controller.Variables
             menuList.Add(item);
 
             return menuList;
+        }
+
+        /// <summary>
+        /// Requests the buffer to accept the current model which will be read to generate the output of future cycles.
+        /// </summary>
+        public void CopyToBuffer()
+        {
+            _parentController.CopyToBuffer();
         }
 
         public void countTotalNumberOfIterations()
@@ -594,7 +586,7 @@ namespace Controller.Variables
             //return null;
         }
 
-        // ******************** properties ********************
+
         public Root.RootController GetRootController()
         {
             return _parentController;
@@ -800,6 +792,16 @@ namespace Controller.Variables
         public void NotifyOptionsChanged()
         {
             ReadOptions();
+        }
+
+        /// <summary>
+        /// Called when [property changed].
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
+        public void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void RefreshVariableValuesInGUI(bool refreshStatics, bool refreshIterators, bool refreshDynamics)
@@ -1014,11 +1016,10 @@ namespace Controller.Variables
             _parentController = parentController;
         }
 
-        // ******************** lock stuff ********************
+        // ******************** Private Methods ********************
         /// <summary>
         /// avoid inconsistency the data should not be copied to the buffer until all updates are done. In _variableUpdateLockObject the very first lock object is stored, all objects from sub updates are not stored. The updateVariablesListFromParent is prevented until the lock is released.
         /// </summary>
-        //private Object _variableUpdateLockObject = null;
         private void LockIterators(object sender, EventArgs e)
         {
             this.LoseFocus(null, null);
@@ -1070,50 +1071,5 @@ namespace Controller.Variables
             }
             System.Console.WriteLine("Unlocked iterators");
         }
-
-        /*public void UpdateSpecificVarialbesCollection(CustomElements.VariableType varType)
-        {
-            switch (varType)
-            {
-                case VariableType.VariableTypeStatic:
-                        if (PropertyChanged != null)
-                        {
-                            PropertyChanged(this, new PropertyChangedEventArgs("VariablesStatic"));
-                        }
-                        break;
-
-                case VariableType.VariableTypeIterator:
-                        if (PropertyChanged != null)
-                        {
-                            PropertyChanged(this, new PropertyChangedEventArgs("VariablesIterator"));
-                        }
-                        break;
-
-                case VariableType.VariableTypeDynamic:
-                        if (PropertyChanged != null)
-                        {
-                            PropertyChanged(this, new PropertyChangedEventArgs("VariablesDynamic"));
-                        }
-                        break;
-        }
-            //System.Console.Write("b\n");
-            if (VariablesListChanged != null)
-            {
-                VariablesListChanged(this, null);
-            }
-        }*/
-        /* refresh the gui */
-
-        #region IController Members
-
-        /// <summary>
-        /// Requests the buffer to accept the current model which will be read to generate the output of future cycles.
-        /// </summary>
-        public void CopyToBuffer()
-        {
-            _parentController.CopyToBuffer();
-        }
-
-        #endregion IController Members
     }
 }
