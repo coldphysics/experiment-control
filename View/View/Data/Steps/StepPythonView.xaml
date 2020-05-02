@@ -6,23 +6,24 @@
              xmlns:CustomElements="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements"
              xmlns:CloseButton="clr-namespace:CustomElements.CloseButton;assembly=CustomElements"
              xmlns:nonFadingButton="clr-namespace:CustomElements.NonFadingButton;assembly=CustomElements"
+             xmlns:steps="clr-namespace:View.Data.Steps"
              mc:Ignorable="d"
              d:DesignHeight="80" d:DesignWidth="120" MinWidth="120" MaxWidth="120" >
 	<UserControl.Resources>
 		<ResourceDictionary Source="pack://application:,,,/CustomElements;component/CustomDictionary.xaml" />
 	</UserControl.Resources>
-	<Border BorderBrush="Gray" BorderThickness="1" KeyDown="Border_KeyDown">
+	<Border BorderBrush="Gray" BorderThickness="1">
 		<Grid>
 			<Grid.RowDefinitions>
-				<RowDefinition Height="7*" />
-				<RowDefinition Height="8*" />
-				<RowDefinition Height="7*" />
-				<RowDefinition Height="7*" />
+				<RowDefinition Height="1*" />
+				<RowDefinition Height="1*" />
+				<RowDefinition Height="1*" />
+				<RowDefinition Height="1*" />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="45*" />
-				<ColumnDefinition Width="65*" />
-				<ColumnDefinition Width="53*"/>
+				<ColumnDefinition Width="35" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="35"/>
 			</Grid.ColumnDefinitions>
 			<DockPanel Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="118">
 				<nonFadingButton:NonFadingButton Width="20" Command="{Binding SetMessage}"  Background="{Binding SetMessageColor}" ToolTipService.IsEnabled="{Binding SetMessageShowTooltip}" ToolTip="{Binding SetMessageMessage}"/>
@@ -37,32 +38,19 @@
 			
 			<TextBlock Text="Dur.:" TextAlignment="Right" HorizontalAlignment="Stretch" Grid.Row="2"
                        VerticalAlignment="Stretch" Margin="1" Padding="0" ></TextBlock>
-			<CustomElements:SubmitTextBox VerticalContentAlignment="Center" HorizontalAlignment="Stretch" HorizontalContentAlignment="Right"
+            <CustomElements:SubmitTextBox VerticalContentAlignment="Center" HorizontalAlignment="Stretch" HorizontalContentAlignment="Right"
                                           VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="1" Padding="0" Margin="1" Text="{Binding Duration, Mode=TwoWay}" Background="{Binding DurationColor, Mode=OneWay}" IsReadOnly="{Binding DurationIsReadOnly, Mode=OneWay}" ToolTipService.IsEnabled="{Binding DurationIsReadOnly, Mode=OneWay}" ToolTip="{Binding DurationVariableName, Mode=OneWay}" TextAlignment="Center">
-				<CustomElements:SubmitTextBox.ContextMenu>
-					<ContextMenu>
-						<MenuItem Name="userInputDurationMenu" Header="User Input" HorizontalAlignment="Left" Command="{Binding UserInputDuration}"/>
-						<MenuItem Name="staticMenu2" Header="Statics" HorizontalAlignment="Left" ItemsSource="{Binding staticNamesDuration}"/>
-						<MenuItem Name="iteratorMenu2" Header="Iterators" HorizontalAlignment="Left" ItemsSource="{Binding iteratorNamesDuration}"/>
-						<MenuItem Name="dynamicMenu2" Header="Dynamics" HorizontalAlignment="Left" ItemsSource="{Binding dynamicNamesDuration}"/>
-					</ContextMenu>
-				</CustomElements:SubmitTextBox.ContextMenu>
-			</CustomElements:SubmitTextBox>
-			<TextBlock Text="Start:" TextAlignment="Right" HorizontalAlignment="Stretch" Grid.Row="3"
-                       VerticalAlignment="Stretch" Padding="1" Margin="0" Foreground="Blue">
-				<TextBlock.ContextMenu>
-					<ContextMenu>
-						<MenuItem Header="Insert" Command="{Binding Insert}"></MenuItem>
-						<MenuItem Header="Move left" Command="{Binding MoveLeft}"></MenuItem>
-						<MenuItem Header="Move right"  Command="{Binding MoveRight}"></MenuItem>
-					</ContextMenu>
-				</TextBlock.ContextMenu>
-			</TextBlock>
-			<TextBox TextAlignment="Center" HorizontalAlignment="Stretch" Grid.Row="3" Grid.Column="1" Padding="0"
-                       Margin="1,1,1,0" Height="17" Text="{Binding StartTime, Mode=OneWay}" Background="LightGray" IsReadOnly="True"/>
-
-			<TextBlock TextAlignment="Left" Grid.Column="2" Margin="1" Grid.Row="2" TextWrapping="Wrap" Text="{Binding Unit}" Padding="0"/>
-			<TextBlock TextAlignment="Left" Grid.Column="2" Margin="1" Grid.Row="3" TextWrapping="Wrap" Text="{Binding Unit}" Padding="0"/>
+                <CustomElements:SubmitTextBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Name="userInputDurationMenu" Header="User Input" HorizontalAlignment="Left" Command="{Binding UserInputDuration}"/>
+                        <MenuItem Name="staticMenu2" Header="Statics" HorizontalAlignment="Left" ItemsSource="{Binding staticNamesDuration}"/>
+                        <MenuItem Name="iteratorMenu2" Header="Iterators" HorizontalAlignment="Left" ItemsSource="{Binding iteratorNamesDuration}"/>
+                        <MenuItem Name="dynamicMenu2" Header="Dynamics" HorizontalAlignment="Left" ItemsSource="{Binding dynamicNamesDuration}"/>
+                    </ContextMenu>
+                </CustomElements:SubmitTextBox.ContextMenu>
+            </CustomElements:SubmitTextBox>
+            <TextBlock TextAlignment="Left" Grid.Column="2" Margin="1" Grid.Row="2" TextWrapping="Wrap" Text="{Binding Unit}" Padding="0"/>
+            <steps:StepBasicView Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3"></steps:StepBasicView>
 		</Grid>
 	</Border>
 </UserControl>

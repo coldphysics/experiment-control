@@ -17,7 +17,6 @@ namespace Controller.Data.Channels
         {
             Constant,
             Linear,
-            Exponential,
             Binary,
             Csv,
             Python
@@ -117,17 +116,28 @@ namespace Controller.Data.Channels
         {
             int index = Steps.IndexOf(step);
 
+            // We need to move the controllers, the models, recalculate the start time of the effected steps, and notify UI of change
             if (index > 1 && leftRight == LeftRightEnum.Left)
             {
+                StepBasicController previousStep = (StepBasicController)Steps[index - 1];
                 Steps.Move(index, index - 1);
                 Model.Steps.Move(index - 1, index - 2);
+                Model.Steps[index - 2].SetStartTime(StartTimeOf(step));
+                Model.Steps[index - 1].SetStartTime(StartTimeOf(previousStep));
+                step.UpdateProperty("StartTime");
+                previousStep.UpdateProperty("StartTime");
                 CopyToBuffer();
             }
 
             if (index < Steps.Count - 1 && leftRight == LeftRightEnum.Right)
             {
+                StepBasicController nextStep = (StepBasicController)Steps[index + 1];
                 Steps.Move(index, index + 1);
                 Model.Steps.Move(index - 1, index);
+                Model.Steps[index].SetStartTime(StartTimeOf(step));
+                Model.Steps[index - 1].SetStartTime(StartTimeOf(nextStep));
+                step.UpdateProperty("StartTime");
+                nextStep.UpdateProperty("StartTime");
                 CopyToBuffer();
             }
         }
@@ -216,8 +226,5 @@ namespace Controller.Data.Channels
         {
             return Model.Setting.Name;
         }
-        //public event PropertyChangedEventHandler PropertyChanged;
-
-
     }
 }

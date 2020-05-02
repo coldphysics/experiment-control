@@ -30,6 +30,11 @@ namespace Model.Options.Builders
             variablesWindowOGB.AddIntegerSetting(OptionNames.VARIABLES_STATIC_GROUP_HEIGHT, 10, 1, 100, "Variables");
             OptionsGroup variablesWindowOG = variablesWindowOGB.GetResult();
 
+            OptionsGroupBuilder visualizationOGB = new OptionsGroupBuilder();
+            visualizationOGB.SetName("Output Visualizer Window");
+            visualizationOGB.AddIntegerSetting(OptionNames.VISUALIZED_SAMPLES, 1000, 1, 10000, "Number of Samples");
+            OptionsGroup visualizationOG = visualizationOGB.GetResult();
+
             //General
             OptionsGroupBuilder displayGeneralOGB = new OptionsGroupBuilder();
             displayGeneralOGB.SetName("Display");
@@ -37,6 +42,7 @@ namespace Model.Options.Builders
             displayGeneralOGB.AddFileSetting(OptionNames.ICON_PATH, iconUri.AbsolutePath, new List<string>() { "PNG files|*.png", "JPEG files|*.jpg;*.jpeg", "ICON files|*.ico" });
             displayGeneralOGB.AddBooleanSetting(OptionNames.AUTOMATICALLY_OPEN_WINDOWS, true, null);
             displayGeneralOGB.AddChildOptionsGroup(variablesWindowOG);
+            displayGeneralOGB.AddChildOptionsGroup(visualizationOG);
             result.Add(displayGeneralOGB.GetResult());
 
 

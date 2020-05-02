@@ -46,14 +46,12 @@ namespace Controller.MainWindow.MeasurementRoutine
             loader.ModelStructureMismatchDetected +=
                 (sender, args) =>
                 {
-                    if (ModelStructureMismatchDetected != null)
-                        ModelStructureMismatchDetected(sender, args);
+                    ModelStructureMismatchDetected?.Invoke(sender, args);
                 };
             loader.ModelVersionMismatchDetected +=
                 (sender, args) =>
                 {
-                    if (ModelVersionMismatchDetected != null)
-                        ModelVersionMismatchDetected(sender, args);
+                    ModelVersionMismatchDetected?.Invoke(sender, args);
                 };
         }
 

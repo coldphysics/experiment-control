@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:VariableTypes="clr-namespace:View.Variables.VariableTypes"
              xmlns:SubmitTextBox="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="340">
+             d:DesignHeight="300" d:DesignWidth="340" PreviewMouseDown="UserControl_PreviewMouseDown">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="130*"></ColumnDefinition>
@@ -14,7 +14,7 @@
             <ColumnDefinition Width="50*"></ColumnDefinition>
             <ColumnDefinition Width="50*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <!--<VariableTypes:VariableBasicView Grid.Column ="0"></VariableTypes:VariableBasicView>-->
+        <VariableTypes:VariableBasicView Grid.Column ="0"></VariableTypes:VariableBasicView>
         <TextBox Grid.Column="1" Background="LightGray"  IsReadOnly="True" Text="{Binding VariableValue, Mode=TwoWay}"  Name="VariableValue"></TextBox>
         <SubmitTextBox:SubmitTextBox Grid.Column="2" Background="{Binding VariableLockedColor, Mode=OneWay}" IsReadOnly="{Binding VariableLocked, Mode=OneWay}" Text="{Binding VariableStartValue, Mode=TwoWay}"  Name="VariableStartValue"></SubmitTextBox:SubmitTextBox>
         <SubmitTextBox:SubmitTextBox Grid.Column="3" Background="{Binding VariableLockedColor, Mode=OneWay}" IsReadOnly="{Binding VariableLocked, Mode=OneWay}" Text="{Binding VariableEndValue, Mode=TwoWay}"  Name="VariableStopValue"></SubmitTextBox:SubmitTextBox>

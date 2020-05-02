@@ -39,8 +39,13 @@
 				</Grid.RowDefinitions>
 				<Label Content="Option Categories:" Grid.Row="0"/>
 				<Border Grid.Row="1" Margin="5">
-					<TreeView x:Name="optionGroupsLB" HorizontalAlignment="Right" Width="190" ItemsSource="{Binding OptionGroups}">
-						<TreeView.ItemTemplate>
+					<TreeView x:Name="optionGroupsLB" HorizontalAlignment="Right" Width="190" ItemsSource="{Binding OptionGroups}" >
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="True" />
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.ItemTemplate>
 							<HierarchicalDataTemplate DataType="{x:Type local:OptionsGroupController}" ItemsSource="{Binding ChildOptionGroups}" >
 								<TextBlock Text="{Binding Name}" />
 							</HierarchicalDataTemplate>

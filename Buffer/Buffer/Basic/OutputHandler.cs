@@ -35,9 +35,9 @@ namespace Buffer.Basic
     /// This class handles the primary loop that controls and interacts with most other components
     /// in the software,
     /// </remarks>
-    public class OutputHandler 
+    public class OutputHandler
     {
-        
+
         #region Enums
         //  **************** enums *************************        
         /// <summary>
@@ -151,7 +151,7 @@ namespace Buffer.Basic
         /// <summary>
         /// Indicates that the output loop should stop after the first whole scan of iterators is over.
         /// </summary>
-        public bool StopAfterScan;
+        public bool stopAfterScan;
 
 
         /// <summary>
@@ -201,9 +201,8 @@ namespace Buffer.Basic
                 else return 0;
             }
 
-             set
+            set
             {
-
                 _startGlobalCounterOfMeasurementRoutine = value;
             }
         }
@@ -237,10 +236,6 @@ namespace Buffer.Basic
         /// the value stored in the database if the settings does not order the program to save on the database.
         /// </summary>
         private int _globalCounter;
-        /// <summary>
-        /// The value of the global counter when the current "set" of scans has been initiated.
-        /// </summary>
-        private int _startCounterOfScans;
         /// <summary>
         /// The number of iterations before a single scan finishes.
         /// </summary>
@@ -282,7 +277,7 @@ namespace Buffer.Basic
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         public delegate void IterateVariablesEventHandler(object sender, EventArgs e);
 
-       
+
         /// <summary>
         /// Is connected to the VariablesController 
         /// </summary>
@@ -293,7 +288,7 @@ namespace Buffer.Basic
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         public delegate void ResetIteratorValuesEventHandler(object sender, EventArgs e);
-       
+
         /// <summary>
         /// Occurs when iterator variables have to be locked (become readonly).
         /// </summary>
@@ -383,52 +378,15 @@ namespace Buffer.Basic
                 ec.GlobalCounter = GlobalCounter;
             }
         }
+
+        //Ebaa 11.06
+
         /// <summary>
         /// Gets the value of the global counter when the current "set" of scans has been initiated.
         /// </summary>
         /// <value>
         /// The value of the global counter when the current "set" of scans has been initiated.
         /// </value>
-        public int StartCounterOfScans
-        {
-            get {
-                if (IsMeasurementRoutineMode)
-                    return _startCounterOfScans;
-                else return 0; 
-            }
-           
-            private set
-            
-            {
-                if (value == 0 && _startCounterOfScans != 0)
-                {
-                    LastStartCounterOfScans = _startCounterOfScans;
-                }
-                _startCounterOfScans = value;
-            }
-        }
-
-        //Ebaa 11.06
-        //private int _startGlobalCounterOfMeasurementRoutine;
-  
-        //public int StartGlobalCounterOfMeasurementRoutine
-        //{
-        //    get
-        //    {
-        //        if (IsMeasurementRoutineMode)
-        //            return _startGlobalCounterOfMeasurementRoutine;
-        //        else return 0;
-        //    }
-
-        //    private set
-        //    {
-                
-        //        _startGlobalCounterOfMeasurementRoutine = value;
-        //    }
-        //}
-
-
-       
         public int StartCounterOfScansOfCurrentModel
         {
             get
@@ -437,7 +395,7 @@ namespace Buffer.Basic
             }
             set
             {
-               
+                // This is done when stopping the whole experiment or stopping the iteration only
                 if (value == 0 && ModelCounters.StartCounterOfScansOfCurrentModel != 0)
                 {
                     LastStartCounterOfScans = ModelCounters.StartCounterOfScansOfCurrentModel;
@@ -445,30 +403,6 @@ namespace Buffer.Basic
                 ModelCounters.StartCounterOfScansOfCurrentModel = value;
             }
         }
-
-
-      
-        /// <summary>
-        /// Gets or sets a value indicating whether StartCounterOfScansOfCurrentModel is set.
-        /// This value is used to avoid assigning the StartCounterOfScansOfCurrentModel counter multiple times.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if StartCounterOfScansOfCurrentModel is set; otherwise, <c>false</c>.
-        /// </value>
-        public bool GCIsSet
-        {
-            get
-            {
-                return ModelCounters.GCIsSet;
-            }
-            set
-            {
-                ModelCounters.GCIsSet = value;
-            }
-        }
-
-       
-
 
         /// <summary>
         /// Gets the last start counter of scans.
@@ -561,13 +495,9 @@ namespace Buffer.Basic
                             if (_cycleState == CycleStates.Running || _cycleState == CycleStates.Stopped)
                             {
                                 ResetIteratorValues(this, null); //TODO check if this is necessary
-                                IterationOfScan = 1;
-                                CompletedScans = 0;
-                              //  StartCounterOfScans = 0;
+                                ModelCounters.Reset();
                                 StartGlobalCounterOfMeasurementRoutine = 0;
-                      
                                 StartCounterOfScansOfCurrentModel = 0;
-                                GCIsSet = false;
                                 UnlockIterators(this, null);
                             }
 
@@ -575,15 +505,10 @@ namespace Buffer.Basic
                             {
                                 if (oldstate == CycleStates.Running || oldstate == CycleStates.Stopped)
                                 {
-                                    IterationOfScan = 1;
-                                    CompletedScans = 0;
-                                    
-                                  //  StartCounterOfScans = GlobalCounter;// + 1;
+                                    ModelCounters.Reset();
                                     StartGlobalCounterOfMeasurementRoutine = GlobalCounter;
-                           
                                     StartCounterOfScansOfCurrentModel = GlobalCounter;
-                                    GCIsSet = true;
-                                    //ResetIteratorValues(this, null);
+                                    ModelCounters.GCIsSet = true;
                                     LockIterators(this, null);//This disables the UI of the iterators so the user cannot change them
                                 }
                             }
@@ -678,16 +603,16 @@ namespace Buffer.Basic
             DateTime nextStartTime = DateTime.Now;
             CycleStates cycleState;
             RootModel workLoopCopy;
-            
+
 
             // main loop
             while (true)
             {
-               
+
                 //In the first loop no data has been sent to the hardware system yet, so do not wait for the hardware.
                 if (!first)
                 {
-                  
+
                     SetOutputLoopThreadState(OutputLoopStates.WaitForHardware);
 
                     /***/
@@ -702,12 +627,12 @@ namespace Buffer.Basic
                     //If this is the first loop, or after being stopped (user clicked on 'Stop')
                     if (first || cycleState == CycleStates.Stopped)
                     {
-                    
+
                         //If the user clicked on 'stop', iterator variables are set to their starting values.
                         if (!first)
                             //TODO check if this is necassary.
                             ResetIteratorValues(this, null);//RECO try not to fire an event while locked
-                     
+
 
                         first = false;
                         SetOutputLoopThreadState(OutputLoopStates.Sleeping);
@@ -749,8 +674,8 @@ namespace Buffer.Basic
 
                     //initial value
                     iteratedInLastCycle = false;
-             
-                   
+
+
                     //Make a local copy from the Model (received from the Buffer)
                     workLoopCopy = (RootModel)DeepClone(_rootModel);
                     workLoopCopy.EstimatedStartTime = nextStartTime;
@@ -760,12 +685,12 @@ namespace Buffer.Basic
 
 
 
-      
+
                     // everything has to wait until the variables and so on are stored in the database
                     /***/
 
                     CreateDatabaseEntry(workLoopCopy);
-                  
+
 
                     // start python scripts as a background thread
                     // the first cycle when we have 'scanning' or 'scanning_once' states
@@ -773,7 +698,7 @@ namespace Buffer.Basic
                     {
                         /***/
                         RunPhythonScriptStartScanTimeCritical(workLoopCopy);
-                      
+
                         startScanPythonScriptThread = new Thread(RunPhythonScriptStartScan);
                         startScanPythonScriptThread.Name = "startScanPythonScriptThread";
                         startScanPythonScriptThread.Start();
@@ -831,19 +756,19 @@ namespace Buffer.Basic
                     SetOutputLoopThreadState(OutputLoopStates.PostStart);
 
 
-                   ProfilesManager profilesManager = ProfilesManager.GetInstance();
-                   bool saveFirstModeltoXmlFile=false;// Indicates whether the (save only the first model file of iterating sequences) checkbox is checked.
+                    ProfilesManager profilesManager = ProfilesManager.GetInstance();
+                    bool saveFirstModeltoXmlFile = false;// Indicates whether the (save only the first model file of iterating sequences) checkbox is checked.
                     if (profilesManager.ActiveProfile.DoesSettingExist(SettingNames.SAVE_MODEL_TO_XML))
                     {
                         bool saveToXMLFile = profilesManager.ActiveProfile.GetSettingValueByName<bool>(SettingNames.SAVE_MODEL_TO_XML);
 
                         if (saveToXMLFile)
                         {
-                            saveFirstModeltoXmlFile = profilesManager.ActiveProfile.GetSettingValueByName<bool>(SettingNames.SAVE_FIRST_MODEL_TO_XML) ;
+                            saveFirstModeltoXmlFile = profilesManager.ActiveProfile.GetSettingValueByName<bool>(SettingNames.SAVE_FIRST_MODEL_TO_XML);
                         }
-                       
+
                     }
-                    
+
 
 
                     if (IterationOfScan == 1 && CompletedScans == 0 && saveFirstModeltoXmlFile) // saves only the first model file of iterating sequences.
@@ -866,9 +791,9 @@ namespace Buffer.Basic
                     else
                     { //No other option
                     }
-                    
-                   
-                  
+
+
+
                     // using a new thread set the value of 'ionizationPulses' taken from variableslist and start 'lecroyVBScript'
                     if (controlLecroy)
                     {
@@ -881,7 +806,7 @@ namespace Buffer.Basic
                     //
                     BeforeIteratingVariablesEventArgs eventArgs = new BeforeIteratingVariablesEventArgs();
                     DoBeforeIteratingVariables(eventArgs);
-                    
+
                     _waitForGeneratedData = false;
                     // if in iterating mode some actions have to take place
                     if (workLoopCopy.IsItererating && !pause)
@@ -922,7 +847,7 @@ namespace Buffer.Basic
                                 _waitForGeneratedData = true;
                             }
                             // handle stop after scan
-                            if (StopAfterScan)
+                            if (stopAfterScan)
                             {
                                 OutputCycleState = CycleStates.Stopped;
                             }
@@ -933,8 +858,8 @@ namespace Buffer.Basic
                             IterationOfScan++;
                             /***/
                             IterateVariables(this, null);
-                          
-                           
+
+
                             _waitForGeneratedData = true;
                         }
                         /***/
@@ -953,11 +878,8 @@ namespace Buffer.Basic
                     ModelIndex = eventArgs.NextModelIndex; // this is used to save the model number in the database.
                     if (eventArgs.ModelWillChange)//A new model will be loaded
                     {
-
-
                         _waitForGeneratedData = true;
                         DoAfterIteratingVariables();
-
                     }
                     else//we might have an iterated model
                     {
@@ -965,13 +887,15 @@ namespace Buffer.Basic
                         if (NumberOfIterations <= 1)
                             _waitForGeneratedData = false;
                     }
-                 
-                   
-                    
+
+                    Console.WriteLine("End of current OutputLoop, NumberOfIterations ={0}", NumberOfIterations);
+
+
+
 
                 }
 
-               
+
 
                 // run the garbage collector here since it is not in the time critical path
                 //                GC.Collect();
@@ -1059,8 +983,7 @@ namespace Buffer.Basic
         //  *********************************** set / get / update **********************************************************
         private void DoBeforeIteratingVariables(BeforeIteratingVariablesEventArgs e)
         {
-            if (BeforeIteratingVariables != null)
-                BeforeIteratingVariables(this, e);
+            BeforeIteratingVariables?.Invoke(this, e);
         }
 
         private void DoAfterIteratingVariables()
@@ -1074,10 +997,7 @@ namespace Buffer.Basic
         /// </summary>
         public void UpdateIteratorState()
         {
-            if (OnScanChange != null)
-            {
-                OnScanChange(this, null);
-            }
+            OnScanChange?.Invoke(this, null);
         }
 
 
@@ -1096,10 +1016,7 @@ namespace Buffer.Basic
         /// </summary>
         private void UpdateOutputLoopState()
         {
-            if (OnOuputLoopStateChange != null)
-            {
-                OnOuputLoopStateChange(this, null);
-            }
+            OnOuputLoopStateChange?.Invoke(this, null);
         }
 
         /// <summary>
@@ -1120,10 +1037,10 @@ namespace Buffer.Basic
                 _cycleDuration = cycleDuration * SECOND;
                 _rawOutput = rawOutput;
                 _timesToReplicateOutput = timesToReplicateOutput;
-                
+
 
                 _waitForGeneratedData = false;//this stops the busy waiting
-                // increase the global counter if it has not been increased already
+                // increase the global counter (since the model has changed) if it has not been increased already
                 if (!iteratedInLastCycle)
                 {
                     GlobalCounter++;
@@ -1216,8 +1133,8 @@ namespace Buffer.Basic
         private void RunPhythonScriptStartScan()
         {
             //string scriptFilePath = ProfilesManager.GetInstance().ActiveProfile.GetSettingValueByName<string>(SettingNames.NON_TIME_CRITICAL_PYTHON_START);
-           
-           // string scriptFilePath = model.StartofScanNonTimeCriticalPythonFilePath;
+
+            // string scriptFilePath = model.StartofScanNonTimeCriticalPythonFilePath;
             string scriptFilePath = _rootModel.StartofScanNonTimeCriticalPythonFilePath;
             pStartScan = RunNonTimeCriticalPythonScript(scriptFilePath, pStartScan);
         }
@@ -1240,7 +1157,7 @@ namespace Buffer.Basic
         private void RunPhythonScriptEverySingleIteration()
         {
             //string scriptFilePath = ProfilesManager.GetInstance().ActiveProfile.GetSettingValueByName<string>(SettingNames.NON_TIME_CRITICAL_PYTHON_CYCLE);
-           // string scriptFilePath = model.EveryCycleNonTimeCriticalPythonPath;
+            // string scriptFilePath = model.EveryCycleNonTimeCriticalPythonPath;
             string scriptFilePath = _rootModel.EveryCycleNonTimeCriticalPythonPath;
             pEverySingleIteration = RunNonTimeCriticalPythonScript(scriptFilePath, pEverySingleIteration);
         }
@@ -1313,20 +1230,17 @@ namespace Buffer.Basic
                 if (variable.IsIterator())
                 {
                     iteratorList.Add(variable.VariableName + "\t" + variable.VariableValue.ToString(CultureInfo.InvariantCulture) + "\t" + variable.VariableStartValue.ToString(CultureInfo.InvariantCulture) + "\t" + variable.VariableEndValue.ToString(CultureInfo.InvariantCulture) + "\t" + variable.VariableStepValue.ToString(CultureInfo.InvariantCulture));
-                   
+
                 }
             }
 
 
             // add additional variables
             variablesList.Add("cntGlobal" + "\t" + model.GlobalCounter);
-
-       
             variablesList.Add("StartCounterOfScans" + "\t" + StartCounterOfScansOfCurrentModel);
- 
             variablesList.Add("StartCounterOfRoutine" + "\t" + StartGlobalCounterOfMeasurementRoutine);
-            
-           // variablesList.Add("StartCounterOfScans" + "\t" + StartCounterOfScans);
+
+            // variablesList.Add("StartCounterOfScans" + "\t" + StartCounterOfScans);
             variablesList.Add("IterationOfScan" + "\t" + IterationOfScan);
             variablesList.Add("CompletedScans" + "\t" + CompletedScans);
             variablesList.Add("NumberOfIterations" + "\t" + NumberOfIterations);
@@ -1360,7 +1274,8 @@ namespace Buffer.Basic
                 if (!ProfilesManager.GetInstance().ActiveProfile.GetSettingValueByName<bool>(SettingNames.USE_LEGACY_DATABASE))//We need to use new schema
                 {
                     OperatingMode currentMode;
-                    int startCounterOfRoutine ;
+                    int startCounterOfRoutine;
+
                     if (IsMeasurementRoutineMode)
                     {
                         currentMode = OperatingMode.MEASUREMENT_ROUTINE;
@@ -1395,10 +1310,8 @@ namespace Buffer.Basic
                         table, model.GlobalCounter, estimatedStartTime.ToString("yyyy-MM-dd HH:mm:ss"), StartCounterOfScansOfCurrentModel, IterationOfScan,
                         CompletedScans, NumberOfIterations, sqlVariables, sqlIterators, currentMode.ToString(), StartGlobalCounterOfMeasurementRoutine, modelNumber, routineArray
                         );
-   
-                }
 
-                   
+                }
                 else // this should be removed when all experiments start using the new schema.
                 {
                     query = "replace into " + table +
@@ -1426,11 +1339,11 @@ namespace Buffer.Basic
         /// <summary>
         /// Queries the database for the last global counter if access to the database is allowed, otherwise returns 1
         /// </summary>
-        /// <returns>last global counter if access to DB is allowed, 1 otherwise.</returns>
+        /// <returns>last global counter if access to DB is allowed, 0 otherwise.</returns>
         public int LoadGlobalCounter()
         {
             if (!Global.CanAccessDatabase())
-                return 1;
+                return 0;
 
             int globalCounter = -1;
             DatabaseConnectionSetting setting = (DatabaseConnectionSetting)ProfilesManager.GetInstance().ActiveProfile.GetSettingByName(SettingNames.DATABASE_CONNECTION);
@@ -1508,22 +1421,22 @@ namespace Buffer.Basic
                     }
 
 
-                       //  xml data
-                        using (var writer = new FileStream(saveFolder + model.GlobalCounter + ".xml.gz", FileMode.Create))
+                    //  xml data
+                    using (var writer = new FileStream(saveFolder + model.GlobalCounter + ".xml.gz", FileMode.Create))
+                    {
+                        using (var gz = new GZipStream(writer, CompressionMode.Compress, false))
                         {
-                            using (var gz = new GZipStream(writer, CompressionMode.Compress, false))
-                            {
-                                Type type = model.GetType();
-                                var serializer = new DataContractSerializer(type);
-                                serializer.WriteObject(gz, model);
-                            }
+                            Type type = model.GetType();
+                            var serializer = new DataContractSerializer(type);
+                            serializer.WriteObject(gz, model);
                         }
-                    
+                    }
+
                 }
             }
         }
 
-    //ebaa 8.05.2018
+        //ebaa 8.05.2018
         //private void SaveXmlFirstModel(object rootModel)
         //{
         //    ProfilesManager profilesManager = ProfilesManager.GetInstance();

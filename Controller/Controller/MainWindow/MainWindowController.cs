@@ -41,6 +41,7 @@ using HardwareAdWin.Debug;
 using System.Windows.Threading;
 using Controller.MainWindow.MeasurementRoutine;
 using Controller.OutputVisualizer;
+using Model.MeasurementRoutine;
 
 namespace Controller.MainWindow
 {
@@ -108,8 +109,8 @@ namespace Controller.MainWindow
         public static Window visualizationWindow;
         //look
         private static bool isVisualizationWindowOpen = false;
-       
-       
+
+
 
         #endregion
 
@@ -519,8 +520,8 @@ namespace Controller.MainWindow
 
         public bool StopAfterScan
         {
-            get { return _outputHandler.StopAfterScan; }
-            set { _outputHandler.StopAfterScan = value; }
+            get { return _outputHandler.stopAfterScan; }
+            set { _outputHandler.stopAfterScan = value; }
         }
 
         public bool ControlLecroy
@@ -572,20 +573,20 @@ namespace Controller.MainWindow
         public bool IsOnceChecked
         {
             get { return _once; }
-           
+
         }
 
-       
 
-       
+
+
         public bool IsIterateAndSaveChecked
         {
             get
             {
                 return _iterateAndSave;
             }
-            set 
-            { 
+            set
+            {
                 _iterateAndSave = value;
                 OnPropertyChanged("IsIterateAndSaveChecked");
             }
@@ -664,13 +665,9 @@ namespace Controller.MainWindow
             get { return _outputHandler.GlobalCounter; }
         }
 
-        public int StartCounterOfScans
-        {
-            get { return _outputHandler.StartCounterOfScans; }
-        }
 
         //Ebaa 11.06
-      
+
         /// <summary>
         /// Gets the start counter of scans of current model.
         /// </summary>
@@ -722,14 +719,14 @@ namespace Controller.MainWindow
         private bool _incrementIteratorsIsEnabled;
         public bool IncrementIteratorsIsEnabled
         {
-            get 
-            { 
-                return _incrementIteratorsIsEnabled; 
+            get
+            {
+                return _incrementIteratorsIsEnabled;
             }
-            set 
-            { 
+            set
+            {
                 _incrementIteratorsIsEnabled = value;
-                OnPropertyChanged("IncrementIteratorsIsEnabled");                
+                OnPropertyChanged("IncrementIteratorsIsEnabled");
             }
         }
 
@@ -881,7 +878,7 @@ namespace Controller.MainWindow
             OnPropertyChanged("globalCounter");
 
             //Ebaa 11.06
-           // IterationManagerController.NotifyPropertyChanged("StartCounterOfScans");
+            // IterationManagerController.NotifyPropertyChanged("StartCounterOfScans");
             IterationManagerController.NotifyPropertyChanged("StartCounterOfScansOfCurrentModel");
             IterationManagerController.NotifyPropertyChanged("LastStartCounterOfScans");
             IterationManagerController.NotifyPropertyChanged("NumberOfIterations");
@@ -968,7 +965,7 @@ namespace Controller.MainWindow
 
         public void loader_ModelVersionMismatchDetected(object sender, ModelVersionMismatchEventArgs e)
         {
-           // MessageBox.Show("You are using an old version of the model" + "\n" + "In this version python scripts are model-specific\n"  + "Note: In order to modify python scripts, load the model as a primary model", "Warning", MessageBoxButton.OK);
+            // MessageBox.Show("You are using an old version of the model" + "\n" + "In this version python scripts are model-specific\n"  + "Note: In order to modify python scripts, load the model as a primary model", "Warning", MessageBoxButton.OK);
         }
 
 
@@ -1263,7 +1260,7 @@ namespace Controller.MainWindow
 
             if (result != null)
             {
-                
+
                 FileName = result;
             }
         }
@@ -1319,7 +1316,7 @@ namespace Controller.MainWindow
             about.HyperlinkText = "Click here to check recent updates of the software!";
             about.Publisher = "Pi5 - University of Stuttgart";
             about.AdditionalNotes = "Development of this code was started by Stephan Jennewein to control the NI hardware of the SuperAtoms experiment, supervised by Michael Schlagmüller. Since then main contributors have been Udo Hermann, Majd Abdo, Ghareeb Falazi , Ebaa Alnazer (ghareeb.falazi@hotmail.com, ebaa.alnazer@hotmail.com).";
-            
+
             // setting several properties here
             about.ApplicationLogo = new BitmapImage(new System.Uri("pack://application:,,,/View;component/Resources/cr.png"));
             // ...
@@ -1419,351 +1416,30 @@ namespace Controller.MainWindow
             return str;
         }
 
-        //public void LoadFileByFileName(string fileName, bool checkChanges)
-        //{
-        //    _outputHandler.OutputCycleState = OutputHandler.CycleStates.Stopped;
-        //    GetRootController().DisableCopyToBuffer(); // FIXME is there a better access to the root model or a better way to stop updates ?
-        //    //_windowList.CloseAll();
-        //    RootModel model = null;
-
-        //    BackgroundWorker worker = new BackgroundWorker();
-
-        //    //this is where the long running process should go
-        //    worker.DoWork += (o, ea) =>
-        //    {
-        //        ModelLoader loader = new ModelLoader();
-        //        loader.ModelStructureMismatchDetected += loader_ModelStructureMismatchDetected;
-        //        model = loader.LoadModel(fileName);
-        //    };
-
-        //    worker.RunWorkerCompleted += (o, ea) =>
-        //    {
-        //        UnblockUI();
-
-        //        if (model == null)
-        //            return;
-
-        //        if (_variables.Variables.Count != 0)
-        //        {
-        //            VariableComparison.ShowNewWindow(_variables, model.Data.variablesModel);
-        //        }//end variable comparison
-
-
-        //        //new code started 02.12.14
-        //        //now start the comparison of the values of everything. Wiki:
-        //        //Variables, Steps, Channel Names, Limits
-        //        if (checkChanges)
-        //        {
-        //            StringBuilder LogString = new StringBuilder("");
-        //            //Step 1: Compare single Steps.
-
-
-        //            SequenceGroupModel group = ((RootModel)_model).Data.group;
-        //            SequenceGroupModel groupNew = ((RootModel)model).Data.group;
-
-        //            if (group.Cards.Count != groupNew.Cards.Count)
-        //            {
-        //                //System.Console.WriteLine("Number of cards not equal! In group {0}", group.Name);
-        //                LogString.Append("Number of cards not equal");
-        //            }
-        //            else
-        //            {
-        //                for (int j = 0; j < group.Cards.Count; j++)
-        //                {
-        //                    Model.Data.Cards.CardBasicModel card = group.Cards[j];
-        //                    Model.Data.Cards.CardBasicModel cardNew = groupNew.Cards[j];
-        //                    if (card.Name != cardNew.Name)
-        //                    {
-        //                        //System.Console.WriteLine("Card names not equal! old: {0} new: {1}", card.Name, cardNew.Name);
-        //                        LogString.Append("Card names not equal \t" + card.Name +
-        //                                         " --> " + cardNew.Name + "\n");
-        //                    }
-        //                    if (card.Sequences.Count != cardNew.Sequences.Count)
-        //                    {
-        //                        //System.Console.WriteLine("Number of sequences not equal! In card {0}", card.Name);
-        //                        LogString.Append("Number of sequences not in card \"" +
-        //                                         card.Name + "\"\n");
-        //                    }
-        //                    else
-        //                    {
-        //                        for (int k = 0; k < card.Sequences.Count; k++)
-        //                        {
-        //                            Model.Data.Sequences.SequenceModel sequence = card.Sequences[k];
-        //                            Model.Data.Sequences.SequenceModel sequenceNew = cardNew.Sequences[k];
-        //                            if (sequence.Name != sequenceNew.Name)
-        //                            {
-        //                                //System.Console.WriteLine("Sequence names not equal! old: {0} new: {1}", sequence.Name, sequenceNew.Name);
-        //                                LogString.Append("Sequence names not equal in \"" + card.Name + "\"\t" +
-        //                                                 sequence.Name + " --> " +
-        //                                                 sequenceNew.Name + "\n");
-        //                            }
-        //                            if (sequence.Channels.Count != sequenceNew.Channels.Count)
-        //                            {
-        //                                //System.Console.WriteLine("Number of channels not equal! In sequence {0}", sequence.Name);
-        //                                LogString.Append("Number of channels not equal in \"" + card.Name + "\", \"" + sequence.Name + "\"\n");
-        //                            }
-        //                            else
-        //                            {
-        //                                for (int l = 0; l < sequence.Channels.Count; l++)
-        //                                {
-        //                                    Model.Data.Channels.ChannelBasicModel channel = sequence.Channels[l];
-        //                                    Model.Data.Channels.ChannelBasicModel channelNew =
-        //                                        sequenceNew.Channels[l];
-        //                                    if (k == 0)
-        //                                    {
-        //                                        if (channel.Setting.Name != channelNew.Setting.Name)
-        //                                        {
-        //                                            //System.Console.WriteLine("Channel names not equal! old: {0} new: {1}", channel.Setting.Name, channelNew.Setting.Name);
-        //                                            LogString.Append("Channel names not equal in \"" + card.Name + "\"\t" + channel.Setting.Name +
-        //                                                             " --> " + channelNew.Setting.Name + "\n");
-        //                                        }
-
-
-
-        //                                        if (channel.Setting.LowerLimit !=
-        //                                            channelNew.Setting.LowerLimit)
-        //                                        {
-        //                                            LogString.Append("Channel lower limit not equal in \"" + card.Name + "\", \"" + channel.Setting.Name +
-        //                                                             "\"\t" +
-        //                                                             channel.Setting.LowerLimit +
-        //                                                             " --> " +
-        //                                                             channelNew.Setting.LowerLimit +
-        //                                                             "\n");
-        //                                        }
-        //                                        if (channel.Setting.UpperLimit !=
-        //                                            channelNew.Setting.UpperLimit)
-        //                                        {
-        //                                            LogString.Append("Channel lower limit not equal in \"" + card.Name + "\", \"" + channel.Setting.Name +
-        //                                                             "\"\t" +
-        //                                                             channel.Setting.UpperLimit +
-        //                                                             " --> " +
-        //                                                             channelNew.Setting.UpperLimit +
-        //                                                             "\n");
-        //                                        }
-        //                                        if (channel.Setting.InitValue !=
-        //                                            channelNew.Setting.InitValue)
-        //                                        {
-        //                                            LogString.Append("Channel Init value not equal in \"" + card.Name + "\", \"" + channel.Setting.Name +
-        //                                                             "\"\t" +
-        //                                                             channel.Setting.InitValue +
-        //                                                             " --> " +
-        //                                                             channelNew.Setting.InitValue +
-        //                                                             "\n");
-        //                                        }
-
-        //                                        if (channel.Setting.Invert !=
-        //                                            channelNew.Setting.Invert)
-        //                                        {
-        //                                            LogString.Append("Channel inverting not equal in \"" + card.Name + "\", \"" + channel.Setting.Name +
-        //                                                             "\"\t" +
-        //                                                             channel.Setting.Invert +
-        //                                                             " --> " +
-        //                                                             channelNew.Setting.Invert +
-        //                                                             "\n");
-        //                                        }
-
-        //                                        if (channel.Setting.UseCalibration != channelNew.Setting.UseCalibration)
-        //                                        {
-        //                                            LogString.Append(
-        //                                                    "Channel settings usage of \"use calibration\" in \"" + card.Name + "\", \"" +
-        //                                                    channel.Setting.Name + "\"\t" + channel.Setting.UseCalibration +
-        //                                                    " --> " + channelNew.Setting.UseCalibration + "\n");
-        //                                        }
-        //                                        else
-        //                                        {
-        //                                            if (channel.Setting.UseCalibration)
-        //                                            {
-
-        //                                                if (channel.Setting.InputUnit != channelNew.Setting.InputUnit)
-        //                                                {
-        //                                                    LogString.Append("Channel input unit not equal in \"" + card.Name + "\", \"" +
-        //                                                        channel.Setting.Name + "\"\t" +
-        //                                                        channel.Setting.InputUnit +
-        //                                                        " --> " +
-        //                                                        channelNew.Setting.InputUnit +
-        //                                                        "\n");
-        //                                                }
-        //                                            }
-        //                                        }
-
-        //                                        //Compare the scripts even if the calibration is disabled! (Ask Felix)
-        //                                        if (channel.Setting.CalibrationScript != channelNew.Setting.CalibrationScript)
-        //                                        {
-        //                                            LogString.Append("Channel calibration Script not equal in \"" + card.Name + "\", \"" +
-        //                                                channel.Setting.Name + "\"\t" +
-        //                                                channel.Setting.CalibrationScript +
-        //                                                " --> " +
-        //                                                channelNew.Setting.CalibrationScript +
-        //                                                "\n");
-        //                                        }
-
-
-
-        //                                    }
-        //                                    if (channel.Steps.Count != channelNew.Steps.Count)
-        //                                    {
-        //                                        //System.Console.WriteLine("Number of steps not equal! In channel {0}", channel.Setting.Name);
-        //                                        LogString.Append("Number of steps not equal in \"" + card.Name + "\",  \"" + sequence.Name +
-        //                                                         "\", \"" + channel.Setting.Name + "\"\n");
-        //                                    }
-        //                                    else
-        //                                    {
-        //                                        for (int m = 0; m < channel.Steps.Count; m++)
-        //                                        {
-        //                                            //System.Console.WriteLine("m: {0}", m);
-        //                                            Model.Data.Steps.StepBasicModel step = channel.Steps[m];
-        //                                            Model.Data.Steps.StepBasicModel stepNew = channelNew.Steps[m];
-        //                                            if (step.GetType() != stepNew.GetType())
-        //                                            {
-        //                                                //System.Console.WriteLine("Step type changed in channel {2} at step {3}! old: {0} new: {1}",step.GetType(), stepNew.GetType(),channel.Setting.Name, m);
-        //                                                LogString.Append("Step types not equal in \"" + card.Name + "\",  \"" +
-        //                                                                 sequence.Name + "\", \"" +
-        //                                                                 channel.Setting.Name + "\", step \"" +
-        //                                                                 (m + 1) + "\"\t" + step.GetType() + " --> " +
-        //                                                                 stepNew.GetType() + "\n");
-        //                                            }
-        //                                            else
-        //                                            {
-        //                                                //System.Console.WriteLine("Else!");
-        //                                                if (step.GetType() ==
-        //                                                    typeof(Model.Data.Steps.StepFileModel))
-        //                                                {
-        //                                                    if (((StepFileModel)step).FileName !=
-        //                                                        ((StepFileModel)step).FileName)
-        //                                                    {
-        //                                                        //System.Console.WriteLine("Step filename changed in channel {2} at step {3}! old: {0} new: {1}",((StepFileModel)step).FileName, ((StepFileModel)step).FileName,channel.Setting.Name, m);
-        //                                                        LogString.Append("Step filenames not equal in \"" + card.Name +
-        //                                                                         "\",  \"" + sequence.Name +
-        //                                                                         "\", \"" + channel.Setting.Name +
-        //                                                                         "\", step \"" + (m + 1) + "\"\t" +
-        //                                                                         ((StepFileModel)step).FileName +
-        //                                                                         " --> " +
-        //                                                                         ((StepFileModel)stepNew).FileName +
-        //                                                                         "\n");
-        //                                                    }
-        //                                                }
-        //                                                if (step.GetType() == typeof(StepRampModel))
-        //                                                {
-        //                                                    //System.Console.WriteLine("Ramp {0} {1}\n{2} - {3}!", step.Duration.Value, stepNew.Duration.Value, step.DurationVariableName, stepNew.DurationVariableName);
-        //                                                    if (step.DurationVariableName !=
-        //                                                        stepNew.DurationVariableName)
-        //                                                    {
-        //                                                        //System.Console.WriteLine("Duration variable changed in channel {2} at step {3}! old: {0} new: {1}",step.DurationVariableName,stepNew.DurationVariableName,channel.Setting.Name, m);
-        //                                                        LogString.Append(
-        //                                                            "Duration Variables not equal in \"" + card.Name + "\",  \"" +
-        //                                                            sequence.Name + "\", \"" + channel.Setting.Name +
-        //                                                            "\", step \"" + (m + 1) + "\"\t" +
-        //                                                            StringOrDefault(step.DurationVariableName,
-        //                                                                "user input") + " --> " +
-        //                                                            StringOrDefault(stepNew.DurationVariableName,
-        //                                                                "user input") + "\n");
-        //                                                    }
-        //                                                    if (step.DurationVariableName == "" ||
-        //                                                        step.DurationVariableName == null)
-        //                                                    {
-        //                                                        if (step.Duration.Value != stepNew.Duration.Value)
-        //                                                        {
-        //                                                            // System.Console.WriteLine("Duration changed in channel {2} at step {3}! old: {0} new: {1}",step.Duration.Value,stepNew.Duration.Value,channel.Setting.Name, m);
-        //                                                            LogString.Append(
-        //                                                                "Duration values not equal in \"" +
-        //                                                                card.Name +
-        //                                                                "\",  \"" + sequence.Name + "\", \"" +
-        //                                                                channel.Setting.Name + "\", step \"" +
-        //                                                                (m + 1) + "\"\t" + step.Duration.Value +
-        //                                                                " --> " + stepNew.Duration.Value + "\n");
-        //                                                        }
-        //                                                    }
-        //                                                    if (step.ValueVariableName != stepNew.ValueVariableName)
-        //                                                    {
-        //                                                        //System.Console.WriteLine("Value variable changed in channel {2} at step {3}! old: {0} new: {1}",step.ValueVariableName,stepNew.ValueVariableName,channel.Setting.Name, m);
-        //                                                        LogString.Append("Value Variables not equal in \"" + card.Name +
-        //                                                                         "\",  \"" + sequence.Name +
-        //                                                                         "\", \"" + channel.Setting.Name +
-        //                                                                         "\", step \"" + (m + 1) + "\"\t" +
-        //                                                                         StringOrDefault(
-        //                                                                             step.ValueVariableName,
-        //                                                                             "user input") + " --> " +
-        //                                                                         StringOrDefault(
-        //                                                                             stepNew.ValueVariableName,
-        //                                                                             "user input") + "\n");
-        //                                                    }
-        //                                                    if (step.ValueVariableName == "" ||
-        //                                                        step.ValueVariableName == null)
-        //                                                    {
-        //                                                        if (step.Value.Value != stepNew.Value.Value)
-        //                                                        {
-        //                                                            // System.Console.WriteLine("Value changed in channel {2} at step {3}! old: {0} new: {1}",step.Value.Value,stepNew.Value.Value,channel.Setting.Name, m);
-        //                                                            LogString.Append(
-        //                                                                "Value values not equal in \"" + card.Name + "\",  \"" +
-        //                                                                sequence.Name + "\", \"" +
-        //                                                                channel.Setting.Name + "\", step \"" +
-        //                                                                (m + 1) + "\"\t" + step.Value.Value +
-        //                                                                " --> " + stepNew.Value.Value + "\n");
-        //                                                        }
-        //                                                    }
-        //                                                }
-        //                                            }
-        //                                        }
-        //                                    }
-        //                                }
-        //                            }
-        //                        }
-        //                    }
-        //                }
-
-        //            }
-        //            //LogString.Append(SettingsValidation(ref model));
-        //            if (LogString.Length != 0)
-        //            {
-        //                LogString.Insert(0, "Detected changes:\n");
-        //                SimpleStringOkWindow.ShowNewSimpleStringOkWindow("Detected changes", LogString.ToString());
-        //            }
-        //            else
-        //            {
-        //                LogString.Append("No changed detected!");
-        //            }
-
-        //            //end of new code 02.12.14
-        //        }
-
-        //        LoadModel(model);
-        //        //_model.Verify();//To show error messages
-        //        //_buffer.CopyData(_model);
-
-        //        FileName = fileName;
-
-        //    };
-        //    //set the IsBusy before you start the thread
-        //    BlockUI("Loading the model...");
-        //    worker.RunWorkerAsync();
-        //}
-
-
         public void LoadModel(RootModel model, int timesToReplicate, GenerationFinishedCallback callback = null)
         {
             _model = model;
+            ModelSpecificCounters counters = MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters;
 
-   
             // Set StartCounterOfScansOfCurrentModel if it is not set before.
-            if (!MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters.GCIsSet)
+            if (!counters.GCIsSet)
             {
-                MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters.GCIsSet = true;
-                MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters.StartCounterOfScansOfCurrentModel = _outputHandler.GlobalCounter;
+                counters.GCIsSet = true;
+                counters.StartCounterOfScansOfCurrentModel = _outputHandler.GlobalCounter;
                 _outputHandler.UpdateIteratorState();
             }
+            else
+            {
+                Console.WriteLine("Global counter is already set, avoiding setting it again!");
+            }
 
-
-            GetRootController().SetModelCounters(MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters);
-            
+            GetRootController().SetModelCounters(counters);
             _variables.SetNewVariablesModel(model.Data.variablesModel);
             _variables.SetNewRootModel(model);
-            
-            
             _controllerRecipe.Cook(_model, _variables);
 
-         
             //Trigger the callback if needed
-            if (callback != null )
+            if (callback != null)
             {
                 DoubleBuffer.FinishedModelGenerationEventHandler handler = null;
 
@@ -1779,14 +1455,11 @@ namespace Controller.MainWindow
 
                 _buffer.FinishedModelGeneration += handler;
             }
-           
 
             GetRootController().TimesToReplicateOutput = timesToReplicate;
-           // Debug.Assert(GetRootController()._enableCopyToBuffer == false);
+            // Debug.Assert(GetRootController()._enableCopyToBuffer == false);
             GetRootController().CopyToBuffer(); // to ensure copying to the buffer for the first time after start (this sets pending changes to true for the first time).
-            GetRootController().EnableCopyToBufferAndCopyChanges(); 
-
-
+            GetRootController().EnableCopyToBufferAndCopyChanges();
 
             //The following block of code ensures that if a none-UI thread tries to create the windows no exception will occur
             Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
@@ -1877,9 +1550,9 @@ namespace Controller.MainWindow
                 if (_iterateAndSave)
                 {
                     if (_once)
-                        OutputHandler.OutputCycleState = Buffer.Basic.OutputHandler.CycleStates.ScanningOnce;
+                        OutputHandler.OutputCycleState = OutputHandler.CycleStates.ScanningOnce;
                     else
-                        OutputHandler.OutputCycleState = Buffer.Basic.OutputHandler.CycleStates.Scanning;
+                        OutputHandler.OutputCycleState = OutputHandler.CycleStates.Scanning;
 
                     _startTime = DateTime.Now;
 
@@ -1887,7 +1560,7 @@ namespace Controller.MainWindow
                     OnPropertyChanged("StartTime");
                 }
                 else
-                    OutputHandler.OutputCycleState = Buffer.Basic.OutputHandler.CycleStates.Running;
+                    OutputHandler.OutputCycleState = OutputHandler.CycleStates.Running;
             }
         }
 
@@ -2010,17 +1683,6 @@ namespace Controller.MainWindow
                                                              channelNew.Setting.UpperLimit +
                                                              "\n");
                                         }
-                                        if (channel.Setting.InitValue !=
-                                            channelNew.Setting.InitValue)
-                                        {
-                                            LogString.Append("Channel Init value not equal in \"" + card.Name + "\", \"" + channel.Setting.Name +
-                                                             "\"\t" +
-                                                             channel.Setting.InitValue +
-                                                             " --> " +
-                                                             channelNew.Setting.InitValue +
-                                                             "\n");
-                                        }
-
                                         if (channel.Setting.Invert !=
                                             channelNew.Setting.Invert)
                                         {
@@ -2204,12 +1866,13 @@ namespace Controller.MainWindow
                 OutputHandler.IsMeasurementRoutineMode = true;
                 OutputHandler.StartGlobalCounterOfMeasurementRoutine = GlobalCounter;
                 OutputHandler.ModelIndex = MeasurementRoutineController.CurrentRoutineModelIndex;
-                
+
                 IsIterateAndSaveChecked = true;
                 IncrementIteratorsIsEnabled = false;
                 //Ebaa 11.06
                 if (IsStarted)
-                ProfileManagerController.IsSaveButtonEnabled = false;
+                    ProfileManagerController.IsSaveButtonEnabled = false;
+
                 IterationManagerController.IsPreviousStartGCOfScansVisible = Visibility.Hidden;
                 IterationManagerController.NameOfTheCurrentStartGCOfScans = "Start counter of routine: ";
                 IterationManagerController.IsScanOnlyOnceEnabled = false;
@@ -2217,13 +1880,13 @@ namespace Controller.MainWindow
                 IterationManagerController.IsShuffleIterationsEnabled = false;
                 IterationManagerController.IsPauseEnabled = false;
                 IterationManagerController.IsAlwaysIncreaseEnabled = false;
-               
-                
+
+
             }
             else
             {
                 //Ebaa 12.06
-               // OutputHandler.StartCounterOfScans = 0;
+                // OutputHandler.StartCounterOfScans = 0;
                 OutputHandler.IsMeasurementRoutineMode = false;
                 OutputHandler.ModelIndex = MeasurementRoutineController.CurrentRoutineModelIndex;
                 OutputHandler.StartGlobalCounterOfMeasurementRoutine = 0;

@@ -22,19 +22,10 @@ namespace Generator.Generator.Step.Abstract
         {
             double previousValue = 0.0;
 
-            //RECO this could be redundant
-            if (_model.Index() == 0 && _model.Sequence().Index() == 0)
+            if (_model.Index() > 0 || _model.Sequence().Index() > 0)
             {
-                previousValue = _model.Setting.InitValue;
-            }
-            else
-            {
-                //If this is the first step of this channel among all sequences then the previous value is the initial value specified in the Settings.
-                if (_model.PreviousStep() == null)
-                {
-                    previousValue = _model.Setting.InitValue;
-                }
-                else//If there exists a previous step then its value is the previous value (this doesn't consider a previous file-step; see the RECO above)
+                //If there exists a previous step, then its value is the previous value (this doesn't consider a previous file-step; see the RECO above)
+                if (_model.PreviousStep() != null)
                 {
                     previousValue = _model.PreviousStep().Value.Value;
                 }

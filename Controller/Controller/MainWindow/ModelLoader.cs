@@ -167,7 +167,7 @@ namespace Controller.MainWindow
     /// <summary>
     /// Loads a model file into memory
     /// </summary>
-    class ModelLoader
+    public class ModelLoader
     {
         private const string ACTIVE_MODEL_XML_SCHEMA = "http://schemas.datacontract.org/2004/07/Model";
         private const string V1_MODEL_XML_SCHEMA = "http://schemas.datacontract.org/2004/07/Model.V1";

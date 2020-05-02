@@ -29,6 +29,7 @@ namespace Model.Data.Steps
             /// <summary>
             /// Goes exponentially from the previous value up to the absolute of the specified value and reaches it exactly when the specified duration passes
             /// </summary>
+            [Obsolete("The exponential step type is obsolete. Use the Python step type instead.")]
             Exponential
         }
 

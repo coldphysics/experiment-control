@@ -152,6 +152,9 @@
     <Compile Include="Data\Steps\SetMessageWindowView.xaml.cs">
       <DependentUpon>SetMessageWindowView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\Steps\StepBasicView.xaml.cs">
+      <DependentUpon>StepBasicView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Data\Steps\StepPythonSetScriptView.xaml.cs">
       <DependentUpon>StepPythonSetScriptView.xaml</DependentUpon>
     </Compile>
@@ -300,6 +303,10 @@
     <Page Include="Data\Steps\SetMessageWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Data\Steps\StepBasicView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Data\Steps\StepPythonSetScriptView.xaml">
       <SubType>Designer</SubType>

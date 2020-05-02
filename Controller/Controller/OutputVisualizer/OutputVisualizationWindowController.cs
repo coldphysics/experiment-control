@@ -109,7 +109,7 @@ namespace Controller.OutputVisualizer
            
             foreach (var controller in outputVisualizerCollectionUC)
             {
-                controller.AlignTriggered -= controller_AlignTriggered;
+                controller.alignTriggered -= controller_AlignTriggered;
             }
             //clear the collection of the "OutputVisualizer" controls at the beginning
             outputVisualizerCollectionUC.Clear();
@@ -210,7 +210,7 @@ namespace Controller.OutputVisualizer
 
             foreach (var controller in outputVisualizerCollectionUC)
             {
-                controller.AlignTriggered += controller_AlignTriggered;
+                controller.alignTriggered += controller_AlignTriggered;
                 
             }
         }
