@@ -1189,7 +1189,7 @@ namespace Buffer.Basic
             string port = setting.Port.ToString();
 
             string connectionString = "SERVER=" + server + ";PORT=" + port + ";DATABASE=" +
-                                     database + ";UID=" + uid + ";PASSWORD=" + password + ";";
+                                     database + ";UID=" + uid + ";PASSWORD=" + password + ";SslMode=none;";
             MySqlConnection connection = null;
 
             try

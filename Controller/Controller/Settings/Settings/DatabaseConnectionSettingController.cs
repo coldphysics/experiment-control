@@ -290,7 +290,7 @@ namespace Controller.Settings.Settings
             string port = Port.ToString();
 
             string connectionString = "SERVER=" + server +  ";PORT=" + Port + ";DATABASE=" +
-                                      database + ";UID=" + uid + ";PASSWORD=" + password + ";";
+                                      database + ";UID=" + uid + ";PASSWORD=" + password + ";SslMode=none;";
             string table = Table;
             string query = "select globalCounter FROM " + table + "  LIMIT 1;";
 
