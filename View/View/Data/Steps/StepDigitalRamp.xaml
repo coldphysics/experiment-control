@@ -5,46 +5,35 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:CustomElements="clr-namespace:CustomElements.CloseButton;assembly=CustomElements"
              xmlns:SubmitTextBox="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements"
+             xmlns:steps="clr-namespace:View.Data.Steps"
              xmlns:NonFadingButton="clr-namespace:CustomElements.NonFadingButton;assembly=CustomElements" mc:Ignorable="d"
-             d:DesignWidth="110" MinWidth="130" MaxWidth="130">
+             d:DesignWidth="140" MinWidth="145" MaxWidth="145">
     <UserControl.Resources>
         <ResourceDictionary Source="pack://application:,,,/CustomElements;component/CustomDictionary.xaml" />
     </UserControl.Resources>
     <Border BorderBrush="Gray" BorderThickness="1" >
-        <Grid HorizontalAlignment="Left" Width="128" >
+        <Grid HorizontalAlignment="Stretch" >
             <Grid.RowDefinitions>
-                <RowDefinition Height="20*" />
-                <RowDefinition Height="20*" />
-                <RowDefinition Height="20*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="5*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="21*"/>
-                <ColumnDefinition Width="62*" />
-                <ColumnDefinition Width="18*"/>
-                <ColumnDefinition Width="17*" />
+                <ColumnDefinition Width="35" />
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="25"/>
             </Grid.ColumnDefinitions>
-            <DockPanel Grid.ColumnSpan="7" VerticalAlignment="Stretch">
+            <DockPanel Grid.ColumnSpan="4" VerticalAlignment="Stretch">
                 <NonFadingButton:NonFadingButton Width="20" Command="{Binding SetMessage}" Background="{Binding SetMessageColor}"  ToolTipService.IsEnabled="{Binding SetMessageShowTooltip}" ToolTip="{Binding SetMessageMessage}"/>
                 <CustomElements:CloseButton DockPanel.Dock="Right" VerticalAlignment="Center" MinHeight="15" Margin="1" Command="{Binding RemoveItem}"/>
-                <ComboBox Padding="2,0" DockPanel.Dock="Right" Margin="1" MinWidth="50" MinHeight="14" ItemsSource="{Binding DigitalTypeList}" SelectedValue="{Binding DigitalTypeSelected}"/>
+                <ComboBox Padding="2,0" DockPanel.Dock="Right" Margin="1" MinWidth="75" MinHeight="14" ItemsSource="{Binding DigitalTypeList}" SelectedValue="{Binding DigitalTypeSelected}"/>
             </DockPanel>
             <Label Content="Dur.:" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"
-                   HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch" Margin="1" Padding="0" Grid.ColumnSpan="4" />
-            <TextBlock Text="Start:" TextAlignment="Right"
-                   HorizontalAlignment="Stretch" Grid.Row="2" VerticalAlignment="Stretch" Margin="1" Padding="0" Foreground="Blue" Grid.ColumnSpan="4">
-                <TextBlock.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Insert" HorizontalAlignment="Left" Command="{Binding Insert}"></MenuItem>
-                        <MenuItem Header="Move left" HorizontalAlignment="Left" Command="{Binding MoveLeft}"></MenuItem>
-                        <MenuItem Header="Move right"  HorizontalAlignment="Left" Command="{Binding MoveRight}"></MenuItem>
-                    </ContextMenu>
-                </TextBlock.ContextMenu>
-            </TextBlock>
-            <SubmitTextBox:SubmitTextBox HorizontalContentAlignment="Right" VerticalContentAlignment="Center"
-                                         HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="4" VerticalAlignment="Stretch" Margin="1,1,1,1" Padding="0" Text="{Binding Duration}" Background="{Binding DurationColor, Mode=OneWay}" IsReadOnly="{Binding DurationIsReadOnly, Mode=OneWay}" ToolTipService.IsEnabled="{Binding DurationIsReadOnly, Mode=OneWay}" ToolTip="{Binding DurationVariableName, Mode=OneWay}" Name="DurTextBox">
+                   HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch" Margin="1" Padding="0"  />
+
+            <SubmitTextBox:SubmitTextBox HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                         HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" Margin="1,1,1,1" Padding="0" Text="{Binding Duration}" Background="{Binding DurationColor, Mode=OneWay}" IsReadOnly="{Binding DurationIsReadOnly, Mode=OneWay}" ToolTipService.IsEnabled="{Binding DurationIsReadOnly, Mode=OneWay}" ToolTip="{Binding DurationVariableName, Mode=OneWay}" Name="DurTextBox">
                 <SubmitTextBox:SubmitTextBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Name="userInputDurationMenu" Header="User Input"  HorizontalAlignment="Left" Command="{Binding UserInputDuration}"/>
@@ -54,17 +43,10 @@
                     </ContextMenu>
                 </SubmitTextBox:SubmitTextBox.ContextMenu>
             </SubmitTextBox:SubmitTextBox>
-            <TextBlock TextAlignment="Right" HorizontalAlignment="Stretch" Text="{Binding StartTime}"
-                   Grid.Row="2" Grid.Column="4" VerticalAlignment="Stretch" Margin="1" Padding="0" />
-            <NonFadingButton:NonFadingButton Grid.Column="6" Grid.Row="1" Grid.RowSpan="2" Background="{Binding ButtonColor}" Command="{Binding DigitalButton}"/>
-            <TextBlock HorizontalAlignment="Left" Margin="1,1,0,0" Padding="0" Grid.Row="1" TextWrapping="Wrap" Text="{Binding Unit}" VerticalAlignment="Top" Width="17" Grid.Column="5" Height="19"/>
-            <TextBlock HorizontalAlignment="Left" Margin="1,1,0,-1" Padding="0" Grid.Row="2" TextWrapping="Wrap" Text="{Binding Unit}" VerticalAlignment="Top" Width="17" Grid.Column="5" Height="19" />
-            <!--<Button Grid.Column="6" HorizontalAlignment="Left" Margin="22,0,-22,0" VerticalAlignment="Top" Width="17" RenderTransformOrigin="0.085,-0.108" Background="#FFB02929" Height="25" Grid.RowSpan="2" Command="{Binding MoveLeft}">
-                <Image Source="C:\Users\Klajdi\Documents\ControlSoftware\ControlSoftware\View\View\Resources\left_arrow.png"></Image>
-            </Button>
-            <Button Command="{Binding MoveRight}"  Grid.Column="6" HorizontalAlignment="Left" Height="28" Margin="22,11,-22,0" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Top" Width="17" Background="#FF58CD15">
-                <Image Source="C:\Users\Klajdi\Documents\ControlSoftware\ControlSoftware\View\View\Resources\right_arrow.png"></Image>
-            </Button>-->
+            <NonFadingButton:NonFadingButton Grid.Column="3" Grid.Row="1" Grid.RowSpan="2" Background="{Binding ButtonColor}" Command="{Binding DigitalButton}"/>
+            <TextBlock TextAlignment="Left" Grid.Column="2" Margin="1" Grid.Row="1" TextWrapping="Wrap" Text="{Binding Unit}" Padding="0"/>
+
+            <steps:StepBasicView Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3"></steps:StepBasicView>
         </Grid>
     </Border>
 </UserControl>

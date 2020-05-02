@@ -3,14 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:SubmitTextBox="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements" mc:Ignorable="d" 
              d:DesignHeight="28" d:DesignWidth="200">
 	<Grid ToolTip="{Binding UsagesAsString}">
 
 
 
-        <SubmitTextBox:SubmitTextBox Name="VariableName" Text="{Binding VariableName, Mode=TwoWay}" PreviewKeyDown="VariableName_PreviewKeyDown" Background="{Binding VariableUsage, Mode=OneWay}">
+        <SubmitTextBox:SubmitTextBox Name="VariableName" Text="{Binding VariableName, Mode=TwoWay}" Background="{Binding VariableUsage, Mode=OneWay}">
 			<SubmitTextBox:SubmitTextBox.ContextMenu>
 				<ContextMenu>
 					<MenuItem Name="Static" Header="Static" Command="{Binding SwitchToStatic}"></MenuItem>

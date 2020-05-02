@@ -16,20 +16,5 @@ namespace View.Variables.VariableTypes
             InitializeComponent();
         }
 
-        private void VariableName_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            var realSender = (SubmitTextBox)sender;
-            var dataContext = (VariableController)realSender.DataContext;
-
-            if (e.Key == Key.Up)
-            {
-                dataContext.moveUp(dataContext);
-                e.Handled = true;
-            } else if (e.Key == Key.Down)
-            {
-                dataContext.moveDown(dataContext);
-                e.Handled = true;
-            }
-        }
     }
 }

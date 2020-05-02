@@ -7,20 +7,42 @@ using System.Windows.Media;
 using Communication;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
+using System.Windows.Input;
+
 namespace View.Variables
 {
+    public class TaskListDataTemplateSelector : DataTemplateSelector
+    {
+        public override DataTemplate
+            SelectTemplate(object item, DependencyObject container)
+        {
+            FrameworkElement element = container as FrameworkElement;
+
+            if (element != null && item != null && item is VariableController)
+            {
+                VariableController taskitem = item as VariableController;
+
+                //System.Console.Write("Iswhat: {0}\n", taskitem.isGroupHeader);
+                if (taskitem.IsGroupHeader == true)
+                    return
+                        element.FindResource("VariableStaticGroupHeaderTemplate") as DataTemplate;
+                else
+                    return
+                        element.FindResource("VariableStaticTemplate") as DataTemplate;
+            }
+
+            return null;
+        }
+    }
+
     /// <summary>
     /// Interaction logic for VariablesView.xaml
     /// </summary>
     public partial class VariablesView : Window
     {
         #region Disable Minimize Button
-        [DllImport("user32.dll")]
-        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-        [DllImport("user32.dll")]
-        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
         private const int GWL_STYLE = -16;
+
         private const int WS_MINIMIZE = -131073;
 
         public VariablesView()
@@ -34,9 +56,14 @@ namespace View.Variables
 
             };
         }
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll")]
+        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         #endregion
 
-        Controller.Variables.VariablesController _controller;
+        VariablesController _controller;
         public VariablesView(Controller.Variables.VariablesController controller)
             :this()
         {
@@ -45,6 +72,12 @@ namespace View.Variables
             controller.LoseFocus += loseFocus;
             InitializeComponent();
             SizeSavedWindow.addToSizeSavedWindows(this);
+        }
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+            this.Hide();
         }
 
         private void loseFocus(object sender, EventArgs e)
@@ -58,43 +91,7 @@ namespace View.Variables
             //Keyboard.ClearFocus();
         }
 
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
-        {
-            e.Cancel = true;
-            this.Hide();
-        }
-
         #region GetDataFromListBox(ListBox,Point)
-        private static object GetDataFromListBox(ListBox source, Point point)
-        {
-            UIElement element = source.InputHitTest(point) as UIElement;
-            if (element != null)
-            {
-                object data = DependencyProperty.UnsetValue;
-                while (data == DependencyProperty.UnsetValue)
-                {
-                    data = source.ItemContainerGenerator.ItemFromContainer(element);
-
-                    if (data == DependencyProperty.UnsetValue)
-                    {
-                        element = VisualTreeHelper.GetParent(element) as UIElement;
-                    }
-
-                    if (element == source)
-                    {
-                        return null;
-                    }
-                }
-
-                if (data != DependencyProperty.UnsetValue)
-                {
-                    return data;
-                }
-            }
-
-            return null;
-        }
-
         private static object GetDataFromGrid(Grid source, Point point)
         {
             UIElement element = source.InputHitTest(point) as UIElement;
@@ -139,7 +136,35 @@ namespace View.Variables
 
             return null;
         }
+        private static object GetDataFromListBox(ListBox source, Point point)
+        {
+            UIElement element = source.InputHitTest(point) as UIElement;
+            if (element != null)
+            {
+                object data = DependencyProperty.UnsetValue;
+                while (data == DependencyProperty.UnsetValue)
+                {
+                    data = source.ItemContainerGenerator.ItemFromContainer(element);
 
+                    if (data == DependencyProperty.UnsetValue)
+                    {
+                        element = VisualTreeHelper.GetParent(element) as UIElement;
+                    }
+
+                    if (element == source)
+                    {
+                        return null;
+                    }
+                }
+
+                if (data != DependencyProperty.UnsetValue)
+                {
+                    return data;
+                }
+            }
+
+            return null;
+        }
         private static object GetRegionFromGrid(Grid source, Point point)
         {
             UIElement element = source.InputHitTest(point) as UIElement;
@@ -189,99 +214,44 @@ namespace View.Variables
         }
         #endregion
 
-        //private bool dragging = false;
-        //Controller.Variables.VariableController draggedItem;
-
-        /*private void VariablesControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private static bool MoveVariableWithArrowsIfNecessary(VariableController controller, System.Windows.Input.KeyEventArgs e)
         {
-            ListBox parent = (ListBox)sender;
-            object data = GetDataFromListBox(parent, e.GetPosition(parent));
-            if (data != null && !((Controller.Variables.VariableController)data).VariableLocked)
+            if (Keyboard.Modifiers == ModifierKeys.Control)
             {
-                //DragDrop.DoDragDrop(parent, data, DragDropEffects.Move);
-                dragging = true;
-                draggedItem = (Controller.Variables.VariableController)data;
-                //System.Console.Write("Drag: {0}\n", draggedItem.VariableName);
-            }
-            base.OnPreviewMouseLeftButtonDown(e);
-        }*/
-
-        /*private void VariablesControl_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            dragging = false;
-            this.Cursor = Cursors.Arrow;
-            base.OnPreviewMouseLeftButtonUp(e);
-        }*/
-
-        /*private void VariablesControl_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            if (dragging && e.LeftButton == MouseButtonState.Released)
-            {
-                dragging = false;
-                this.Cursor = Cursors.Arrow;
-            }
-            if (dragging && e.LeftButton == MouseButtonState.Pressed)
-            {
-                this.Cursor = Cursors.Hand;
-                Grid parent = (Grid)sender;
-                object data = GetDataFromGrid(parent, e.GetPosition(parent));
-                if (data != null && !((Controller.Variables.VariableController)data).VariableLocked)
+                if (e.Key == Key.Up)
                 {
-                    Controller.Variables.VariableController droppedItem = (Controller.Variables.VariableController)data;
-                    //System.Console.Write("Drag: {0}\n", droppedItem.VariableName);
-                    if (draggedItem != droppedItem)
-                    {
-                        _controller.DoDragDrop(draggedItem, droppedItem);
-                    }
+                    controller.moveUp(null);
+                    e.Handled = true;
+                    return true;
                 }
-                else
+                else if (e.Key == Key.Down)
                 {
-                    data = GetRegionFromGrid(parent, e.GetPosition(parent));
-                    if (data != null)
-                    {
-
-                        if (data.GetType().Equals(typeof(CustomElements.VariableType)))
-                        {
-                            CustomElements.VariableType newType = (CustomElements.VariableType)data;
-                            //System.Console.Write("Drag 0\n");
-                            if (newType == CustomElements.VariableType.VariableTypeIterator && _controller.IsIteratorsLocked())
-                            { }
-                            else
-                            {
-                                _controller.DoDragDropRegion(draggedItem, newType);
-                            }
-                        }
-                    }
+                    controller.moveDown(null);
+                    e.Handled = true;
+                    return true;
                 }
             }
-            base.OnPreviewMouseMove(e);
-        }*/
-    }
 
-
-
-
-    public class TaskListDataTemplateSelector : DataTemplateSelector
-    {
-        public override DataTemplate
-            SelectTemplate(object item, DependencyObject container)
-        {
-            FrameworkElement element = container as FrameworkElement;
-
-            if (element != null && item != null && item is VariableController)
-            {
-                VariableController taskitem = item as VariableController;
-
-                //System.Console.Write("Iswhat: {0}\n", taskitem.isGroupHeader);
-                if (taskitem.IsGroupHeader == true)
-                    return
-                        element.FindResource("VariableStaticGroupHeaderTemplate") as DataTemplate;
-                else
-                    return
-                        element.FindResource("VariableStaticTemplate") as DataTemplate;
-            }
-
-            return null;
+            return false;
         }
+
+        private void VariablesDynamicsControl_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (VariablesDynamicsControl.SelectedIndex >= 0)
+            {
+                VariableController selectedController = (VariableController)VariablesDynamicsControl.SelectedItem;
+                MoveVariableWithArrowsIfNecessary(selectedController, e);
+            }
+        }
+
+        private void VariablesIteratorsControl_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (VariablesIteratorsControl.SelectedIndex >= 0)
+            {
+                VariableController selectedController = (VariableController)VariablesIteratorsControl.SelectedItem;
+                MoveVariableWithArrowsIfNecessary(selectedController, e);
+            }
+        }
+
     }
 }
