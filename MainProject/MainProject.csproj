@@ -31,8 +31,8 @@
     <TargetCulture>en-US</TargetCulture>
     <ProductName>Experiment Control</ProductName>
     <PublisherName>Pi 5 - University of Stuttgart</PublisherName>
-    <ApplicationRevision>28</ApplicationRevision>
-    <ApplicationVersion>1.3.0.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.4.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -262,16 +262,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <PublishFile Include="MySql.Data">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
     <PublishFile Include="NationalInstruments.Common">
       <Visible>False</Visible>
       <Group>
