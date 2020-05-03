@@ -1312,10 +1312,12 @@ namespace Controller.MainWindow
         {
             About about = new About();
             about.Title = "Experiment Control";
-            about.Hyperlink = new Uri("https://www.pi5.physik.uni-stuttgart.de/mediawiki/index.php/RQO:ADWin_control");
+            about.Hyperlink = new Uri("https://github.com/coldphysics/experiment-control/releases");
             about.HyperlinkText = "Click here to check recent updates of the software!";
             about.Publisher = "Pi5 - University of Stuttgart";
             about.AdditionalNotes = "Development of this code was started by Stephan Jennewein to control the NI hardware of the SuperAtoms experiment, supervised by Michael Schlagmüller. Since then main contributors have been Udo Hermann, Majd Abdo, Ghareeb Falazi , Ebaa Alnazer (ghareeb.falazi@hotmail.com, ebaa.alnazer@hotmail.com).";
+            about.Copyright = "© 2015-2020 PI5 - University of Stuttgart\n";
+            about.Copyright += "Third party copyrights: ©1994-2018 Xceed Software Inc";
 
             // setting several properties here
             about.ApplicationLogo = new BitmapImage(new System.Uri("pack://application:,,,/View;component/Resources/cr.png"));
