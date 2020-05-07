@@ -80,7 +80,10 @@ Please consider the following prerequisits before installing CPECS.
 Please use the [Wiki](https://github.com/coldphysics/software-control/wiki).
 
 #### How to obtain an executable installer for CPECS?
-__TODO__
+If you are a member of the [coldphysics organization](https://github.com/coldphysics), you can obtain released installers from [this private repository](https://github.com/coldphysics/releases).
+Details about all releases can be found [here](https://github.com/coldphysics/experiment-control/releases).
+
+Alternatively, you will need to build the code and create an installer yourself (see the [developer information](#information-for-developers) below).
 
 #### How to configure the database?
 __TODO__
@@ -120,7 +123,7 @@ If not mentioned otherwise, the following howtos assume the usage of Microsoft V
 #### How to obtain the additional DLLs required for building the project?
 A set of DLLs have strict usage licenses that prevents providing access to them in a public repository.
 Nonetheless, they are required for the successful building and publishing of CPECS. To obtain these DLLs:
-  - If you are a member of the [PI5](https://www.pi5.uni-stuttgart.de/), you can obtain them from [this SVN folder]() __TODO__
+  - If you are a member of the [coldphysics organization](https://github.com/coldphysics), you can obtain them from [this private repository](https://github.com/coldphysics/private_dlls)
   - Otherwise, please obtain them from the original providers:
     - [ADwin software package](https://www.adwin.de/us/download/cdrom.html)
     - [NI-DAQmx 19.6](https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html). Further details: [here](https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019Ma3SAE&l=en-US), and [here](https://www.ni.com/en-us/support/documentation/supplemental/13/national-instruments--net-support.html)
