@@ -46,20 +46,8 @@ namespace Errors
             };
             SizeSavedWindow.addToSizeSavedWindows(this);
             ErrorCollector errorClass = ErrorCollector.Instance;
-            //this.errorClass = errorClass;
             errorClass.SetParent(this);
             this.DataContext = errorClass;
-
-            //System.Windows.Shell.TaskbarItemInfo taskInfo = new System.Windows.Shell.TaskbarItemInfo();
-            //taskInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
-            //this.TaskbarItemInfo = taskInfo;
-
-            //System.Windows.Shell.TaskbarItemProgressState progState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
-//TaskBarProgressSate = 
-            /*Binding errorBinding = new Binding("sortedList");
-            errorBinding.Source = errorClass;
-            errorBinding.Mode = BindingMode.OneWay;
-            ErrorListBox.SetBinding(ItemsControl.ItemsSourceProperty, errorBinding);*/
         }
 
         public void blink()
@@ -82,8 +70,6 @@ namespace Errors
                 Console.Beep(2000, 200);
             }).Start();
         }
-
-
 
         public object TaskBarLock = new object();
         public void stopBlink()

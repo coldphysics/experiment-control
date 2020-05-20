@@ -47,6 +47,7 @@ Please consider the following prerequisits before installing CPECS.
   1. Install [IronPython](https://github.com/IronLanguages/ironpython2/releases/download/ipy-2.7.9/IronPython-2.7.9.msi)
   2. __IT IS NOT REQUIRED__ to install MySql Connector locally, the required libraries are included in the program.
   3. If the message "Your security settings do not allow this application to be installed on your computer" or a similar message shows when trying to install the application, you need to [follow this fix](https://superuser.com/a/1252757). The reason is that atm no officail software signing certifcate is being used to prove the authenticity of the application.
+  4. Ports `7200` and `7205` must be available (to receive errors over the network, e.g., from python scripts)
 
 #### Additional prerequisits for AdWin users
   1. Download and install the [ADwin software package](https://www.adwin.de/us/download/cdrom.html)
