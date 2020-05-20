@@ -37,49 +37,45 @@ namespace Errors.Error
     /// </summary>
     public sealed class ErrorCollector : INotifyPropertyChanged
     {
-        // ******************** variables ********************
-
-        public int GlobalCounter = 0;
-        private bool _blinkstate = false;
-        public Errors.ErrorWindow _parent;
-        private bool showEmptyCategories = false;
+        private Errors.ErrorWindow _parent;
         /// <summary>
-        /// a list containing all errors as ErrorItem
+        /// a list containing all errors as ErrorItems
         /// </summary>
-        public List<ErrorItem> Errors = new List<ErrorItem>();
-        public Dictionary<string, string> Status = new Dictionary<string, string>();
+        private List<ErrorItem> errors = new List<ErrorItem>();
+        private bool _blinkstate = false;
+        private bool showEmptyCategories = false;
+        private bool _showBasic = true;
+        private bool _showPulseblaster = true;
+        private bool _showMainHardware = true;
+        private bool _showVariables = true;
+        private bool _showPython = true;
 
         // ******************** events ********************
-        #region INotifyPropertyChanged Members
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion
-
 
         // ******************** lock stuff ********************
         /// <summary>
         /// lock variable
         /// </summary>
-        private static readonly object SyncRoot = new Object();
+        private static readonly object _singletonLockObj = new object();
 
         private readonly object _lockObj = new object();
 
         // ******************** properties ********************
-        //Bool values which indicate whether 
+        public Dictionary<string, string> Status { get; set; } = new Dictionary<string, string>();
+
+        public int GlobalCounter { get; set; } = 0;
+
         public bool ShowBasic
         {
             get { return _showBasic; }
             set
             {
                 _showBasic = value;
-                if (null != this.PropertyChanged)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-                }
+                OnUpdateErrorList();
             }
         }
-        private bool _showBasic = true;
 
         public bool ShowPulseblaster
         {
@@ -87,13 +83,9 @@ namespace Errors.Error
             set
             {
                 _showPulseblaster = value;
-                if (null != this.PropertyChanged)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-                }
+                OnUpdateErrorList();
             }
         }
-        private bool _showPulseblaster = true;
 
         public bool ShowMainHardware
         {
@@ -101,13 +93,9 @@ namespace Errors.Error
             set
             {
                 _showMainHardware = value;
-                if (null != this.PropertyChanged)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-                }
+                OnUpdateErrorList();
             }
         }
-        private bool _showMainHardware = true;
 
         public bool ShowVariables
         {
@@ -115,13 +103,9 @@ namespace Errors.Error
             set
             {
                 _showVariables = value;
-                if (null != this.PropertyChanged)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-                }
+                OnUpdateErrorList();
             }
         }
-        private bool _showVariables = true;
 
         public bool ShowPython
         {
@@ -129,13 +113,9 @@ namespace Errors.Error
             set
             {
                 _showPython = value;
-                if (null != this.PropertyChanged)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-                }
+                OnUpdateErrorList();
             }
         }
-        private bool _showPython = true;
 
         public List<ErrorItem> SortedList
         {
@@ -147,8 +127,9 @@ namespace Errors.Error
         /// the instance return value for creating a new ErrorClass instance
         /// </summary>
         private static volatile ErrorCollector _instance;
+
         /// <summary>
-        /// instance Constructor, for this being a Singleton Class
+        /// instance Constructor, for this being a Singleton Class (thread-safe)
         /// </summary>
         public static ErrorCollector Instance
         {
@@ -156,7 +137,7 @@ namespace Errors.Error
             {
                 if (_instance == null) // first check
                 {
-                    lock (SyncRoot)
+                    lock (_singletonLockObj)
                     {
                         if (_instance == null) // second check for thread safety
                         {
@@ -168,16 +149,14 @@ namespace Errors.Error
             }
         }
 
-        /// <summary>
-        /// Constructor for ErrorClass
-        /// </summary>
+
         private ErrorCollector()
         {
-            Thread waitForNetworkErrors = new Thread(awaitNetworkErrors);
+            Thread waitForNetworkErrors = new Thread(AwaitNetworkErrors);
             waitForNetworkErrors.IsBackground = true;
             waitForNetworkErrors.Start();
 
-            Thread waitForNetworkStatusReports = new Thread(awaitNetworkStatusReports);
+            Thread waitForNetworkStatusReports = new Thread(AwaitNetworkStatusReports);
             waitForNetworkStatusReports.IsBackground = true;
             waitForNetworkStatusReports.Start();
         }
@@ -187,7 +166,7 @@ namespace Errors.Error
             _parent = parentWindow;
         }
 
-        public void blink()
+        private void Blink()
         {
             if (_blinkstate == false)
             {
@@ -196,7 +175,7 @@ namespace Errors.Error
             }
         }
 
-        public void stopBlink()
+        private void StopBlink()
         {
             if (_blinkstate == true)
             {
@@ -205,35 +184,33 @@ namespace Errors.Error
             }
         }
 
-        private void createErrorListForSingleCategory(List<ErrorItem> newErrors, ref List<string> tempList, ref List<ErrorItem> _sortedList, ErrorWindow errorWindow, string errorWindowName, bool showThisCategory)
+        private void CreateErrorListForSingleCategory(List<ErrorItem> newErrors, List<ErrorItem> _sortedList, ErrorWindow errorWindow, string errorWindowName, bool showThisCategory)
         {
-            bool occurednewErrors = false;
+            bool isHeaderAdded = false;
             ErrorItem header;
+
             for (int i = 0; i < newErrors.Count(); i++)
             {
                 if (newErrors[i].ErrorWindow == errorWindow)
                 {
-                    if (!occurednewErrors)
+                    if (!isHeaderAdded)
                     {
-                        tempList.Add("--- " + errorWindowName + " ---");
                         header = new ErrorItem();
                         header.DataTime = "";
                         header.ErrorMessage = "--- " + errorWindowName + " ---";
                         header.isHeader = true;
                         header.ErrorWindow = errorWindow;
                         _sortedList.Add(header);
-                        occurednewErrors = true;
+                        isHeaderAdded = true;
                     }
                     if (showThisCategory)
                     {
-                        tempList.Add(newErrors[i].DataTime + "\t" + newErrors[i].ErrorMessage);
                         _sortedList.Add(newErrors[i]);
                     }
                 }
             }
-            if (!occurednewErrors && showEmptyCategories)
+            if (!isHeaderAdded && showEmptyCategories)
             {
-                tempList.Add(errorWindowName + " OK");
                 header = new ErrorItem();
                 header.DataTime = "";
                 header.ErrorMessage = errorWindowName + " OK";
@@ -244,56 +221,52 @@ namespace Errors.Error
         }
 
         /// <summary>
-        /// a method returning a string error list
+        /// a method returning an error list
         /// </summary>
-        /// <returns>a string list containing all errors</returns>
+        /// <returns>an ErrorItem list containing all errors</returns>
         private List<ErrorItem> CreateErrorList()
         {
-            List<ErrorItem> newErrors;
+            List<ErrorItem> errorsCopy;
+            //Lock, deepClone of "newErrors"
             lock (_lockObj)
             {
-                newErrors = new List<ErrorItem>(Errors);
+                errorsCopy = new List<ErrorItem>(errors);
             }
-            //Lock, deepClone of "newErrors"
-            var tempList = new List<string>();
-            var _sortedList = new List<ErrorItem>();
-            _sortedList.Clear();
 
-            if (newErrors != null)
+            List<ErrorItem> _sortedList = new List<ErrorItem>();
+
+            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Basic, "Basic", ShowBasic);
+            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.MainHardware, "Main Hardware", ShowMainHardware);
+            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Pulseblaster, "Pulseblaster", ShowPulseblaster);
+            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Variables, "Variables", ShowVariables);
+            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Python, "Python / External", ShowPython);
+
+            if (_sortedList.Count != 0)
             {
-                createErrorListForSingleCategory(newErrors, ref tempList, ref _sortedList, ErrorWindow.Basic, "Basic", ShowBasic);
-                createErrorListForSingleCategory(newErrors, ref tempList, ref _sortedList, ErrorWindow.MainHardware, "Main Hardware", ShowMainHardware);
-                createErrorListForSingleCategory(newErrors, ref tempList, ref _sortedList, ErrorWindow.Pulseblaster, "Pulseblaster", ShowPulseblaster);
-                createErrorListForSingleCategory(newErrors, ref tempList, ref _sortedList, ErrorWindow.Variables, "Variables", ShowVariables);
-                createErrorListForSingleCategory(newErrors, ref tempList, ref _sortedList, ErrorWindow.Python, "Python / External", ShowPython);
-                if (_sortedList.Count != 0)
-                {
-                    blink();
-                }
-                else
-                {
-                    stopBlink();
-                }
+                Blink();
             }
-            return _sortedList;
+            else
+            {
+                StopBlink();
+            }
 
+            return _sortedList;
         }
 
-
+        private void OnUpdateErrorList()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SortedList"));
+        }
 
         // ******************** delete Errors ********************
         public void RemoveSingleError(ErrorItem error)
         {
             lock (_lockObj)
             {
-                if (Errors.Contains(error))
+                if (errors.Contains(error))
                 {
-                    Errors.Remove(error);
+                    errors.Remove(error);
                 }
-            }
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
             }
         }
 
@@ -306,19 +279,11 @@ namespace Errors.Error
         {
             lock (_lockObj)
             {
-                for (int i = 0; i < Errors.Count; i++)
-                {
-                    if (Errors[i].ErrorWindow == errorWindow && !Errors[i].StayOnDelete && Errors[i].ErrorType == errorType && !(Errors[i] is StickyErrorItem))
-                    {
-                        Errors.Remove(Errors[i]);
-                        i = -1;
-                    }
-                }
+                errors.RemoveAll(error => {
+                    return error.ErrorWindow == errorWindow && !error.StayOnDelete && error.ErrorType == errorType && !(error is StickyErrorItem);
+                });
             }
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-            }
+            OnUpdateErrorList();
         }
 
         /// <summary>
@@ -329,19 +294,11 @@ namespace Errors.Error
         {
             lock (_lockObj)
             {
-                for (int i = 0; i < Errors.Count; i++)
-                {
-                    if (Errors[i].ErrorWindow == errorWindow && !Errors[i].StayOnDelete && !(Errors[i] is StickyErrorItem))
-                    {
-                        Errors.Remove(Errors[i]);
-                        i = -1;
-                    }
-                }
+                errors.RemoveAll(error => {
+                    return error.ErrorWindow == errorWindow && !error.StayOnDelete && !(error is StickyErrorItem);
+                });
             }
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-            }
+            OnUpdateErrorList();
         }
 
         /// <summary>
@@ -352,85 +309,76 @@ namespace Errors.Error
         {
             lock (_lockObj)
             {
-                for (int i = 0; i < Errors.Count; i++)
-                {
-                    if (Errors[i].ErrorWindow == errorWindow && !(Errors[i] is StickyErrorItem))
-                    {
-                        Errors.Remove(Errors[i]);
-                        i = -1;
-                    }
-                }
+                errors.RemoveAll(error => {
+                    return error.ErrorWindow == errorWindow && !(error is StickyErrorItem);
+                });
+
             }
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-            }
+            OnUpdateErrorList();
         }
 
         // ******************** add Errors ********************
+
+        private void AwaitNetworkMessages(int port, Action<string> action)
+        {
+            TcpListener serverSocket = new TcpListener(IPAddress.Any, port);
+            TcpClient clientSocket;
+            NetworkStream networkStream;
+            serverSocket.Start();
+
+            while (true)
+            {
+                using (clientSocket = serverSocket.AcceptTcpClient())
+                {
+                    using (networkStream = clientSocket.GetStream())
+                    {
+                        byte[] bytesFrom = new byte[10025];
+                        Array.Resize(ref bytesFrom, clientSocket.ReceiveBufferSize);
+                        networkStream.Read(bytesFrom, 0, clientSocket.ReceiveBufferSize);
+                        string dataFromClient = System.Text.Encoding.ASCII.GetString(bytesFrom);
+                        dataFromClient = dataFromClient.Substring(0, dataFromClient.IndexOf('\0'));
+                        action(dataFromClient);
+                    }
+
+                }
+
+            }
+        }
 
         /// <summary>
         /// waits for errors being sent via the network (port 7200)
         /// You have to send "ERROR" + ErrorMessage if the error shall be displayed. If the message does not start with "ERROR", it will be ignored.
         /// You should also terminate the ErrorMessage with "\0" because for some reason the network communication does not transmit or receive string terminating characters.
         /// </summary>
-        void awaitNetworkErrors()
+        private void AwaitNetworkErrors()
         {
-            TcpListener serverSocket = new TcpListener(IPAddress.Any ,7200);
-            TcpClient clientSocket = default(TcpClient);
-            serverSocket.Start();
-            while (true)
+            AwaitNetworkMessages(7200, (dataFromClient) =>
             {
-                clientSocket = serverSocket.AcceptTcpClient();
-                NetworkStream networkStream = clientSocket.GetStream();
-                byte[] bytesFrom = new byte[10025];
-                Array.Resize(ref bytesFrom, clientSocket.ReceiveBufferSize);
-                networkStream.Read(bytesFrom, 0, clientSocket.ReceiveBufferSize);
-                string dataFromClient = System.Text.Encoding.ASCII.GetString(bytesFrom);
-                dataFromClient = dataFromClient.Substring(0, dataFromClient.IndexOf('\0'));
-                //System.Console.Write("Message from Client: {0}\n", dataFromClient);
-                clientSocket.Close();
                 if (dataFromClient.Length > 5)
                 {
                     if (dataFromClient.Substring(0, 5).Equals("ERROR"))
                     {
                         ErrorCollector errorCollector = ErrorCollector.Instance;
-                        //System.Console.Write("Calling AddError!\n");
                         errorCollector.AddError(dataFromClient.Substring(5, dataFromClient.Length - 5), ErrorWindow.Python, true, ErrorTypes.ExternalError);
                     }
-
                 }
-            }
+            });
+
         }
 
-        //RECO start network listening safely
-        void awaitNetworkStatusReports()
+        private void AwaitNetworkStatusReports()
         {
-            TcpListener serverSocket = new TcpListener(IPAddress.Any, 7205);
-            TcpClient clientSocket = default(TcpClient);
-            serverSocket.Start();
-            while (true)
+            AwaitNetworkMessages(7205, (dataFromClient) =>
             {
-                clientSocket = serverSocket.AcceptTcpClient();
-                NetworkStream networkStream = clientSocket.GetStream();
-                byte[] bytesFrom = new byte[10025];
-                Array.Resize(ref bytesFrom, clientSocket.ReceiveBufferSize);
-                networkStream.Read(bytesFrom, 0, clientSocket.ReceiveBufferSize);
-                string dataFromClient = System.Text.Encoding.ASCII.GetString(bytesFrom);
-                dataFromClient = dataFromClient.Substring(0, dataFromClient.IndexOf('\0'));
-                //System.Console.Write("Message from Client: {0}\n", dataFromClient);
-                clientSocket.Close();
                 if (dataFromClient.Length > 6)
                 {
                     if (dataFromClient.Substring(0, 6).Equals("STATUS"))
                     {
-                        ErrorCollector errorCollector = ErrorCollector.Instance;
-                        //System.Console.Write("Calling AddError!\n");
-                        errorCollector.SetStatus(dataFromClient.Substring(6, dataFromClient.Length - 6), "Python");
+                        SetStatus(dataFromClient.Substring(6, dataFromClient.Length - 6), "Python");
                     }
-
                 }
-            }
+            });
+
         }
 
         /// <summary>
@@ -453,12 +401,12 @@ namespace Errors.Error
         private ErrorItem AddError(string errorMsg, ErrorWindow errorCard, bool stayOnDelete, ErrorTypes errorType, bool isSticky)
         {
             ErrorItem error = null;
-            //System.Console.Write("ADD ERROR!\n");
+
             if (errorMsg != null)
             {
-                ErrorItem alreadyExistingError = Errors.Where(param => param.ErrorMessage.Equals(errorMsg)).FirstOrDefault();
+                ErrorItem alreadyExistingError = errors.Where(param => param.ErrorMessage.Equals(errorMsg)).FirstOrDefault();
 
-                if(alreadyExistingError != null)
+                if (alreadyExistingError != null)
                     RemoveSingleError(alreadyExistingError);//This guarantees a new datetime information for the error
 
                 if (!isSticky)
@@ -483,8 +431,6 @@ namespace Errors.Error
                         ErrorType = errorType
                     };
                 }
-                //_parent.blink();
-
 
                 lock (_lockObj)
                 {
@@ -492,29 +438,22 @@ namespace Errors.Error
                     {
                         error.ErrorMessage += " at " + Status["Python"];
                     }
-                    Errors.Add(error);
+                    errors.Add(error);
                 }
-
             }
 
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-            }
+            OnUpdateErrorList();
 
             return error;
         }
 
-
-
         public void SetStatus(string statusMessage, string Group)
         {
-            //System.Console.Write("ADD ERROR!\n");
             if (statusMessage != null)
             {
                 string outString = "GC " + GlobalCounter + " " + DateTime.Now.ToString("ddd, dd.MM., HH:mm:ss") + " - " +
                                    statusMessage;
-                //_parent.blink();
+
                 lock (_lockObj)
                 {
                     if (Status.ContainsKey(Group))
@@ -526,13 +465,8 @@ namespace Errors.Error
                         Status.Add(Group, outString);
                     }
                 }
-
             }
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("Status"));
-            }
-            //this._parent.blink();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Status"));
         }
 
         /// <summary>
@@ -582,8 +516,6 @@ namespace Errors.Error
             //this._parent.blink();
         }*/
 
-
-
         /// <summary>
         /// Deletes all Errors of the specified Window and Type, even the StayOnDeleteErrors
         /// </summary>
@@ -607,10 +539,6 @@ namespace Errors.Error
                 PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
             }
         }*/
-
-
-
-
 
         /// <summary>
         /// Sets an error (and deletes all other errors of this window and type)
@@ -656,5 +584,4 @@ namespace Errors.Error
             //this._parent.blink();
         }*/
     }
-
 }

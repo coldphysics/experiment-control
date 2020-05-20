@@ -6,7 +6,7 @@ namespace Controller.Control
 {
     public class WindowList : IWindowList
     {
-        private readonly Dictionary<string, Window> _existingWindows = new Dictionary<string,Window>();
+        private readonly Dictionary<string, Window> _existingWindows = new Dictionary<string, Window>();
 
         public WindowList(Dictionary<string, Window> newWindowList)
         {
@@ -43,6 +43,8 @@ namespace Controller.Control
 
         public void ShowAll()
         {
+            CloseAll();
+
             foreach (var window in _existingWindows)
             {
                 window.Value.Show();
@@ -51,8 +53,9 @@ namespace Controller.Control
 
         public void ShowByName(string name)
         {
-            if (_existingWindows.ContainsKey(name) && !_existingWindows[name].IsVisible)
+            if (_existingWindows.ContainsKey(name))
             {
+                CloseByName(name);
                 _existingWindows[name].Show();
             }
         }

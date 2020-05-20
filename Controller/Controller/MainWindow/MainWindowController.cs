@@ -1527,10 +1527,7 @@ namespace Controller.MainWindow
                 _windowList.ShowByName("Errors");
             }
 
-            if (null != WindowsListChanged)
-            {
-                WindowsListChanged(null, null);
-            }
+            WindowsListChanged?.Invoke(null, null);
         }
 
         /// <summary>

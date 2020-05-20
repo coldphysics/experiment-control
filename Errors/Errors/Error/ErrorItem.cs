@@ -1,7 +1,7 @@
 ﻿namespace Errors.Error
 {
     /// <summary>
-    /// an error Item containing all informations about one error message
+    /// An error Item containing all information about one error message
     /// </summary>
     public class ErrorItem
     {
@@ -15,8 +15,7 @@
             set;
         }
 
-        public bool isHeader { get { return _isHeader; } set { _isHeader = value; } }
-        private bool _isHeader = false;
+        public bool isHeader { get; set; } = false;
 
         /// <summary>
         /// String containing the Message text of the Error
