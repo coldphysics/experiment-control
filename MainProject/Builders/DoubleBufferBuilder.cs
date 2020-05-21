@@ -34,6 +34,8 @@ namespace MainProject.Builders
                     return new SuperAtomsHwGroup();
                 case HW_TYPES.NI_PCI:
                     return new DyHwGroup();
+                case HW_TYPES.NO_OUTPUT:
+                    return new NoOutputHardwareGroup();
             }
 
             return null;

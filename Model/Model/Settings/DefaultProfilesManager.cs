@@ -29,7 +29,11 @@ namespace Model.Settings
         /// <summary>
         /// National Instruments chassis
         /// </summary>
-        NI_CHASSIS
+        NI_CHASSIS,
+        /// <summary>
+        /// Dummy hardware that only simulates the cycle duration
+        /// </summary>
+        NO_OUTPUT
     }
 
     /// <summary>
