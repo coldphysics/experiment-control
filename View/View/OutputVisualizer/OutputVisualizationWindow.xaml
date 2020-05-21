@@ -4,28 +4,25 @@
          xmlns:ce="clr-namespace:CustomElements.CheckableTreeView;assembly=CustomElements"
              xmlns:vw="clr-namespace:View.OutputVisualizer"     
          >
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition  Width="auto" >
-            </ColumnDefinition>
-            <ColumnDefinition Width="*">
-
-            </ColumnDefinition>
+            <ColumnDefinition  Width="auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" ></RowDefinition>
-                <RowDefinition Height="10"></RowDefinition>
                 <RowDefinition Height="auto" ></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Button Content="Refresh" Grid.Row="0" Command="{Binding UserControlCollectionCommand}"/>
-            <ce:CheckableTreeView DataContext="{Binding VisualizationTreeViewController}" Grid.Row="3" />
+            <Button Content="Refresh" Margin="5,10,5,0" Grid.Row="0" Command="{Binding UserControlCollectionCommand}"/>
+            <CheckBox Grid.Row="1" Margin="5,10,5,0" Content="Automatically refresh when new output is generated." IsChecked="{Binding AutomaticRefresh}"/>
+            <ce:CheckableTreeView Grid.Row="2" Margin="0,10,0,0" DataContext="{Binding VisualizationTreeViewController}"  />
 
         </Grid>
-        
+
         <GroupBox Grid.Column="1">
             <ScrollViewer >
                 <ItemsControl   ItemsSource="{Binding OutputVisualizerCollectionUC}" Background="{x:Null}" >
@@ -41,7 +38,7 @@
 
             </ScrollViewer>
         </GroupBox>
-       
+
     </Grid>
 
 

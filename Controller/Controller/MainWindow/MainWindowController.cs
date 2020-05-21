@@ -79,6 +79,7 @@ namespace Controller.MainWindow
             // GetRootController().CopyToBuffer();
             MeasurementRoutineController = new MeasurementRoutineManagerController(this, _model);
             IterationManagerController = new IterationManagerController(this);
+            _buffer.FinishedModelGeneration += VisualizationWindowManager.GetInstance(_variables.GetRootController()).HandleNewGeneratedOutputEvent;
             CurrentModeController = MeasurementRoutineController;
             _incrementIteratorsIsEnabled = true;
 
@@ -173,21 +174,6 @@ namespace Controller.MainWindow
                     windows.Add(sWindow);
                 }
                 return windows;
-            }
-        }
-
-
-
-        //look
-        public OutputVisualizationWindowController OutputVisulizationWindowController
-        {
-            get
-            {
-                RootController root = GetRootController();
-                CTVViewModel treeView = ModelBasedCTVBuilder.BuildCheckableTree(root);
-                OutputVisualizationWindowController outputVisualizationController = new OutputVisualizationWindowController(root, treeView);
-
-                return outputVisualizationController;
             }
         }
 

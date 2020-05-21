@@ -1,4 +1,5 @@
-﻿using Controller.Control.StepBatchAddition;
+﻿using Buffer.Basic;
+using Controller.Control.StepBatchAddition;
 using Controller.Root;
 using CustomElements.CheckableTreeView;
 using System;
@@ -33,6 +34,14 @@ namespace Controller.OutputVisualizer
                 singleton = new VisualizationWindowManager(root);
 
             return singleton;
+        }
+
+        public void HandleNewGeneratedOutputEvent(object sender, FinishedModelGenerationEventArgs args)
+        {
+            if (args.IsSuccessful)
+            {
+                visualizationWindow.Dispatcher.Invoke(() => outputVisualizationController.HandleNewGeneratedOutputEvent());
+            }
         }
 
         public void OpenWindow()
