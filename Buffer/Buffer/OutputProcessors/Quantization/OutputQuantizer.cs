@@ -64,11 +64,13 @@ namespace Buffer.OutputProcessors.Quantization
                             ((QuantizedAnalogCardOutput)currentCard).Output[channel].Add(ConvertVoltageToBits(analogCard.Output[channel, step]));
                         }
                     }
+
+                    ((QuantizedAnalogCardOutput)currentCard).TotalDurationMillis = card.Value.TotalDurationMillis;
                 }
                 else
                 {
                     currentCard = new QuantizedDigitalCardOutput();
-
+                    ((QuantizedDigitalCardOutput)currentCard).TotalDurationMillis = card.Value.TotalDurationMillis;
                     ((QuantizedDigitalCardOutput)currentCard).Output = new List<uint>(((DigitalCardOutput)card.Value).Output);
                 }
 

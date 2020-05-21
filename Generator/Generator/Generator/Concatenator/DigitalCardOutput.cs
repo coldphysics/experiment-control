@@ -1,4 +1,5 @@
 ﻿using Communication.Interfaces.Generator;
+using Model.Settings;
 
 namespace Generator.Generator.Concatenator
 {
@@ -39,6 +40,15 @@ namespace Generator.Generator.Concatenator
         /// The output array of this card.
         /// </value>
         public uint[] Output { get { return _output; } }
+
+        public double TotalDurationMillis
+        {
+            get
+            {
+                int numberOfSamples = Output.Length;
+                return numberOfSamples * TimeSettingsInfo.GetInstance().SmallestTimeStep;
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DigitalCardOutput"/> class.

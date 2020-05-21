@@ -6,6 +6,13 @@
     public interface ICardOutput
     {
         /// <summary>
+        /// Returns the total duration of the output of this card measured in milliseconds
+        /// </summary>
+        double TotalDurationMillis
+        {
+            get;
+        }
+        /// <summary>
         /// Replicates the output.
         /// </summary>
         /// <param name="timesToReplicate">The times to replicate.</param>

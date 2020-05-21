@@ -1,5 +1,6 @@
 ﻿using Communication.Interfaces.Generator;
 using Model.Data.Cards;
+using Model.Settings;
 using System;
 using System.Linq;
 
@@ -24,7 +25,7 @@ namespace Generator.Generator.Concatenator
         /// </summary>
         private CardBasicModel _model;
         /// <summary>
-        /// The total duration of the output of this card measured by the number of time-steps.
+        /// The total duration of the output of this card measured by the number of time-steps (does not consider replication).
         /// </summary>
         private uint _iDuration;
 
@@ -43,6 +44,15 @@ namespace Generator.Generator.Concatenator
         /// The sample rate.
         /// </value>
         public double SampleRate { get; private set; }
+
+        public double TotalDurationMillis
+        {
+            get
+            {
+                int numberOfSamples = Output.GetLength(1);
+                return numberOfSamples * TimeSettingsInfo.GetInstance().SmallestTimeStep;
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AnalogCardOutput"/> class.

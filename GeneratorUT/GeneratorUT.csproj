@@ -70,6 +70,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModelOutputUT.cs" />
     <Compile Include="ParentUT.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -81,6 +82,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Resources\0.0ms.xml.gz">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\0.2ms.xml.gz">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\disabled-first-sequence.xml.gz">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -98,6 +105,10 @@
     <ProjectReference Include="..\AbstractController\AbstractController\AbstractController.csproj">
       <Project>{729D4737-0773-440F-B79E-5CE13C39E8A8}</Project>
       <Name>AbstractController</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Buffer\Buffer\Buffer.csproj">
+      <Project>{A4E6D34D-9407-40B7-A5E1-15C040584399}</Project>
+      <Name>Buffer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Communication\Communication\Communication.csproj">
       <Project>{D7B1494D-A547-420F-8E79-A8746552686C}</Project>

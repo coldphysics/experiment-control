@@ -42,7 +42,6 @@ namespace MainProject.Builders
         {
             //List<string> cardNames = new List<string>(cardTypes.Keys);
 
-
             //This is the generator, which will be used in the Buffer to generate the output
             GeneratorRecipe generatorRecipe = new GeneratorRecipe(new SequenceGroupGeneratorRecipe());
 

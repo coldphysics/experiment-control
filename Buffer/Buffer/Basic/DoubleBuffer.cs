@@ -258,10 +258,7 @@ namespace Buffer.Basic
 
                     foreach (OutputProcessor processor in processors)
                     {
-
                         processor.Process(rawOutput);
-                       
-
                     }
 
                     double cycleDuration = Duration;
