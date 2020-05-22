@@ -19,7 +19,7 @@
         <TextBlock Grid.Column="0" Width="50" Text="{Binding NameOfCardAndChannel}" Padding="0,10" TextWrapping="Wrap" FontWeight="Bold"  />
 
         <Button Grid.Column="0" Height="30" Width="35" IsEnabled="{Binding ButtonVisibility}" Command="{Binding AlignTriggeredCommand}">Align</Button>
-        <lvc:CartesianChart VisualElements="{Binding VisualElments}" DisableAnimations="True" Grid.Column="1" Grid.Row="0" Hoverable="True" Zoom="X" ChartLegend="{x:Null}">
+        <lvc:CartesianChart  VisualElements="{Binding VisualElments}" DisableAnimations="True" Grid.Column="1" Grid.Row="0" Hoverable="True" Zoom="X">
             <lvc:CartesianChart.Resources>
                 <Style TargetType="lvc:DefaultTooltip">
                     <Setter Property="ShowTitle" Value="False"></Setter>
@@ -27,7 +27,7 @@
                 </Style>
             </lvc:CartesianChart.Resources>
             <lvc:CartesianChart.AxisX >
-                <lvc:Axis Title="Time (millisecond)" Sections="{Binding SectionCollection}"   RangeChangedCommand="{Binding RangeChangedCommand}"  MinValue="{Binding MinValue,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxValue="{Binding MaxValue,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="Black"/>
+                <lvc:Axis Title="Time (millisecond)" Sections="{Binding SectionCollection}" RangeChangedCommand="{Binding RangeChangedCommand}"  MinValue="{Binding MinValue,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxValue="{Binding MaxValue,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="Black"/>
             </lvc:CartesianChart.AxisX >
             <lvc:CartesianChart.AxisY >
                 <lvc:Axis LabelFormatter="{Binding LabelFormatter}" Title="Output (volt)" Foreground="Black"/>
@@ -35,7 +35,7 @@
             </lvc:CartesianChart.AxisY>
 
             <lvc:CartesianChart.Series>
-                <lvc:ScatterSeries Values="{Binding ManipulatedArray}"  PointGeometry="{x:Static lvc:DefaultGeometries.Circle}" MaxPointShapeDiameter="5" MinPointShapeDiameter="5" DataLabels="False"/>
+                <lvc:ScatterSeries Values="{Binding ManipulatedArray}"  PointGeometry="{x:Static lvc:DefaultGeometries.Circle}" MaxPointShapeDiameter="5" MinPointShapeDiameter="5" />
             </lvc:CartesianChart.Series>
 
         </lvc:CartesianChart >
