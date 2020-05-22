@@ -18,12 +18,17 @@ namespace Controller.OutputVisualizer
     /// <seealso cref="Controller.BaseController" />
     public class OutputVisualizerController : BaseController
     {
+        public class AlignTriggeredArgs : EventArgs
+        {
+            public double MinValue { set; get; }
+            public double MaxValue { set; get; }
+        }
         /// <summary>
         /// Event handler for the [UserTriggeredAlignHandler] event 
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="args">The <see cref="RangeChangedEventArgs"/> instance containing the event data.</param>
-        public delegate void UserTriggeredAlignHandler(object sender, RangeChangedEventArgs args);
+        /// <param name="args">The <see cref="AlignTriggeredArgs"/> instance containing the event data.</param>
+        public delegate void UserTriggeredAlignHandler(object sender, AlignTriggeredArgs args);
 
 
         // ******************** Variables/Objects ********************   
@@ -136,18 +141,6 @@ namespace Controller.OutputVisualizer
         }
 
         /// <summary>
-        /// The arguments of the x axis that are set when the axisChanged.
-        /// Used to align all controllers to this controller when the align button is clicked.
-        /// </summary>
-        private RangeChangedEventArgs args;
-
-        public RangeChangedEventArgs Args
-        {
-            get { return args; }
-            set { args = value; }
-        }
-
-        /// <summary>
         /// The minimum value of the x axis that is used by the <see cref=" OutputVisualizationWindowController"/> when align button is clicked
         /// to adjust all other controllers to this value.
         /// </summary>
@@ -158,6 +151,7 @@ namespace Controller.OutputVisualizer
             get { return _minValue; }
             set
             {
+                ButtonVisibility = true;
                 _minValue = value;
                 OnPropertyChanged("MinValue");
             }
@@ -174,6 +168,7 @@ namespace Controller.OutputVisualizer
             get { return _maxValue; }
             set
             {
+                ButtonVisibility = true;
                 _maxValue = value;
                 OnPropertyChanged("MaxValue");
             }
@@ -239,7 +234,7 @@ namespace Controller.OutputVisualizer
         #region Constructor
         //************** Constructor*************
 
-        public OutputVisualizerController(double[] tempList)
+        public OutputVisualizerController()
         {
             NUMBER_OF_SAMPLES = OptionsManager.GetInstance().GetOptionValueByName<int>(OptionNames.VISUALIZED_SAMPLES);
             // Maps the 100 nanosecond values that are passed as datetime type to millisecond, and display the y values without any change (in volt)
@@ -251,12 +246,11 @@ namespace Controller.OutputVisualizer
             //every time LiveCharts detects the DateTimePoint type in a Chart Values instance, it will use the toMillisMapper.
             Charting.For<DateTimePoint>(toMillisMapper);
             CalculateStepSize();
-            SetData(tempList);
             MaxValue = double.NaN;
             MinValue = double.NaN;
             LabelFormatter = x => string.Format("{0:0.000}", x);
             ButtonVisibility = false;
-            RangeChangedCommand = new RelayCommand(AxisChanged);
+            RangeChangedCommand = new RelayCommand(OnAxisChanged);
             //align
             AlignTriggeredCommand = new RelayCommand(AlignUserControls);
         }
@@ -298,24 +292,20 @@ namespace Controller.OutputVisualizer
 
 
         //align
-        protected void OnAlignTriggered(RangeChangedEventArgs args)
+        protected void OnAlignTriggered(AlignTriggeredArgs args)
         {
             alignTriggered?.Invoke(this, args);
         }
 
 
         /// <summary>
-        /// extracts values from the output array that correspond to the x axis  
+        /// Extracts values from the output array that correspond to the x axis, and triggers resampling 
         /// </summary>
-        /// <param name="eventargs">The <see cref="RangeChangedEventArgs"/> instance containing the event data.</param>
-        public void ChangeAxis(RangeChangedEventArgs eventargs)
+        public void ChangeAxis()
         {
-            double max = ((Axis)eventargs.Axis).MaxValue;
-            double min = ((Axis)eventargs.Axis).MinValue;
-            double range = eventargs.Range;
-            min = Math.Max(0, min);
+            double min = Math.Max(0, MinValue);
             int arrayMin = (int)Math.Round(min / stepSizeMillis);
-            int arrayMax = (int)Math.Round(max / stepSizeMillis);
+            int arrayMax = (int)Math.Round(MaxValue / stepSizeMillis);
             arrayMax = Math.Min(arrayMax, outputArray.Count);
             SampleOutput(arrayMin, arrayMax);
         }
@@ -324,18 +314,18 @@ namespace Controller.OutputVisualizer
         /// calls the changeAxis method when the axis changes 
         /// </summary>
         /// <param name="parameter">The parameter.</param>
-        public void AxisChanged(object parameter)
+        public void OnAxisChanged(object parameter)
         {
-            RangeChangedEventArgs eventargs = (RangeChangedEventArgs)parameter;
-            Args = eventargs;
-            ButtonVisibility = true;
-            ChangeAxis(eventargs);
+            ChangeAxis();
         }
 
         //align
         public void AlignUserControls(object parameter)
         {
-            OnAlignTriggered(Args);
+            AlignTriggeredArgs args = new AlignTriggeredArgs();
+            args.MinValue = MinValue;
+            args.MaxValue = MaxValue;
+            OnAlignTriggered(args);
         }
 
 
@@ -346,7 +336,7 @@ namespace Controller.OutputVisualizer
         public void SetData(double[] output)
         {
             int sizeOfArray = output.Length;
-
+            outputArray.Clear();
             for (int i = 0; i < sizeOfArray; i++)
             {
                 DateTime dt = new DateTime(i * stepSize100Nanos);
@@ -354,7 +344,17 @@ namespace Controller.OutputVisualizer
                 outputArray.Add(dtp);
             }
 
-            SampleOutput(0, outputArray.Count);
+            if (Double.IsNaN(MinValue) || Double.IsNaN(MaxValue))
+            {
+                _minValue = 0;
+                _maxValue = sizeOfArray * stepSizeMillis;
+                ChangeAxis();
+            }
+            else
+            {
+                // try to use the existing Min, Max before sampling
+                ChangeAxis();
+            }
         }
 
         /// <summary>
@@ -373,7 +373,7 @@ namespace Controller.OutputVisualizer
             {
                 samplingStep = 1;
             }
-            
+
             int k = min;
 
             for (int j = 0; j < NUMBER_OF_SAMPLES && k < max; j++)

@@ -9,7 +9,7 @@ namespace Generator.Generator.Concatenator
     /// <summary>
     /// The output of an analog card for a single sequence.
     /// </summary>
-    public class AnalogCardOutput : INonQuantizedCard
+    public class AnalogCardOutput : INonQuantizedCardOutput
     {
         /// <summary>
         /// The current offset index reached during the building of the output for each of the channels.

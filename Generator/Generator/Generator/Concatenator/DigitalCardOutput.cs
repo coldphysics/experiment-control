@@ -6,7 +6,7 @@ namespace Generator.Generator.Concatenator
     /// <summary>
     /// The output of a digital card for a single sequence.
     /// </summary>
-    public class DigitalCardOutput : INonQuantizedCard
+    public class DigitalCardOutput : INonQuantizedCardOutput
     {
         /// <summary>
         /// The current offset index reached during the building of the output for each of the channels.

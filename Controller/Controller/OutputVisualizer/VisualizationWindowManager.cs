@@ -38,7 +38,7 @@ namespace Controller.OutputVisualizer
 
         public void HandleNewGeneratedOutputEvent(object sender, FinishedModelGenerationEventArgs args)
         {
-            if (args.IsSuccessful)
+            if (args.IsSuccessful && visualizationWindow != null)
             {
                 visualizationWindow.Dispatcher.Invoke(() => outputVisualizationController.HandleNewGeneratedOutputEvent());
             }

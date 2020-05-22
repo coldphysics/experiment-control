@@ -1,4 +1,6 @@
-﻿using AbstractController.Data.Sequence;
+﻿using AbstractController.Data.Card;
+using AbstractController.Data.Channels;
+using AbstractController.Data.Sequence;
 using Buffer.Basic;
 using Buffer.OutputProcessors;
 using Communication.Commands;
@@ -19,6 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using static Controller.OutputVisualizer.OutputVisualizerController;
 
 namespace Controller.OutputVisualizer
 {
@@ -68,6 +71,15 @@ namespace Controller.OutputVisualizer
         }
 
         /// <summary>
+        /// Gets or sets the output visualizer collection, which contains a collection of all <see cref=" OutputVisualizerController" /> 
+        /// </summary>
+        public ObservableCollection<OutputVisualizerController> AllControllers
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// The command  triggered when the Refresh button is clicked to display the <see cref=" OutputVisualizerController"/> that are checked in the tree view.
         /// </summary>
         /// <value> The command triggered when the Refresh button is clicked </value>
@@ -99,8 +111,10 @@ namespace Controller.OutputVisualizer
             this.rootController = root;
             this.VisualizationTreeViewController = treeViewController;
             OutputVisualizerCollectionUC = new ObservableCollection<OutputVisualizerController>();
+            AllControllers = new ObservableCollection<OutputVisualizerController>();
             //Add intialize commands method in case we have multiple commands
-            UserControlCollectionCommand = new RelayCommand(buildUserControls);
+            UserControlCollectionCommand = new RelayCommand(RefreshControllers);
+            BuildControllers();
         }
 
 
@@ -109,145 +123,138 @@ namespace Controller.OutputVisualizer
         {
             if (AutomaticRefresh)
             {
-                buildUserControls(null);
+                RefreshControllers(null);
             }
         }
 
-        /// <summary>
-        /// Builds the user controls when the "Refresh" button is clicked
-        /// </summary>
-        /// <param name="parameter">not used here.</param>
-        /// <exception cref="System.Exception">Card must be Non-Quantized</exception>
-        private void buildUserControls(object parameter)
+        private void BuildSections()
         {
-
-            foreach (var controller in outputVisualizerCollectionUC)
+            const int COLOR_SEED = 1200;
+            const double OPACITY = 0.4;
+            ObservableCollection<AbstractSequenceController> sequeces =
+                rootController.DataController.SequenceGroup.Windows.First().Tabs;
+            // providing the same seed everytime, ensures that colors are generated in the same order always (not totally random :))
+            Random random = new Random(COLOR_SEED);
+            Color color;
+            // Clear existing sections
+            foreach (OutputVisualizerController ovc in OutputVisualizerCollectionUC)
             {
-                controller.alignTriggered -= controller_AlignTriggered;
+                ovc.SectionCollection = new SectionsCollection();
+                ovc.VisualElments = new VisualElementsCollection();
             }
-            //clear the collection of the "OutputVisualizer" controls at the beginning
-            outputVisualizerCollectionUC.Clear();
 
+            foreach (AbstractSequenceController sequence in sequeces)
+            {
+                color = Color.FromArgb((byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256));
 
-            ICollection<CTVItemViewModel> checkedChannels = this.visualizationTreeViewController.GetCheckedLeaves();
-            ChannelBasicController channelController = null;
+                string indexOfsequenceStr = sequence.Index().ToString();
+                string nameOfSequenceStr = ((TabController)sequence).Name;
+                double startTime = sequence.ActualStartTime();
+                double duration = sequence.LongestDurationAllSequences();
+
+                foreach (OutputVisualizerController ovc in AllControllers)
+                {
+                    VisualElement nameOfSequence = new VisualElement();
+
+                    //the position of the sequence name
+                    nameOfSequence.X = startTime + (duration / 2);
+                    nameOfSequence.Y = Double.NaN;
+
+                    TextBlock text = new TextBlock();
+                    text.Text = nameOfSequenceStr + " " + indexOfsequenceStr;
+                    nameOfSequence.UIElement = text;
+                    nameOfSequence.HorizontalAlignment = HorizontalAlignment.Center;
+                    nameOfSequence.VerticalAlignment = VerticalAlignment.Bottom;
+
+                    AxisSection section = new AxisSection();
+                    section.Value = startTime;
+                    section.SectionWidth = duration;
+                    section.Fill = new SolidColorBrush
+                    {
+                        Color = color,
+                        Opacity = OPACITY
+                    };
+
+                    ovc.SectionCollection.Add(section);
+                    ovc.VisualElments.Add(nameOfSequence);
+                }
+            }
+        }
+
+        private void AddDataToVisibleChannels()
+        {
             ProcessorListManager plm = ProcessorListManager.GetInstance();
 
             if (plm.saver != null)
             {
-                //Get the output that was saved before the quantization and compression steps.
+                // Get the output that was saved before the quantization and compression steps.
                 IModelOutput output = plm.saver.GetVisualizerOutput();
+                ICollection<CTVItemViewModel> checkedChannels = this.visualizationTreeViewController.GetCheckedLeaves();
+                ChannelBasicController channelController;
 
-                if (checkedChannels.Count > 0)
+                foreach (var channel in checkedChannels)
                 {
-                    //get a collection of all sequences in the model.
-                    ObservableCollection<AbstractSequenceController> seq1 = ((ChannelBasicController)(checkedChannels.ElementAt(0) as CheckableTVItemController).Item).Parent.Parent.Tabs;
+                    channelController = (ChannelBasicController)(channel as CheckableTVItemController).Item;
+                    ObservableCollection<AbstractSequenceController> seq = channelController.Parent.Parent.Tabs;
+                    string cardName = channelController.Parent.Parent.Model.Name;
 
-                    //Generate random colors for all sequences
-                    Random random = new Random();
-                    List<Color> colorArray = new List<Color>();
-                    foreach (var sequence in seq1)
+                    if (output.Output[cardName] is INonQuantizedCardOutput)
                     {
-                        Color color = Color.FromArgb((byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256));
-                        colorArray.Add(color);
-
+                        string controllerName = cardName + "-" + channelController.ToString();
+                        double[] tempList = ((INonQuantizedCardOutput)output.Output[cardName]).GetChannelOutput(channelController.Index());
+                        // select the corresponding controller
+                        OutputVisualizerController ovc = AllControllers
+                            .Where((controller) => controller.NameOfCardAndChannel.Equals(controllerName))
+                            .First();
+                        ovc.SetData(tempList);
+                        OutputVisualizerCollectionUC.Add(ovc);
                     }
-
-                    foreach (var channel in checkedChannels)
+                    else
                     {
-                        channelController = (ChannelBasicController)(channel as CheckableTVItemController).Item;
-                        string cardName = ((WindowBasicController)channelController.Parent.Parent).Name;
-                        ObservableCollection<AbstractSequenceController> seq = channelController.Parent.Parent.Tabs;
-
-
-                        if (output.Output[cardName] is INonQuantizedCard)
-                        {
-                            double[] tempList = ((INonQuantizedCard)output.Output[cardName]).GetChannelOutput(channelController.Index());
-
-                            OutputVisualizerController ovc = new OutputVisualizerController(tempList);
-
-                            //to display the color of each sequence in the outputVisualizer control.
-                            ovc.SectionCollection = new SectionsCollection();
-
-                            //to display the name of each sequence in the outputVisualizer control.
-                            ovc.VisualElments = new VisualElementsCollection();
-
-                            ovc.NameOfCardAndChannel = cardName + "-" + channelController.ToString();
-
-
-                            int colorNumber = 0;
-                            foreach (var sequence in seq)
-                            {
-
-                                string indexOfsequence = sequence.Index().ToString();
-                                double startTime = sequence.ActualStartTime();
-                                // double duration = sequence.ActualDuration();
-                                //double duration = sequence.ActualDuration();
-                                double duration = sequence.LongestDurationAllSequences();
-                                AxisSection section = new AxisSection();
-                                VisualElement nameOfSequence = new VisualElement();
-
-                                //the position of the sequence name
-                                nameOfSequence.X = startTime + (duration / 2);
-                                nameOfSequence.Y = Double.NaN;
-
-                                TextBlock text = new TextBlock();
-                                text.Text = ((TabController)sequence).Name + " " + indexOfsequence;
-                                nameOfSequence.UIElement = text;
-                                nameOfSequence.HorizontalAlignment = HorizontalAlignment.Center;
-                                nameOfSequence.VerticalAlignment = VerticalAlignment.Bottom;
-
-
-                                section.Value = startTime;
-                                section.SectionWidth = duration;
-
-
-                                Color color = colorArray.ElementAt(colorNumber);
-                                section.Fill = new SolidColorBrush
-                                {
-                                    Color = color,
-                                    Opacity = .4
-                                };
-
-                                ovc.SectionCollection.Add(section);
-                                ovc.VisualElments.Add(nameOfSequence);
-                                colorNumber++;
-
-                            }
-
-                            OutputVisualizerCollectionUC.Add(ovc);
-                        }
-                        else
-                        {
-                            throw new Exception("Card must be Non-Quantized");
-
-                        }
-
+                        throw new Exception("Card output must be Non-Quantized");
                     }
                 }
             }
 
-            foreach (var controller in outputVisualizerCollectionUC)
-            {
-                controller.alignTriggered += controller_AlignTriggered;
-
-            }
         }
 
+        private void RefreshControllers(object param)
+        {
+            OutputVisualizerCollectionUC.Clear();
+            BuildSections();
+            AddDataToVisibleChannels();
+        }
+
+        private void BuildControllers()
+        {
+            foreach (AbstractCardController card in rootController.DataController.SequenceGroup.Windows)
+            {
+                foreach (AbstractChannelController channel in card.Tabs.First().Channels)
+                {
+                    OutputVisualizerController ovc = new OutputVisualizerController();
+                    ovc.SectionCollection = new SectionsCollection();
+                    //to display the name of each sequence in the outputVisualizer control.
+                    ovc.VisualElments = new VisualElementsCollection();
+                    ovc.NameOfCardAndChannel = card.Model.Name + "-" + channel.ToString();
+                    ovc.alignTriggered += controller_AlignTriggered;
+                    AllControllers.Add(ovc);
+                }
+            }
+        }
 
 
         /// <summary>
         /// Handles the AlignTriggered event of the controller control.Align all <see cref="OutputVisualizer "/>  controls to the values of the sender control.(align the x axis)
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="args">The <see cref="LiveCharts.Events.RangeChangedEventArgs"/> instance containing the event data.</param>
-        void controller_AlignTriggered(object sender, LiveCharts.Events.RangeChangedEventArgs args)
+        /// <param name="args">The <see cref="AlignTriggeredArgs"/> instance containing the event data.</param>
+        void controller_AlignTriggered(object sender, AlignTriggeredArgs args)
         {
             foreach (var controller in outputVisualizerCollectionUC)
             {
-                controller.MinValue = ((LiveCharts.Wpf.Axis)args.Axis).MinValue;
-                controller.MaxValue = ((LiveCharts.Wpf.Axis)args.Axis).MaxValue;
-                controller.ChangeAxis(args);
+                controller.MinValue = args.MinValue;
+                controller.MaxValue = args.MaxValue;
+                controller.ChangeAxis();
             }
         }
 
