@@ -130,8 +130,10 @@ namespace Controller.Control.StepBatchAddition
                 root.AddChild(currentCard);
                 // }
             }
+            CTVViewModel result = new CTVViewModel();
+            result.Add(root);
 
-            return new CTVViewModel() { root };
+            return result ;
         }
     }
 }

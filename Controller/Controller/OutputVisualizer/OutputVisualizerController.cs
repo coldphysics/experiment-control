@@ -241,7 +241,8 @@ namespace Controller.OutputVisualizer
             var toMillisMapper = Mappers.Xy<DateTimePoint>()
             .X(dayModel => (double)((dayModel.DateTime.Ticks) * 0.00000001))
             .Y(dayModel => dayModel.Value);
-
+            VisualElments = new VisualElementsCollection();
+            SectionCollection = new SectionsCollection();
             // This method saves the mapper at your application level, 
             //every time LiveCharts detects the DateTimePoint type in a Chart Values instance, it will use the toMillisMapper.
             Charting.For<DateTimePoint>(toMillisMapper);

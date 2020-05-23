@@ -1,5 +1,6 @@
 ﻿using Buffer.Basic;
 using Controller.Control.StepBatchAddition;
+using Controller.MainWindow;
 using Controller.Root;
 using CustomElements.CheckableTreeView;
 using System;
@@ -21,17 +22,26 @@ namespace Controller.OutputVisualizer
         private bool isVisualizationWindowOpen = false;
 
 
-        private VisualizationWindowManager(RootController root)
+        private VisualizationWindowManager(MainWindowController mainWindowController)
         {
-            CTVViewModel treeView = ModelBasedCTVBuilder.BuildCheckableTree(root);
-            outputVisualizationController = new OutputVisualizationWindowController(root, treeView);
-
+            CTVViewModel treeView = ModelBasedCTVBuilder.BuildCheckableTree(mainWindowController.GetRootController());
+            outputVisualizationController = new OutputVisualizationWindowController(treeView, mainWindowController);
         }
-
-        public static VisualizationWindowManager GetInstance(RootController root)
+        public static void Initialize(MainWindowController mainWindowController)
         {
             if (singleton == null)
-                singleton = new VisualizationWindowManager(root);
+            {
+                singleton = new VisualizationWindowManager(mainWindowController);
+            }
+            else
+            {
+                throw new Exception("Trying to initialize singleton more than once!");
+            }
+        }
+        public static VisualizationWindowManager GetInstance()
+        {
+            if (singleton == null)
+                throw new Exception("Trying to get instance without initialization");
 
             return singleton;
         }

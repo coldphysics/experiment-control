@@ -9,6 +9,7 @@ using Controller.Control.StepBatchAddition;
 using Controller.Data.Channels;
 using Controller.Data.Tabs;
 using Controller.Data.Windows;
+using Controller.MainWindow;
 using Controller.Root;
 using CustomElements.CheckableTreeView;
 using LiveCharts;
@@ -19,6 +20,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 using static Controller.OutputVisualizer.OutputVisualizerController;
@@ -29,13 +31,8 @@ namespace Controller.OutputVisualizer
     /// the view model for the <see cref="OutputVisualizerWindow "/> . It controls the interactions between the OutputVisualizer user controls.
     /// </summary>
     /// <seealso cref="Controller.BaseController" />
-    public class OutputVisualizationWindowController : BaseController
+    public class OutputVisualizationWindowController : ChildController
     {
-
-        // ******************** Variables/Objects ******************** 
-        #region Attributes
-        private RootController rootController;
-        #endregion
 
         // ******************** Properties ******************** 
         #region Properties
@@ -78,24 +75,18 @@ namespace Controller.OutputVisualizer
             get;
             set;
         }
-
         /// <summary>
         /// The command  triggered when the Refresh button is clicked to display the <see cref=" OutputVisualizerController"/> that are checked in the tree view.
         /// </summary>
         /// <value> The command triggered when the Refresh button is clicked </value>
-        private RelayCommand userControlCollectionCommand;
-
-        public RelayCommand UserControlCollectionCommand
-        {
-            get { return userControlCollectionCommand; }
-            private set { userControlCollectionCommand = value; }
-        }
+        public RelayCommand UserControlCollectionCommand { get; private set; }
 
         public bool AutomaticRefresh
         {
             set;
             get;
         }
+
         #endregion
 
         //************** Constructor*************
@@ -105,20 +96,25 @@ namespace Controller.OutputVisualizer
         /// </summary>
         /// <param name="root">the root</param>
         /// <param name="treeViewController"> the visualization tree view controller</param>
-        public OutputVisualizationWindowController(RootController root, CTVViewModel treeViewController)
+        public OutputVisualizationWindowController(CTVViewModel treeViewController, MainWindowController mainWindowController)
+            : base(mainWindowController)
         {
-
-            this.rootController = root;
             this.VisualizationTreeViewController = treeViewController;
             OutputVisualizerCollectionUC = new ObservableCollection<OutputVisualizerController>();
             AllControllers = new ObservableCollection<OutputVisualizerController>();
             //Add intialize commands method in case we have multiple commands
             UserControlCollectionCommand = new RelayCommand(RefreshControllers);
-            BuildControllers();
+            BuildControllers(mainWindowController.GetRootController());
         }
 
 
-        //******************** Methods ********************       
+        //******************** Methods ********************      
+
+        private RootController GetRootController()
+        {
+            return ((MainWindowController)parent).GetRootController();
+        }
+
         public void HandleNewGeneratedOutputEvent()
         {
             if (AutomaticRefresh)
@@ -127,33 +123,40 @@ namespace Controller.OutputVisualizer
             }
         }
 
+
         private void BuildSections()
         {
             const int COLOR_SEED = 1200;
             const double OPACITY = 0.4;
             ObservableCollection<AbstractSequenceController> sequeces =
-                rootController.DataController.SequenceGroup.Windows.First().Tabs;
+                GetRootController().DataController.SequenceGroup.Windows.First().Tabs;
             // providing the same seed everytime, ensures that colors are generated in the same order always (not totally random :))
             Random random = new Random(COLOR_SEED);
-            Color color;
-            // Clear existing sections
-            foreach (OutputVisualizerController ovc in OutputVisualizerCollectionUC)
-            {
-                ovc.SectionCollection = new SectionsCollection();
-                ovc.VisualElments = new VisualElementsCollection();
-            }
+            List<Color> colors = new List<Color>();
+            List<string> names = new List<string>();
+            List<double> startTimes = new List<double>();
+            List<double> durations = new List<double>();
 
             foreach (AbstractSequenceController sequence in sequeces)
             {
-                color = Color.FromArgb((byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256));
+                colors.Add(Color.FromArgb((byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256)));
+                names.Add(string.Format("{0} {1}", ((TabController)sequence).Name, sequence.Index().ToString()));
+                startTimes.Add(sequence.ActualStartTime());
+                durations.Add(sequence.LongestDurationAllSequences());
+            }
 
-                string indexOfsequenceStr = sequence.Index().ToString();
-                string nameOfSequenceStr = ((TabController)sequence).Name;
-                double startTime = sequence.ActualStartTime();
-                double duration = sequence.LongestDurationAllSequences();
+            foreach (OutputVisualizerController ovc in AllControllers)
+            {
+                ClearSections(ovc);  
+                int seqIndex = 0;
 
-                foreach (OutputVisualizerController ovc in AllControllers)
+                foreach (AbstractSequenceController sequence in sequeces)
                 {
+                    Color color = colors[seqIndex];
+                    string name = names[seqIndex];
+                    double startTime = startTimes[seqIndex];
+                    double duration = durations[seqIndex];
+
                     VisualElement nameOfSequence = new VisualElement();
 
                     //the position of the sequence name
@@ -161,7 +164,7 @@ namespace Controller.OutputVisualizer
                     nameOfSequence.Y = Double.NaN;
 
                     TextBlock text = new TextBlock();
-                    text.Text = nameOfSequenceStr + " " + indexOfsequenceStr;
+                    text.Text = name;
                     nameOfSequence.UIElement = text;
                     nameOfSequence.HorizontalAlignment = HorizontalAlignment.Center;
                     nameOfSequence.VerticalAlignment = VerticalAlignment.Bottom;
@@ -177,8 +180,29 @@ namespace Controller.OutputVisualizer
 
                     ovc.SectionCollection.Add(section);
                     ovc.VisualElments.Add(nameOfSequence);
+                    ++seqIndex;
                 }
             }
+        }
+
+        private void ClearSections(OutputVisualizerController ovc)
+        {
+            if (ovc.SectionCollection != null && ovc.VisualElments != null)
+            {
+                foreach (AxisSection section in ovc.SectionCollection)
+                {
+                    BindingOperations.ClearAllBindings(section);
+                }
+
+                foreach (VisualElement ve in ovc.VisualElments)
+                {
+                    BindingOperations.ClearAllBindings(ve);
+                }
+
+                ovc.SectionCollection = new SectionsCollection();
+                ovc.VisualElments = new VisualElementsCollection();
+            }
+
         }
 
         private void AddDataToVisibleChannels()
@@ -225,16 +249,15 @@ namespace Controller.OutputVisualizer
             AddDataToVisibleChannels();
         }
 
-        private void BuildControllers()
+
+        private void BuildControllers(RootController rootController)
         {
             foreach (AbstractCardController card in rootController.DataController.SequenceGroup.Windows)
             {
                 foreach (AbstractChannelController channel in card.Tabs.First().Channels)
                 {
                     OutputVisualizerController ovc = new OutputVisualizerController();
-                    ovc.SectionCollection = new SectionsCollection();
                     //to display the name of each sequence in the outputVisualizer control.
-                    ovc.VisualElments = new VisualElementsCollection();
                     ovc.NameOfCardAndChannel = card.Model.Name + "-" + channel.ToString();
                     ovc.alignTriggered += controller_AlignTriggered;
                     AllControllers.Add(ovc);

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using Buffer.Basic;
 using Controller.MainWindow;
+using Controller.OutputVisualizer;
 using CustomElements.SizeSavedWindow;
 using Errors;
 
@@ -18,6 +19,8 @@ namespace View.Main
         private readonly MainWindowController _controller;
         public MainWindow(MainWindowController controller)
         {
+            VisualizationWindowManager.Initialize(controller);
+            controller.OnCreatingWindow();
             _controller = controller;
             DataContext = _controller;
             InitializeComponent();
