@@ -32,7 +32,7 @@ namespace Model.Options.Builders
 
             OptionsGroupBuilder visualizationOGB = new OptionsGroupBuilder();
             visualizationOGB.SetName("Output Visualizer Window");
-            visualizationOGB.AddIntegerSetting(OptionNames.VISUALIZED_SAMPLES, 1000, 1, 10000, "Number of Samples");
+            visualizationOGB.AddIntegerSetting(OptionNames.VISUALIZED_SAMPLES, 400, 1, 10000, "Number of Samples");
             OptionsGroup visualizationOG = visualizationOGB.GetResult();
 
             //General
