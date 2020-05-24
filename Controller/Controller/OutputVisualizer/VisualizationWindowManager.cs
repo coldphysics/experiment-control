@@ -70,6 +70,7 @@ namespace Controller.OutputVisualizer
                 visualizationWindow.Title = "Output Visualizer";
                 //visulizationWindow.ShowDialog();
             }
+            outputVisualizationController.HandleWindowOpeningEvent();
             visualizationWindow.Show();
             visualizationWindow.Focus();
 

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 
 namespace CustomElements.CheckableTreeView
@@ -9,6 +12,7 @@ namespace CustomElements.CheckableTreeView
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
     public abstract class CTVItemViewModel : INotifyPropertyChanged
     {
+        public event EventHandler HierarchyCheckStateChanged;
         #region Data
 
         /// <summary>
@@ -25,7 +29,7 @@ namespace CustomElements.CheckableTreeView
         /// <summary>
         /// The child items.
         /// </summary>
-        private List<CTVItemViewModel> children;
+        private ObservableCollection<CTVItemViewModel> children;
 
         #endregion // Data
 
@@ -37,7 +41,7 @@ namespace CustomElements.CheckableTreeView
         /// <value>
         /// The children.
         /// </value>
-        public List<CTVItemViewModel> Children
+        public ObservableCollection<CTVItemViewModel> Children
         {
             get
             {
@@ -109,12 +113,16 @@ namespace CustomElements.CheckableTreeView
             _isChecked = value;
 
             if (updateChildren && _isChecked.HasValue && children != null)
-                this.Children.ForEach(c => c.SetIsChecked(_isChecked, true, false));
+            {
+                foreach (CTVItemViewModel child in this.children)
+                    child.SetIsChecked(_isChecked, true, false);
+            }
 
             if (updateParent && _parent != null)
                 _parent.VerifyCheckState();
 
             this.OnPropertyChanged("IsChecked");
+            Subitem_HierarchyCheckStateChanged(this, new EventArgs());
         }
 
         /// <summary>
@@ -151,8 +159,7 @@ namespace CustomElements.CheckableTreeView
         /// <param name="prop">The property.</param>
         void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         /// <summary>
@@ -169,11 +176,39 @@ namespace CustomElements.CheckableTreeView
         public void AddChild(CTVItemViewModel child)
         {
             if (children == null)
-                children = new List<CTVItemViewModel>();
+            {
+                children = new ObservableCollection<CTVItemViewModel>();
+                children.CollectionChanged += Children_CollectionChanged;
+            }
 
             children.Add(child);
             child._parent = this;
         }
+
+        private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (CTVItemViewModel subitem in e.NewItems)
+                {
+                    subitem.HierarchyCheckStateChanged += Subitem_HierarchyCheckStateChanged;
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (CTVItemViewModel subitem in e.OldItems)
+                {
+                    subitem.HierarchyCheckStateChanged -= Subitem_HierarchyCheckStateChanged;
+                }
+            }
+        }
+
+        private void Subitem_HierarchyCheckStateChanged(object sender, EventArgs e)
+        {
+            HierarchyCheckStateChanged?.Invoke(sender, e);
+        }
+
 
         /// <summary>
         /// Gets the checked child items (including the item itself) at the leaf level.

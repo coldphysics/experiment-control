@@ -45,9 +45,6 @@ namespace Model.Options.Builders
             displayGeneralOGB.AddChildOptionsGroup(visualizationOG);
             result.Add(displayGeneralOGB.GetResult());
 
-
-
-
             return result;
         }
     }
