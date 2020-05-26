@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using Buffer.Basic;
 using Controller.MainWindow;
+using Controller.OutputVisualizer;
 using CustomElements.SizeSavedWindow;
 using Errors;
 
@@ -18,6 +19,8 @@ namespace View.Main
         private readonly MainWindowController _controller;
         public MainWindow(MainWindowController controller)
         {
+            VisualizationWindowManager.Initialize(controller);
+            controller.OnCreatingWindow();
             _controller = controller;
             DataContext = _controller;
             InitializeComponent();
@@ -60,14 +63,14 @@ namespace View.Main
         {
 
             // show info when in debugging mode
-            if (Global.GetHardwareType() == Model.Settings.HW_TYPES.AdWin_Simulator || !Global.CanAccessDatabase())
+            if (Global.GetHardwareType() == Model.Settings.HW_TYPES.AdWin_Simulator || Global.GetHardwareType() == Model.Settings.HW_TYPES.NO_OUTPUT || !Global.CanAccessDatabase())
             {
-                String output = "DEBUG MODE";
-                if (Global.GetHardwareType() == Model.Settings.HW_TYPES.AdWin_Simulator)
-                    output += "\n * no hardware Output";
+                String output = "According to the selected profile:";
+                if (Global.GetHardwareType() == Model.Settings.HW_TYPES.AdWin_Simulator || Global.GetHardwareType() == Model.Settings.HW_TYPES.NO_OUTPUT)
+                    output += "\n * No hardware output will take place!";
                 if (!Global.CanAccessDatabase())
-                    output += "\n * no data will be written into the database";
-                MessageBox.Show(output);
+                    output += "\n * No data will be written into the database!";
+                MessageBox.Show(output, "Debug Mode", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 

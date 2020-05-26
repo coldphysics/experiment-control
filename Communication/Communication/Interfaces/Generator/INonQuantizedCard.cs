@@ -5,7 +5,7 @@
     /// Represents the non quantized digital and analog cards 
     /// </summary>
     /// <seealso cref="Communication.Interfaces.Generator.ICardOutput" />
-    public interface INonQuantizedCard : ICardOutput
+    public interface INonQuantizedCardOutput : ICardOutput
     {
         /// <summary>
         /// Gets the channel output.

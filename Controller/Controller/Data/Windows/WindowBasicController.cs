@@ -145,7 +145,7 @@ namespace Controller.Data.Windows
         {
             if (!DoubleBuffer.ModelIsWrong)
             {
-                VisualizationWindowManager vwm = VisualizationWindowManager.GetInstance(_rootController);
+                VisualizationWindowManager vwm = VisualizationWindowManager.GetInstance();
                 vwm.OpenWindow();
             }
             else

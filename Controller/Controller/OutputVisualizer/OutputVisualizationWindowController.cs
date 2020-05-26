@@ -1,11 +1,13 @@
-﻿using AbstractController.Data.Sequence;
+﻿using AbstractController.Data.Card;
+using AbstractController.Data.Channels;
+using AbstractController.Data.Sequence;
 using Buffer.OutputProcessors;
 using Communication.Commands;
 using Communication.Interfaces.Generator;
 using Controller.Control.StepBatchAddition;
 using Controller.Data.Channels;
 using Controller.Data.Tabs;
-using Controller.Data.Windows;
+using Controller.MainWindow;
 using Controller.Root;
 using CustomElements.CheckableTreeView;
 using LiveCharts;
@@ -16,7 +18,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
+using static Controller.OutputVisualizer.OutputVisualizerController;
 
 namespace Controller.OutputVisualizer
 {
@@ -24,13 +28,14 @@ namespace Controller.OutputVisualizer
     /// the view model for the <see cref="OutputVisualizerWindow "/> . It controls the interactions between the OutputVisualizer user controls.
     /// </summary>
     /// <seealso cref="Controller.BaseController" />
-    public class OutputVisualizationWindowController : BaseController
+    public class OutputVisualizationWindowController : ChildController
     {
-
-        // ******************** Variables/Objects ******************** 
-        #region Attributes
-        private RootController rootController;
-        #endregion
+        /// <summary>
+        /// The last output known to this controller via (1) opening the window (2) explicitly clicking refresh
+        /// (3) receiveing an automatic refresh (if applicable).
+        /// Needed so that just selecting or unselecting displayed channels does not do an implicit refresh.
+        /// </summary>
+        private IModelOutput lastKnownOutput;
 
         // ******************** Properties ******************** 
         #region Properties
@@ -38,7 +43,6 @@ namespace Controller.OutputVisualizer
         /// <summary>
         ///Gets or sets the visualization TreeView controller
         /// </summary>
-      
         private CTVViewModel visualizationTreeViewController;
         public CTVViewModel VisualizationTreeViewController
         {
@@ -51,10 +55,9 @@ namespace Controller.OutputVisualizer
         }
 
         /// <summary>
-        ///Gets or sets the output visualizer collection uc which contains a collection of <see cref=" OutputVisualizerController" /> 
-        /// according to the channels that are selected in the treeView by the user 
+        /// Gets or sets the output visualizer collection which contains a collection of <see cref=" OutputVisualizerController" /> 
+        /// that correspond to the channels that are selected in the treeView by the user.
         /// </summary>
-        
         private ObservableCollection<OutputVisualizerController> outputVisualizerCollectionUC;
 
         public ObservableCollection<OutputVisualizerController> OutputVisualizerCollectionUC
@@ -68,16 +71,28 @@ namespace Controller.OutputVisualizer
         }
 
         /// <summary>
-        /// The command  triggered when the Refresh button is clicked to display the <see cref=" OutputVisualizerController"/> that are checked in the tree view.
+        /// Gets or sets the output visualizer collection, which contains a collection of all <see cref=" OutputVisualizerController" /> 
         /// </summary>
-        /// <value> The command triggered when the Refresh button is clicked </value>
-        private RelayCommand userControlCollectionCommand;
-
-        public RelayCommand UserControlCollectionCommand
+        public ObservableCollection<OutputVisualizerController> AllControllers
         {
-            get { return userControlCollectionCommand; }
-            private set { userControlCollectionCommand = value; }
+            get;
+            set;
         }
+        /// <summary>
+        /// The command  triggered when the Refresh button is clicked to update the latest known output model and visualize it.
+        /// </summary>
+        public RelayCommand UserControlCollectionCommand { get; private set; }
+
+        /// <summary>
+        /// Indicates whether automatic refreshes of the last known output model are enabled or not.
+        /// Automatic refreshes take place when a new output generation operation is done.
+        /// </summary>
+        public bool AutomaticRefresh
+        {
+            set;
+            get;
+        }
+
         #endregion
 
         //************** Constructor*************
@@ -85,153 +100,269 @@ namespace Controller.OutputVisualizer
         /// <summary>
         /// Initializes a new instance of the <see cref="OutputVisualizationWindowController"/> class.
         /// </summary>
-        /// <param name="root">the root</param>
-        /// <param name="treeViewController"> the visualization tree view controller</param>
-        public OutputVisualizationWindowController(RootController root, CTVViewModel treeViewController)
+        /// <param name="mainWindowController">The parent controller (gives access to the buffer)</param>
+        /// <param name="treeViewController">The visualization tree view controller</param>
+        public OutputVisualizationWindowController(CTVViewModel treeViewController, MainWindowController mainWindowController)
+            : base(mainWindowController)
         {
-            
-            this.rootController = root;
             this.VisualizationTreeViewController = treeViewController;
             OutputVisualizerCollectionUC = new ObservableCollection<OutputVisualizerController>();
-            //Add intialize commands method in case we have multiple commands
-            UserControlCollectionCommand = new RelayCommand(buildUserControls);
+            AllControllers = new ObservableCollection<OutputVisualizerController>();
+            UserControlCollectionCommand = new RelayCommand(RefreshControllers);
+            // We create the sub-controllers only once so we retain their views when the underlying data changes
+            BuildControllers(mainWindowController.GetRootController());
+            VisualizationTreeViewController.CheckStateChanged += VisualizationTreeViewController_CheckStateChanged;
         }
 
+        //******************** Methods ********************      
 
-        //******************** Methods ********************        
-        /// <summary>
-        /// Builds the user controls when the "Refresh" button is clicked
-        /// </summary>
-        /// <param name="parameter">not used here.</param>
-        /// <exception cref="System.Exception">Card must be Non-Quantized</exception>
-        private void buildUserControls(object parameter)
+        private RootController GetRootController()
         {
-           
-            foreach (var controller in outputVisualizerCollectionUC)
+            return ((MainWindowController)parent).GetRootController();
+        }
+
+        /// <summary>
+        /// Invoked whenever a new output is generated
+        /// </summary>
+        public void HandleNewGeneratedOutputEvent()
+        {
+            if (AutomaticRefresh)
             {
-                controller.alignTriggered -= controller_AlignTriggered;
+                RefreshControllers(null);
             }
-            //clear the collection of the "OutputVisualizer" controls at the beginning
-            outputVisualizerCollectionUC.Clear();
+        }
 
-           
-            ICollection<CTVItemViewModel> checkedChannels = this.visualizationTreeViewController.GetCheckedLeaves();
-            ChannelBasicController channelController = null;
-            ProcessorListManager plm = ProcessorListManager.GetInstance();
+        /// <summary>
+        /// Invoked whenever the associated window opens
+        /// </summary>
+        public void HandleWindowOpeningEvent()
+        {
+            RefreshControllers(null);
+        }
 
-            //Get the output that was saved before the quantization and compression steps.
-            IModelOutput output = plm.saver.GetVisualizerOutput();
-
-            //get a collection of all sequences in the model.
-            ObservableCollection<AbstractSequenceController> seq1 = ((ChannelBasicController)((checkedChannels.ElementAt(0) as CheckableTVItemController).Item)).Parent.Parent.Tabs;
-
-            //Generate random colors for all sequences
-            Random random = new Random();
-            List<Color> colorArray = new List<Color>();
-            foreach (var sequence in seq1)
+        /// <summary>
+        /// Invoked when the check-state of any element of the channels tree view is changed.
+        /// Used to either display or hide the corresponding channel output visualizers.
+        /// </summary>
+        /// <param name="sender">The tree element whose state is changed</param>
+        /// <param name="e">Not used</param>
+        private void VisualizationTreeViewController_CheckStateChanged(object sender, EventArgs e)
+        {
+            CTVItemViewModel checkedItem = (CTVItemViewModel)sender;
+            // Check if this is a leaf node, i.e., a channel
+            if (checkedItem.Children == null || checkedItem.Children.Count == 0)
             {
-                Color color = Color.FromArgb((byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256));
-                colorArray.Add(color);
-
-            }
-
-
-            foreach (var channel in checkedChannels)
-            {
-                channelController = (ChannelBasicController)(channel as CheckableTVItemController).Item;
-                string cardName = ((WindowBasicController)channelController.Parent.Parent).Name;
-                ObservableCollection<AbstractSequenceController> seq = channelController.Parent.Parent.Tabs;
-
-              
-                if (output.Output[cardName] is INonQuantizedCard)
+                if (checkedItem.IsChecked.Value)
                 {
-                    double[] tempList = ((INonQuantizedCard)output.Output[cardName]).GetChannelOutput(channelController.Index());
-
-                    OutputVisualizerController ovc = new OutputVisualizerController(tempList);
-
-                    //to display the color of each sequence in the outputVisualizer control.
-                    ovc.SectionCollection = new SectionsCollection();
-
-                    //to display the name of each sequence in the outputVisualizer control.
-                    ovc.VisualElments = new VisualElementsCollection();
-
-                    ovc.NameOfCardAndChannel = cardName + "-" + channelController.ToString();
-                 
-                    
-                    int colorNumber = 0;
-                    foreach (var sequence in seq)
-                    {
-                      
-                        string indexOfsequence = sequence.Index().ToString();
-                        double startTime = sequence.ActualStartTime();
-                        // double duration = sequence.ActualDuration();
-                        //double duration = sequence.ActualDuration();
-                       double duration = sequence.LongestDurationAllSequences();
-                        AxisSection section = new AxisSection();
-                        VisualElement nameOfSequence = new VisualElement();
-
-                        //the position of the sequence name
-                        nameOfSequence.X = startTime + (duration / 2);
-                        nameOfSequence.Y = Double.NaN;
-
-                        TextBlock text = new TextBlock();
-                        text.Text = ((TabController)sequence).Name + " " + indexOfsequence;
-                        nameOfSequence.UIElement = text;
-                        nameOfSequence.HorizontalAlignment = HorizontalAlignment.Center;
-                        nameOfSequence.VerticalAlignment = VerticalAlignment.Bottom;
-
-
-                        section.Value = startTime;
-                        section.SectionWidth = duration;
-
-
-                        Color color = colorArray.ElementAt(colorNumber);
-                        section.Fill = new SolidColorBrush
-                        {
-                            Color = color,
-                            Opacity = .4
-                        };
-
-                        ovc.SectionCollection.Add(section);
-                        ovc.VisualElments.Add(nameOfSequence);
-                        colorNumber++;
-
-                    }
-
-                    OutputVisualizerCollectionUC.Add(ovc);
+                    BuildSectionsForChannel(checkedItem);
+                    AddDataToChannel(checkedItem);
                 }
                 else
                 {
-                    throw new Exception("Card must be Non-Quantized");
-
+                    RemoveSectionsOfChannel(checkedItem);
+                    RemoveDataFromChannel(checkedItem);
                 }
 
             }
+        }
 
-            foreach (var controller in outputVisualizerCollectionUC)
+        /// <summary>
+        /// Builds the sections, i.e., the sequence colors and labels, for a given channel.
+        /// </summary>
+        /// <param name="channel">The checked channel to be displayed</param>
+        private void BuildSectionsForChannel(CTVItemViewModel channel)
+        {
+            const int COLOR_SEED = 1200;
+            const double OPACITY = 0.4;
+            ObservableCollection<AbstractSequenceController> sequeces =
+                GetRootController().DataController.SequenceGroup.Windows.First().Tabs;
+            // providing the same seed everytime, ensures that colors are generated in the same order always (not totally random :))
+            Random random = new Random(COLOR_SEED);
+            OutputVisualizerController ovc = GetControllerOfChannel(channel);
+            ClearSectionsOfChannel(ovc);
+            int seqIndex = 0;
+
+            foreach (AbstractSequenceController sequence in sequeces)
             {
-                controller.alignTriggered += controller_AlignTriggered;
-                
+                Color color = Color.FromArgb((byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256));
+                string name = string.Format("{0} ({1})", ((TabController)sequence).Name, sequence.Index().ToString());
+                double startTime = sequence.ActualStartTime();
+                double duration = sequence.LongestDurationAllSequences();
+
+                VisualElement nameOfSequence = new VisualElement();
+
+                //the position of the sequence name
+                nameOfSequence.X = startTime + (duration / 2);
+                nameOfSequence.Y = Double.NaN;
+
+                TextBlock text = new TextBlock();
+                text.Text = name;
+                nameOfSequence.UIElement = text;
+                nameOfSequence.HorizontalAlignment = HorizontalAlignment.Center;
+                nameOfSequence.VerticalAlignment = VerticalAlignment.Bottom;
+
+                AxisSection section = new AxisSection();
+                section.Value = startTime;
+                section.SectionWidth = duration;
+                section.Fill = new SolidColorBrush
+                {
+                    Color = color,
+                    Opacity = OPACITY
+                };
+
+                ovc.SectionCollection.Add(section);
+                ovc.VisualElments.Add(nameOfSequence);
+                ++seqIndex;
+            }
+
+        }
+
+        private void RemoveSectionsOfChannel(CTVItemViewModel channel)
+        {
+            ClearSectionsOfChannel(GetControllerOfChannel(channel));
+        }
+
+        private void BuildSectionsForVisibleChannels()
+        {
+            ICollection<CTVItemViewModel> checkedChannels = this.visualizationTreeViewController.GetCheckedLeaves();
+
+            foreach (var channel in checkedChannels)
+            {
+                BuildSectionsForChannel(channel);
             }
         }
 
+        private void ClearSectionsOfChannel(OutputVisualizerController ovc)
+        {
+            if (ovc.SectionCollection != null && ovc.VisualElments != null)
+            {
+                foreach (AxisSection section in ovc.SectionCollection)
+                {
+                    BindingOperations.ClearAllBindings(section);
+                }
+
+                foreach (VisualElement ve in ovc.VisualElments)
+                {
+                    BindingOperations.ClearAllBindings(ve);
+                }
+
+                ovc.SectionCollection = new SectionsCollection();
+                ovc.VisualElments = new VisualElementsCollection();
+            }
+
+        }
+
+        /// <summary>
+        /// Associates a channels visualization controller with the data it needs to visualize
+        /// </summary>
+        /// <param name="channel">The checked channel to be displayed</param>
+        private void AddDataToChannel(CTVItemViewModel channel)
+        {
+            ChannelBasicController channelController = (ChannelBasicController)(channel as CheckableTVItemController).Item;
+            string cardName = channelController.Parent.Parent.Model.Name;
+            OutputVisualizerController ovc = GetControllerOfChannel(channel);
+
+            if (lastKnownOutput.Output[cardName] is INonQuantizedCardOutput)
+            {
+                double[] tempList = ((INonQuantizedCardOutput)lastKnownOutput.Output[cardName]).GetChannelOutput(channelController.Index());
+                // select the corresponding controller
+                ovc.SetData(tempList);
+                OutputVisualizerCollectionUC.Add(ovc);
+            }
+            else
+            {
+                throw new Exception("Card output must be Non-Quantized");
+            }
+        }
+
+        private void RemoveDataFromChannel(CTVItemViewModel channel)
+        {
+            OutputVisualizerController ovc = GetControllerOfChannel(channel);
+            ovc.SetData(new double[0]);
+            OutputVisualizerCollectionUC.Remove(ovc);
+        }
+
+        private void AddDataToVisibleChannels()
+        {
+            if (lastKnownOutput != null)
+            {
+                ICollection<CTVItemViewModel> checkedChannels = this.visualizationTreeViewController.GetCheckedLeaves();
+
+                foreach (var channel in checkedChannels)
+                {
+                    AddDataToChannel(channel);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Given a checked tree view element, reurns the corresponding channel visalization controller.
+        /// </summary>
+        /// <param name="channel">a checked tree view element</param>
+        /// <returns>the corresponding channel visalization controller</returns>
+        private OutputVisualizerController GetControllerOfChannel(CTVItemViewModel channel)
+        {
+            ChannelBasicController channelController = (ChannelBasicController)(channel as CheckableTVItemController).Item;
+            string cardName = channelController.Parent.Parent.Model.Name;
+            string controllerName = cardName + "-" + channelController.ToString();
+            // select the corresponding controller
+            return AllControllers
+                .Where((controller) => controller.NameOfCardAndChannel.Equals(controllerName))
+                .First();
+        }
+
+        /// <summary>
+        /// Occurs when the last known output needs to be updated
+        /// </summary>
+        /// <param name="param">Not used</param>
+        private void RefreshControllers(object param)
+        {
+            ProcessorListManager plm = ProcessorListManager.GetInstance();
+
+            if (plm.saver != null)
+            {
+                // Get the output that was saved before the quantization and compression steps.
+                this.lastKnownOutput = plm.saver.GetVisualizerOutput();
+
+                OutputVisualizerCollectionUC.Clear();
+                BuildSectionsForVisibleChannels();
+                AddDataToVisibleChannels();
+            }
+        }
+
+
+        private void BuildControllers(RootController rootController)
+        {
+            foreach (AbstractCardController card in rootController.DataController.SequenceGroup.Windows)
+            {
+                foreach (AbstractChannelController channel in card.Tabs.First().Channels)
+                {
+                    OutputVisualizerController ovc = new OutputVisualizerController();
+                    //to display the name of each sequence in the outputVisualizer control.
+                    ovc.NameOfCardAndChannel = card.Model.Name + "-" + channel.ToString();
+                    ovc.alignTriggered += controller_AlignTriggered;
+                    AllControllers.Add(ovc);
+                }
+            }
+        }
 
 
         /// <summary>
-        /// Handles the AlignTriggered event of the controller control.Align all <see cref="OutputVisualizer "/>  controls to the values of the sender control.(align the x axis)
+        /// Handles the AlignTriggered event of the controller control. Aligns all <see cref="OutputVisualizer "/> controls to the values of the sender control.(align the x axis)
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="args">The <see cref="LiveCharts.Events.RangeChangedEventArgs"/> instance containing the event data.</param>
-        void controller_AlignTriggered(object sender, LiveCharts.Events.RangeChangedEventArgs args)
+        /// <param name="sender">The source of the event (not used).</param>
+        /// <param name="args">The <see cref="AlignTriggeredArgs"/> instance containing the event data.</param>
+        private void controller_AlignTriggered(object sender, AlignTriggeredArgs args)
         {
             foreach (var controller in outputVisualizerCollectionUC)
             {
-                controller.MinValue = ((LiveCharts.Wpf.Axis)args.Axis).MinValue;
-                controller.MaxValue = ((LiveCharts.Wpf.Axis)args.Axis).MaxValue;
-                controller.ChangeAxis(args);   
+                controller.MinValue = args.MinValue;
+                controller.MaxValue = args.MaxValue;
+                controller.ChangeAxis();
             }
         }
-       
+
     }
 }
 

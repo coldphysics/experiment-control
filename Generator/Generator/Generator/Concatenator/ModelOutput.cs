@@ -1,5 +1,6 @@
 ﻿using Communication.Interfaces.Generator;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Generator.Generator.Concatenator
 {
@@ -24,6 +25,21 @@ namespace Generator.Generator.Concatenator
         {
             get { return output; }
 
+        }
+
+        public double OutputDurationMillis
+        {
+            get
+            {
+                if (Output.Count > 0)
+                {
+                    return Output.Values.First().TotalDurationMillis;
+                }
+                else
+                {
+                    throw new System.Exception("Cannot determine output duration. No cards were found!");
+                }
+            }
         }
 
         /// <summary>

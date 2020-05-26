@@ -95,6 +95,7 @@
     <Compile Include="Basic\DoubleBuffer.cs" />
     <Compile Include="Basic\OutputHandler.cs" />
     <Compile Include="GeneratorWrapper.cs" />
+    <Compile Include="HardwareManager\NoOutputHardwareGroup.cs" />
     <Compile Include="OutputProcessors\CalibrationUnit\CalibrationScriptAnalyzer.cs" />
     <Compile Include="OutputProcessors\CalibrationUnit\OutputCalibrator.cs" />
     <Compile Include="OutputProcessors\CalibrationUnit\ChannelCalibrator.cs" />

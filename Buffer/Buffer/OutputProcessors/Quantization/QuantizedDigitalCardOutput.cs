@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Communication.Interfaces.Generator;
+using Model.Settings;
 
 namespace Buffer.OutputProcessors.Quantization
 {
@@ -24,6 +25,12 @@ namespace Buffer.OutputProcessors.Quantization
             set { output = value; }
         }
 
+        public double TotalDurationMillis
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="QuantizedDigitalCardOutput"/> class.
         /// </summary>
@@ -31,7 +38,6 @@ namespace Buffer.OutputProcessors.Quantization
         {
         }
 
-        #region ICardOutput Members
 
         /// <summary>
         /// Replicates the output.
@@ -46,6 +52,8 @@ namespace Buffer.OutputProcessors.Quantization
                 result.AddRange(output);
             }
 
+            TotalDurationMillis *= timesToReplicate;
+
             output = result;
         }
 
@@ -54,6 +62,5 @@ namespace Buffer.OutputProcessors.Quantization
             throw new NotImplementedException();
         }
 
-        #endregion
     }
 }

@@ -16,11 +16,7 @@ namespace GeneratorUT
         [DataTestMethod]
         public void TestDisabledSequenceDoesNotAffectLastStepValue(string modelName, string profileName)
         {
-            SelectProfile(profileName);
-            RootModel model = LoadModel(modelName);
-            GeneratorRecipe recipe = new GeneratorRecipe(new SequenceGroupGeneratorRecipe());
-            DataOutputGenerator outputGenerator = (DataOutputGenerator)recipe.Cook(model);
-
+            DataOutputGenerator outputGenerator = CreateOutputGenerator(modelName, profileName);
             Collection<AbstractSequenceController> seqs = outputGenerator.SequenceGroup.Windows[0].Tabs;
             AbstractSequenceController seq = seqs[seqs.Count - 1];
             double value = ((BasicStepOutputGenerator)seq.Channels[0].Steps[0]).GetLastValueOfPreviousStep();

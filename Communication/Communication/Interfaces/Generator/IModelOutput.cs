@@ -19,6 +19,14 @@ namespace Communication.Interfaces.Generator
         }
 
         /// <summary>
+        /// Gets the duration of the output measured in milliseconds
+        /// </summary>
+        double OutputDurationMillis
+        {
+            get;
+        }
+
+        /// <summary>
         /// Replicates the output.
         /// </summary>
         /// <param name="timesToReplicate">The times to replicate.</param>

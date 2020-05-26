@@ -34,6 +34,8 @@ namespace MainProject.Builders
                     return new SuperAtomsHwGroup();
                 case HW_TYPES.NI_PCI:
                     return new DyHwGroup();
+                case HW_TYPES.NO_OUTPUT:
+                    return new NoOutputHardwareGroup();
             }
 
             return null;
@@ -41,7 +43,6 @@ namespace MainProject.Builders
         public void Build(RootModel rootModel, Dictionary<string, CardBasicModel.CardType> cardTypes)
         {
             //List<string> cardNames = new List<string>(cardTypes.Keys);
-
 
             //This is the generator, which will be used in the Buffer to generate the output
             GeneratorRecipe generatorRecipe = new GeneratorRecipe(new SequenceGroupGeneratorRecipe());

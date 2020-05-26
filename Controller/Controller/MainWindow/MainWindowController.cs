@@ -79,6 +79,7 @@ namespace Controller.MainWindow
             // GetRootController().CopyToBuffer();
             MeasurementRoutineController = new MeasurementRoutineManagerController(this, _model);
             IterationManagerController = new IterationManagerController(this);
+
             CurrentModeController = MeasurementRoutineController;
             _incrementIteratorsIsEnabled = true;
 
@@ -173,21 +174,6 @@ namespace Controller.MainWindow
                     windows.Add(sWindow);
                 }
                 return windows;
-            }
-        }
-
-
-
-        //look
-        public OutputVisualizationWindowController OutputVisulizationWindowController
-        {
-            get
-            {
-                RootController root = GetRootController();
-                CTVViewModel treeView = ModelBasedCTVBuilder.BuildCheckableTree(root);
-                OutputVisualizationWindowController outputVisualizationController = new OutputVisualizationWindowController(root, treeView);
-
-                return outputVisualizationController;
             }
         }
 
@@ -846,6 +832,10 @@ namespace Controller.MainWindow
         #endregion
 
         #region Event Handling
+        public void OnCreatingWindow()
+        {
+            _buffer.FinishedModelGeneration += VisualizationWindowManager.GetInstance().HandleNewGeneratedOutputEvent;
+        }
 
         //private void RunModeChangedHandler(object parameter)
         //{
@@ -1336,7 +1326,7 @@ namespace Controller.MainWindow
         {
             if (!DoubleBuffer.ModelIsWrong)
             {
-                VisualizationWindowManager vwm = VisualizationWindowManager.GetInstance(GetRootController());
+                VisualizationWindowManager vwm = VisualizationWindowManager.GetInstance();
                 vwm.OpenWindow();
             }
             else

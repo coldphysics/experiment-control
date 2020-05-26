@@ -29,7 +29,11 @@ namespace Model.Settings
         /// <summary>
         /// National Instruments chassis
         /// </summary>
-        NI_CHASSIS
+        NI_CHASSIS,
+        /// <summary>
+        /// Dummy hardware that only simulates the cycle duration
+        /// </summary>
+        NO_OUTPUT
     }
 
     /// <summary>
@@ -107,6 +111,7 @@ namespace Model.Settings
             "RQO5thFloor",
             "Dy4thFloor",
             "AdWinSimulation",
+            "NoOutput",
             "Default"
         };
 
@@ -122,7 +127,8 @@ namespace Model.Settings
                 CreateRQO5thFloorProfile(),
                 CreateSuperAtoms5thFloorProfile(),
                 CreateDy4thFloorProfile(),
-                CreateSimulatorProfile()
+                CreateSimulatorProfile(),
+                CreateNoOutputProfile()
             };
 
             return result;
@@ -136,7 +142,7 @@ namespace Model.Settings
         public Profile CreateDefaultProfile()
         {
             ProfileBuilder builder = new ProfileBuilder();
-            builder.SetProfileName(default_profile_names[5]);
+            builder.SetProfileName(default_profile_names[6]);
 
             //builder.AddStringSetting(SettingNames.EXPERIMENT_NAME, "");
 
@@ -297,6 +303,19 @@ namespace Model.Settings
             ((SampleRateSetting)result.GetSettingByName(SettingNames.SAMPLE_RATE)).Value = 20;
 
             result.Name = default_profile_names[4];
+
+            return result;
+        }
+
+        private Profile CreateNoOutputProfile()
+        {
+            Profile result = CreateDefaultProfile();
+            ((StringMultiOptionSetting)result.GetSettingByName(SettingNames.HW_TYPE)).Value = HW_TYPES.NO_OUTPUT.ToString();
+            ((StringMultiOptionSetting)result.GetSettingByName(SettingNames.HW_TYPE)).DefaultValue = HW_TYPES.NO_OUTPUT.ToString();
+            ((BooleanSetting)result.GetSettingByName(SettingNames.ALLOW_ACCESS_DATABASE)).Value = false;
+            ((BooleanSetting)result.GetSettingByName(SettingNames.ALLOW_ACCESS_DATABASE)).DefaultValue = false;
+
+            result.Name = default_profile_names[5];
 
             return result;
         }

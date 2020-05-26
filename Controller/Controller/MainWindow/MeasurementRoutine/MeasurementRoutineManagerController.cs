@@ -197,20 +197,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                     return Visibility.Collapsed;
             }
         }
-        //Ebaa
 
-        public OutputVisualizationWindowController OutputVisulizationWindowController
-        {
-            get
-            {
-                RootController root = Parent.GetRootController();
-                CTVViewModel treeView = ModelBasedCTVBuilder.BuildCheckableTree(root);
-                OutputVisualizationWindowController outputVisualizationController = new OutputVisualizationWindowController(root, treeView);
-
-                return outputVisualizationController;
-
-            }
-        }
         public ICommand SetPrimaryModelCommand { private set; get; }
         public ICommand SetPythonScriptsCommand { private set; get; }
         public ICommand AddSecondaryModelCommand { private set; get; }

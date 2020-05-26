@@ -1,11 +1,12 @@
 ﻿using Communication.Interfaces.Generator;
+using Model.Settings;
 
 namespace Generator.Generator.Concatenator
 {
     /// <summary>
     /// The output of a digital card for a single sequence.
     /// </summary>
-    public class DigitalCardOutput : INonQuantizedCard
+    public class DigitalCardOutput : INonQuantizedCardOutput
     {
         /// <summary>
         /// The current offset index reached during the building of the output for each of the channels.
@@ -39,6 +40,15 @@ namespace Generator.Generator.Concatenator
         /// The output array of this card.
         /// </value>
         public uint[] Output { get { return _output; } }
+
+        public double TotalDurationMillis
+        {
+            get
+            {
+                int numberOfSamples = Output.Length;
+                return numberOfSamples * TimeSettingsInfo.GetInstance().SmallestTimeStep;
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DigitalCardOutput"/> class.
