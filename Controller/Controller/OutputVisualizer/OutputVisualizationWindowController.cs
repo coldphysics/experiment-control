@@ -30,6 +30,11 @@ namespace Controller.OutputVisualizer
     /// <seealso cref="Controller.BaseController" />
     public class OutputVisualizationWindowController : ChildController
     {
+        /// <summary>
+        /// The last output known to this controller via (1) opening the window (2) explicitly clicking refresh
+        /// (3) receiveing an automatic refresh (if applicable).
+        /// Needed so that just selecting or unselecting displayed channels does not do an implicit refresh.
+        /// </summary>
         private IModelOutput lastKnownOutput;
 
         // ******************** Properties ******************** 
@@ -50,8 +55,8 @@ namespace Controller.OutputVisualizer
         }
 
         /// <summary>
-        /// Gets or sets the output visualizer collection uc which contains a collection of <see cref=" OutputVisualizerController" /> 
-        /// according to the channels that are selected in the treeView by the user 
+        /// Gets or sets the output visualizer collection which contains a collection of <see cref=" OutputVisualizerController" /> 
+        /// that correspond to the channels that are selected in the treeView by the user.
         /// </summary>
         private ObservableCollection<OutputVisualizerController> outputVisualizerCollectionUC;
 
@@ -74,11 +79,14 @@ namespace Controller.OutputVisualizer
             set;
         }
         /// <summary>
-        /// The command  triggered when the Refresh button is clicked to display the <see cref=" OutputVisualizerController"/> that are checked in the tree view.
+        /// The command  triggered when the Refresh button is clicked to update the latest known output model and visualize it.
         /// </summary>
-        /// <value> The command triggered when the Refresh button is clicked </value>
         public RelayCommand UserControlCollectionCommand { get; private set; }
 
+        /// <summary>
+        /// Indicates whether automatic refreshes of the last known output model are enabled or not.
+        /// Automatic refreshes take place when a new output generation operation is done.
+        /// </summary>
         public bool AutomaticRefresh
         {
             set;
@@ -92,16 +100,16 @@ namespace Controller.OutputVisualizer
         /// <summary>
         /// Initializes a new instance of the <see cref="OutputVisualizationWindowController"/> class.
         /// </summary>
-        /// <param name="root">the root</param>
-        /// <param name="treeViewController"> the visualization tree view controller</param>
+        /// <param name="mainWindowController">The parent controller (gives access to the buffer)</param>
+        /// <param name="treeViewController">The visualization tree view controller</param>
         public OutputVisualizationWindowController(CTVViewModel treeViewController, MainWindowController mainWindowController)
             : base(mainWindowController)
         {
             this.VisualizationTreeViewController = treeViewController;
             OutputVisualizerCollectionUC = new ObservableCollection<OutputVisualizerController>();
             AllControllers = new ObservableCollection<OutputVisualizerController>();
-            //Add intialize commands method in case we have multiple commands
             UserControlCollectionCommand = new RelayCommand(RefreshControllers);
+            // We create the sub-controllers only once so we retain their views when the underlying data changes
             BuildControllers(mainWindowController.GetRootController());
             VisualizationTreeViewController.CheckStateChanged += VisualizationTreeViewController_CheckStateChanged;
         }
@@ -113,6 +121,9 @@ namespace Controller.OutputVisualizer
             return ((MainWindowController)parent).GetRootController();
         }
 
+        /// <summary>
+        /// Invoked whenever a new output is generated
+        /// </summary>
         public void HandleNewGeneratedOutputEvent()
         {
             if (AutomaticRefresh)
@@ -121,11 +132,20 @@ namespace Controller.OutputVisualizer
             }
         }
 
+        /// <summary>
+        /// Invoked whenever the associated window opens
+        /// </summary>
         public void HandleWindowOpeningEvent()
         {
             RefreshControllers(null);
         }
 
+        /// <summary>
+        /// Invoked when the check-state of any element of the channels tree view is changed.
+        /// Used to either display or hide the corresponding channel output visualizers.
+        /// </summary>
+        /// <param name="sender">The tree element whose state is changed</param>
+        /// <param name="e">Not used</param>
         private void VisualizationTreeViewController_CheckStateChanged(object sender, EventArgs e)
         {
             CTVItemViewModel checkedItem = (CTVItemViewModel)sender;
@@ -146,6 +166,10 @@ namespace Controller.OutputVisualizer
             }
         }
 
+        /// <summary>
+        /// Builds the sections, i.e., the sequence colors and labels, for a given channel.
+        /// </summary>
+        /// <param name="channel">The checked channel to be displayed</param>
         private void BuildSectionsForChannel(CTVItemViewModel channel)
         {
             const int COLOR_SEED = 1200;
@@ -161,7 +185,7 @@ namespace Controller.OutputVisualizer
             foreach (AbstractSequenceController sequence in sequeces)
             {
                 Color color = Color.FromArgb((byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256));
-                string name = string.Format("{0} {1}", ((TabController)sequence).Name, sequence.Index().ToString());
+                string name = string.Format("{0} ({1})", ((TabController)sequence).Name, sequence.Index().ToString());
                 double startTime = sequence.ActualStartTime();
                 double duration = sequence.LongestDurationAllSequences();
 
@@ -228,6 +252,10 @@ namespace Controller.OutputVisualizer
 
         }
 
+        /// <summary>
+        /// Associates a channels visualization controller with the data it needs to visualize
+        /// </summary>
+        /// <param name="channel">The checked channel to be displayed</param>
         private void AddDataToChannel(CTVItemViewModel channel)
         {
             ChannelBasicController channelController = (ChannelBasicController)(channel as CheckableTVItemController).Item;
@@ -268,6 +296,11 @@ namespace Controller.OutputVisualizer
 
         }
 
+        /// <summary>
+        /// Given a checked tree view element, reurns the corresponding channel visalization controller.
+        /// </summary>
+        /// <param name="channel">a checked tree view element</param>
+        /// <returns>the corresponding channel visalization controller</returns>
         private OutputVisualizerController GetControllerOfChannel(CTVItemViewModel channel)
         {
             ChannelBasicController channelController = (ChannelBasicController)(channel as CheckableTVItemController).Item;
@@ -279,6 +312,10 @@ namespace Controller.OutputVisualizer
                 .First();
         }
 
+        /// <summary>
+        /// Occurs when the last known output needs to be updated
+        /// </summary>
+        /// <param name="param">Not used</param>
         private void RefreshControllers(object param)
         {
             ProcessorListManager plm = ProcessorListManager.GetInstance();
@@ -312,9 +349,9 @@ namespace Controller.OutputVisualizer
 
 
         /// <summary>
-        /// Handles the AlignTriggered event of the controller control.Align all <see cref="OutputVisualizer "/>  controls to the values of the sender control.(align the x axis)
+        /// Handles the AlignTriggered event of the controller control. Aligns all <see cref="OutputVisualizer "/> controls to the values of the sender control.(align the x axis)
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
+        /// <param name="sender">The source of the event (not used).</param>
         /// <param name="args">The <see cref="AlignTriggeredArgs"/> instance containing the event data.</param>
         private void controller_AlignTriggered(object sender, AlignTriggeredArgs args)
         {
