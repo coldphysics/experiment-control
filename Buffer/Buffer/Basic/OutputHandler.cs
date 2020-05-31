@@ -1274,12 +1274,10 @@ namespace Buffer.Basic
                 if (!ProfilesManager.GetInstance().ActiveProfile.GetSettingValueByName<bool>(SettingNames.USE_LEGACY_DATABASE))//We need to use new schema
                 {
                     OperatingMode currentMode;
-                    int startCounterOfRoutine;
 
                     if (IsMeasurementRoutineMode)
                     {
                         currentMode = OperatingMode.MEASUREMENT_ROUTINE;
-                        startCounterOfRoutine = StartGlobalCounterOfMeasurementRoutine;
                     }
                     else if (model.IsItererating)
                         currentMode = OperatingMode.ITERATION;
