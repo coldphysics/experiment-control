@@ -176,8 +176,23 @@ To execute all unit tests in the solution follow these steps:
 6. Done!
 
 #### How to introduce changes to the data model while maintaining backward-compatibility?
-__TODO__
+The application uses [basic C# XML serialization](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/#basic-and-custom-serialization).
+It is very important for future versions of the application to keep the compatibility for models created in older versions of the application, since they might be still in-use by some experiments.
+However, introducing certain changes to the data model, i.e., classes of the `Model` namespace, can cause the program to fail to deserialize older model files.
+Therfore, when having to introduce such changes to the model, the following procedure must be used to maintain backward-compatibility of the application __Before Actually Introduce Any Changes!__:
 
+ 1. Create a subfolder/namespace withing the `Model` project with the name `V[X]` where `[X]` stands for the version number of the model before increasing it, e.g., if the current version is 5 and you want to bump it up to 6, the namespace would be `Model.V5`. (Consult `Model.Root.RootModel` class to figure out the current version).
+ 2. Copy all model classes into this new folder. At the time of writing this document, these classes correspond to the following namespaces: `Model.BaseTypes`, `Model.Root`, `Model.Data`, and `Model.Variables`.
+ 3. Ensure that all classes within the new namespace have their namespace changed to be inside: `Model.V[x]`, instead of just `Model`.
+ 4. Ensure that if a model class uses another model class, it uses the correct version thereof, e.g., the `Model.V1.Data.Card.CardBasicModel` uses `Model.V1.Data.Channels` but not `Model.Data.Channels`. For steps (3-4), a find-and-replace operation of `'Model'` with `'Model.V[X]'` could be helpful. Just ensure to apply it to the current folder, not all over the project!
+ 5. Increase the version number in the `Model.Root.RootModel` class.
+ 6. Introduce the desired changes to the new model, i.e., the one __outside__ the folder `V[X]`.
+ 7. Add a new converter class inside the old version: `Model.V[X].ModelConverter`. This class must allow the conversion of an old model into the new model. The conversion might be just syntactical, i.e., copying certain values from one property to anoter, or they could be semantical, e.g., splitting a property into multiple new ones, or changing the hierarchy of classes, etc. Consult existing converter classes for examples.
+ 8. Introduce changes to the `ModelLoader` class:
+    1. Locate the `ModelLoader` class inside the `Controller.MainWindow` namespace.
+    2. Add a new constant string class field that correspond to the namespace of the old namespace, e.g., `private const string V4_MODEL_XML_SCHEMA = "http://schemas.datacontract.org/2004/07/Model.V5";`
+    3. Locate the method called `ConvertModelVersionIfNecessary`.
+    4. Introduce a new if-else statement that handles the conversion of the old version into the current version (consult similar handling of older versions).
 #### How to introduce changes to the data model of the user profiles?
 __TODO__
 
