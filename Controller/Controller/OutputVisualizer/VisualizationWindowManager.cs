@@ -8,7 +8,6 @@ using System.Windows;
 
 namespace Controller.OutputVisualizer
 {
-
     /// <summary>
     /// This class is a singleton, it's used to open the output visualizer window once and manage it. 
     /// The output visualizer can be opened from the main window (view => output-Visualizer)
@@ -16,16 +15,16 @@ namespace Controller.OutputVisualizer
     /// </summary>
     public class VisualizationWindowManager
     {
-        private static VisualizationWindowManager singleton;
-        private Window visualizationWindow;
-        private OutputVisualizationWindowController outputVisualizationController;
+        private static VisualizationWindowManager _singleton;
+        private Window _visualizationWindow;
+        private readonly OutputVisualizationWindowController _outputVisualizationController;
         private bool isVisualizationWindowOpen = false;
 
 
         private VisualizationWindowManager(MainWindowController mainWindowController)
         {
             CTVViewModel treeView = ModelBasedCTVBuilder.BuildCheckableTree(mainWindowController.GetRootController());
-            outputVisualizationController = new OutputVisualizationWindowController(treeView, mainWindowController);
+            _outputVisualizationController = new OutputVisualizationWindowController(treeView, mainWindowController);
         }
 
         /// <summary>
@@ -34,25 +33,26 @@ namespace Controller.OutputVisualizer
         /// <param name="mainWindowController">The controller of the main window (parent controller)</param>
         public static void Initialize(MainWindowController mainWindowController)
         {
-            if (singleton == null)
+            if (_singleton == null)
             {
-                singleton = new VisualizationWindowManager(mainWindowController);
+                _singleton = new VisualizationWindowManager(mainWindowController);
             }
             else
             {
                 throw new Exception("Trying to initialize singleton more than once!");
             }
         }
+
         /// <summary>
         /// Gets the single instance of this class. The Initialize method must be invoked once before the first call to this method
         /// </summary>
         /// <returns>an instance of the <see cref="VisualizationWindowManager"/> class</returns>
         public static VisualizationWindowManager GetInstance()
         {
-            if (singleton == null)
+            if (_singleton == null)
                 throw new Exception("Trying to get instance without initialization");
 
-            return singleton;
+            return _singleton;
         }
 
         /// <summary>
@@ -62,9 +62,10 @@ namespace Controller.OutputVisualizer
         /// <param name="args">Indicates whether the generation process was successful</param>
         public void HandleNewGeneratedOutputEvent(object sender, FinishedModelGenerationEventArgs args)
         {
-            if (args.IsSuccessful && visualizationWindow != null)
+            if (args.IsSuccessful)
             {
-                visualizationWindow.Dispatcher.Invoke(() => outputVisualizationController.HandleNewGeneratedOutputEvent());
+                _visualizationWindow?.Dispatcher.Invoke(() =>
+                    _outputVisualizationController.HandleNewGeneratedOutputEvent());
             }
         }
 
@@ -73,25 +74,25 @@ namespace Controller.OutputVisualizer
         /// </summary>
         public void OpenWindow()
         {
-            if (visualizationWindow == null || !isVisualizationWindowOpen)
+            if (_visualizationWindow == null || !isVisualizationWindowOpen)
             {
-                visualizationWindow = WindowsHelper.CreateCustomWindowToHostViewModel(outputVisualizationController, false);
+                _visualizationWindow =
+                    WindowsHelper.CreateCustomWindowToHostViewModel(_outputVisualizationController, false);
                 isVisualizationWindowOpen = true;
-                visualizationWindow.Closed += new EventHandler((sender, args) => isVisualizationWindowOpen = false);
+                _visualizationWindow.Closed += new EventHandler((sender, args) => isVisualizationWindowOpen = false);
 
-                visualizationWindow.MinHeight = 360;
-                visualizationWindow.MinWidth = 500;
-                visualizationWindow.Height = 400;
-                visualizationWindow.Width = visualizationWindow.MinWidth;
-                visualizationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                visualizationWindow.Title = "Output Visualizer";
+                _visualizationWindow.MinHeight = 360;
+                _visualizationWindow.MinWidth = 500;
+                _visualizationWindow.Height = 400;
+                _visualizationWindow.Width = _visualizationWindow.MinWidth;
+                _visualizationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                _visualizationWindow.Title = "Output Visualizer";
                 //visulizationWindow.ShowDialog();
             }
-            outputVisualizationController.HandleWindowOpeningEvent();
-            visualizationWindow.Show();
-            visualizationWindow.Focus();
 
+            _outputVisualizationController.HandleWindowOpeningEvent();
+            _visualizationWindow.Show();
+            _visualizationWindow.Focus();
         }
-
     }
 }

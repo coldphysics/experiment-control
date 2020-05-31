@@ -27,8 +27,7 @@ namespace Controller.MainWindow
         /// <value>
         /// The model analog cards.
         /// </value>
-        public int ModelAnalogCards
-        { set; get; }
+        public int ModelAnalogCards { set; get; }
 
         /// <summary>
         /// Gets or sets the number of digital cards.
@@ -36,8 +35,7 @@ namespace Controller.MainWindow
         /// <value>
         /// The model digital cards.
         /// </value>
-        public int ModelDigitalCards
-        { set; get; }
+        public int ModelDigitalCards { set; get; }
 
         /// <summary>
         /// Gets or sets the number of analog channels per card.
@@ -45,8 +43,7 @@ namespace Controller.MainWindow
         /// <value>
         /// The model analog channels per card.
         /// </value>
-        public int ModelAnalogChannelsPerCard
-        { set; get; }
+        public int ModelAnalogChannelsPerCard { set; get; }
 
         /// <summary>
         /// Gets or sets the the number of channels per card.
@@ -54,8 +51,7 @@ namespace Controller.MainWindow
         /// <value>
         /// The model digital channels per card.
         /// </value>
-        public int ModelDigitalChannelsPerCard
-        { set; get; }
+        public int ModelDigitalChannelsPerCard { set; get; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the loading operation should be canceled.
@@ -63,11 +59,7 @@ namespace Controller.MainWindow
         /// <value>
         ///   <c>true</c> if cancel; otherwise, <c>false</c>.
         /// </value>
-        public bool Cancel
-        {
-            set;
-            get;
-        }
+        public bool Cancel { set; get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModelStructureMismatchEventArgs"/> class.
@@ -98,11 +90,7 @@ namespace Controller.MainWindow
         /// <value>
         /// The current version.
         /// </value>
-        public int CurrentVersion
-        {
-            set;
-            get;
-        }
+        public int CurrentVersion { set; get; }
 
         /// <summary>
         /// Gets or sets the model version.
@@ -110,11 +98,7 @@ namespace Controller.MainWindow
         /// <value>
         /// The model version.
         /// </value>
-        public int ModelVersion
-        {
-            set;
-            get;
-        }
+        public int ModelVersion { set; get; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the loading operation should be canceled.
@@ -122,11 +106,7 @@ namespace Controller.MainWindow
         /// <value>
         ///   <c>true</c> if cancel; otherwise, <c>false</c>.
         /// </value>
-        public bool Cancel
-        {
-            set;
-            get;
-        }
+        public bool Cancel { set; get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModelVersionMismatchEventArgs"/> class.
@@ -174,6 +154,11 @@ namespace Controller.MainWindow
         private const string V2_MODEL_XML_SCHEMA = "http://schemas.datacontract.org/2004/07/Model.V2";
         private const string V3_MODEL_XML_SCHEMA = "http://schemas.datacontract.org/2004/07/Model.V3";
         private const string V4_MODEL_XML_SCHEMA = "http://schemas.datacontract.org/2004/07/Model.V4";
+        // The first two versions had a map of sequence groups. When this map is serialized, for some reason,
+        // its type contains a string that depends (somehow) on the namespace of the key and value.
+        // Since these are changed due to versioning, e.g., V1. is added to all types, the old serialized models
+        // cannot be deserialized into version specific models (nor the active model). Therefore, this had to be
+        // fixed manually. However, since version 3, the map is dropped from the model, so this became irrelevant.
         private const string ACTIVE_MODEL_CRYPT = "KeyValueOfstringSequenceGroupModel3tbQ1peO";
         private const string V1_MODEL_CRYPT = "KeyValueOfstringSequenceGroupModelEC1jtckR";
         private const string V2_MODEL_CRYPT = "KeyValueOfstringSequenceGroupModeluFmvqGmx";
@@ -183,6 +168,7 @@ namespace Controller.MainWindow
         /// Occurs when the structure of the model does not match with the settings.
         /// </summary>
         public event ModelStructureMismatchDelegate ModelStructureMismatchDetected;
+
         /// <summary>
         /// Occurs when the version of the model does not match with the current model version.
         /// </summary>
@@ -215,12 +201,13 @@ namespace Controller.MainWindow
         //Ebaa 1.10.2018
         protected void OnPythonScriptsMismatch(ModelVersionMismatchEventArgs args)
         {
-            if(PythonScriptMismatchDetected !=null)
-                PythonScriptMismatchDetected(this,args);
-          //  PythonScriptMismatchDetected?.Invoke(this, args);
+            if (PythonScriptMismatchDetected != null)
+                PythonScriptMismatchDetected(this, args);
+            //  PythonScriptMismatchDetected?.Invoke(this, args);
         }
 
         #region Structure Conversion
+
         private RootModel ConvertModelStructureIfNecessary(RootModel loadedModel)
         {
             int intendedAnalogCardsCount = Global.GetNumAnalogCards();
@@ -228,28 +215,35 @@ namespace Controller.MainWindow
             int intendedAnalogChannelsCount = Global.GetNumAnalogChannelsPerCard();
             int intendedDigitalChannelsCount = Global.GetNumDigitalChannelsPerCard();
 
-            int loadedModelAnalogCards = loadedModel.Data.group.Cards.Count(param => param.Type == Model.Data.Cards.CardBasicModel.CardType.Analog);
-            int loadedModelDigitalCards = loadedModel.Data.group.Cards.Count(param => param.Type == Model.Data.Cards.CardBasicModel.CardType.Digital);
+            int loadedModelAnalogCards =
+                loadedModel.Data.group.Cards.Count(param =>
+                    param.Type == Model.Data.Cards.CardBasicModel.CardType.Analog);
+            int loadedModelDigitalCards = loadedModel.Data.group.Cards.Count(param =>
+                param.Type == Model.Data.Cards.CardBasicModel.CardType.Digital);
             int loadedModelAnalogChannels = 0;
             int loadedModelDigitalChannels = 0;
 
-            CardBasicModel firstAnalogCard = loadedModel.Data.group.Cards.FirstOrDefault(param => param.Type == Model.Data.Cards.CardBasicModel.CardType.Analog);
+            CardBasicModel firstAnalogCard = loadedModel.Data.group.Cards.FirstOrDefault(param =>
+                param.Type == Model.Data.Cards.CardBasicModel.CardType.Analog);
 
             if (firstAnalogCard != null)
             {
-                loadedModelAnalogChannels = (int)firstAnalogCard.NumberOfChannels;
+                loadedModelAnalogChannels = (int) firstAnalogCard.NumberOfChannels;
             }
 
-            CardBasicModel firstDigitalCard = loadedModel.Data.group.Cards.FirstOrDefault(param => param.Type == Model.Data.Cards.CardBasicModel.CardType.Digital);
+            CardBasicModel firstDigitalCard = loadedModel.Data.group.Cards.FirstOrDefault(param =>
+                param.Type == Model.Data.Cards.CardBasicModel.CardType.Digital);
 
             if (firstDigitalCard != null)
             {
-                loadedModelDigitalChannels = (int)firstDigitalCard.NumberOfChannels;
+                loadedModelDigitalChannels = (int) firstDigitalCard.NumberOfChannels;
             }
 
 
-            if (intendedAnalogCardsCount != loadedModelAnalogCards || intendedAnalogChannelsCount != loadedModelAnalogChannels ||
-               intendedDigitalCardsCount != loadedModelDigitalCards || intendedDigitalChannelsCount != loadedModelDigitalChannels)
+            if (intendedAnalogCardsCount != loadedModelAnalogCards ||
+                intendedAnalogChannelsCount != loadedModelAnalogChannels ||
+                intendedDigitalCardsCount != loadedModelDigitalCards ||
+                intendedDigitalChannelsCount != loadedModelDigitalChannels)
             {
                 ModelStructureMismatchEventArgs args = new ModelStructureMismatchEventArgs
                 {
@@ -264,10 +258,10 @@ namespace Controller.MainWindow
                 if (args.Cancel)
                     return null;
 
-                FixNumberOfCards(loadedModel, intendedAnalogCardsCount, loadedModelAnalogCards, 
+                FixNumberOfCards(loadedModel, intendedAnalogCardsCount, loadedModelAnalogCards,
                     CardBasicModel.CardType.Analog, CardBasicModel.ANALOG_CARD_BASE_NAME);
 
-                FixNumberOfCards(loadedModel, intendedDigitalCardsCount, loadedModelDigitalCards, 
+                FixNumberOfCards(loadedModel, intendedDigitalCardsCount, loadedModelDigitalCards,
                     CardBasicModel.CardType.Digital, CardBasicModel.DIGITAL_CARD_BASE_NAME);
 
                 foreach (CardBasicModel currentCard in loadedModel.Data.group.Cards)
@@ -289,7 +283,8 @@ namespace Controller.MainWindow
             {
                 //Add channel settings
                 for (int i = 1; i <= intendedChannelsCount - loadedChannelsCount; i++)
-                    currentCard.Settings.Add(new Model.Data.Channels.ChannelSettingsModel(loadedChannelsCount + i, currentCard));
+                    currentCard.Settings.Add(
+                        new Model.Data.Channels.ChannelSettingsModel(loadedChannelsCount + i, currentCard));
 
                 //Add channels
                 foreach (SequenceModel currentSequnce in currentCard.Sequences)
@@ -298,7 +293,7 @@ namespace Controller.MainWindow
                         currentSequnce.Channels.Add(new ChannelModel(currentSequnce));
                 }
             }
-            else if (loadedChannelsCount > intendedChannelsCount)//We need to remove channels
+            else if (loadedChannelsCount > intendedChannelsCount) //We need to remove channels
             {
                 int TO_REMOVE = loadedChannelsCount - intendedChannelsCount;
                 int removedCounter = TO_REMOVE;
@@ -331,17 +326,18 @@ namespace Controller.MainWindow
             }
         }
 
-        private void FixNumberOfCards(RootModel loadedModel, int intendedCardCount, int loadedCardCount, CardBasicModel.CardType type, string cardBasicName)
+        private void FixNumberOfCards(RootModel loadedModel, int intendedCardCount, int loadedCardCount,
+            CardBasicModel.CardType type, string cardBasicName)
         {
             CardBasicModel currentCard;
             SequenceGroupModel sg = loadedModel.Data.group;
             ObservableCollection<CardBasicModel> cards = loadedModel.Data.group.Cards;
             int channelsCount = 0;
-            CardBasicModel firstCard = cards.Where(param => param.Type == type).FirstOrDefault();
+            CardBasicModel firstCard = cards.FirstOrDefault(param => param.Type == type);
 
             if (firstCard != null)
-                channelsCount = (int)firstCard.NumberOfChannels;
-            
+                channelsCount = (int) firstCard.NumberOfChannels;
+
             //We need to add cards!
             if (loadedCardCount < intendedCardCount)
             {
@@ -349,7 +345,8 @@ namespace Controller.MainWindow
 
                 for (int i = 1; i <= intendedCardCount - loadedCardCount; i++)
                 {
-                    currentCard = CreateNewCard(loadedModel, intendedCardCount, loadedCardCount, channelsCount, type, cardBasicName, i);
+                    currentCard = CreateNewCard(loadedModel, intendedCardCount, loadedCardCount, channelsCount, type,
+                        cardBasicName, i);
 
                     if (type == CardBasicModel.CardType.Analog)
                         position = loadedCardCount + i - 1;
@@ -359,7 +356,7 @@ namespace Controller.MainWindow
                     cards.Insert(position, currentCard);
                 }
             }
-            else if (loadedCardCount > intendedCardCount)//We need to remove cards
+            else if (loadedCardCount > intendedCardCount) //We need to remove cards
             {
                 int toRemove = loadedCardCount - intendedCardCount;
 
@@ -377,16 +374,20 @@ namespace Controller.MainWindow
             }
         }
 
-        private CardBasicModel CreateNewCard(RootModel loadedModel, int intendedCardCount, int loadedCardCount, int intendedChannelCount, CardBasicModel.CardType type, string cardBasicName, int cardPosition)
+        private CardBasicModel CreateNewCard(RootModel loadedModel, int intendedCardCount, int loadedCardCount,
+            int intendedChannelCount, CardBasicModel.CardType type, string cardBasicName, int cardPosition)
         {
             ObservableCollection<SequenceModel> firstCardSequences = loadedModel.Data.group.Cards.First().Sequences;
-            
+
 
             //Create a new card
-            string currentName = String.Format("{0}{1}", cardBasicName, loadedCardCount + cardPosition);//RECO find out whether starting index is being used
-            CardBasicModel currentCard = new CardModel(currentName, (uint)intendedChannelCount, type, loadedModel.Data.group);
+            string currentName =
+                String.Format("{0}{1}", cardBasicName,
+                    loadedCardCount + cardPosition); //RECO find out whether starting index is being used
+            CardBasicModel currentCard =
+                new CardModel(currentName, (uint) intendedChannelCount, type, loadedModel.Data.group);
 
-            for (int iChannel = 0; iChannel < intendedChannelCount ; iChannel++)
+            for (int iChannel = 0; iChannel < intendedChannelCount; iChannel++)
             {
                 ChannelSettingsModel setting = new ChannelSettingsModel(iChannel, currentCard);
                 currentCard.Settings.Add(setting);
@@ -396,14 +397,16 @@ namespace Controller.MainWindow
             //Build empty sequences for the new card (based on the sequences of the first card)
             for (int i = 0; i < firstCardSequences.Count; i++)
             {
-                currentSequence = CreateNewSequence(currentCard, firstCardSequences[i].Name, firstCardSequences[i].startTime, intendedChannelCount);
+                currentSequence = CreateNewSequence(currentCard, firstCardSequences[i].Name,
+                    firstCardSequences[i].startTime, intendedChannelCount);
                 currentCard.Sequences.Add(currentSequence);
             }
 
             return currentCard;
         }
 
-        private SequenceModel CreateNewSequence(CardBasicModel currentCard, string name, double startTime, int intendedChannelCount)
+        private SequenceModel CreateNewSequence(CardBasicModel currentCard, string name, double startTime,
+            int intendedChannelCount)
         {
             SequenceModel currentSequence = new SequenceModel(currentCard);
 
@@ -419,9 +422,11 @@ namespace Controller.MainWindow
 
             return currentSequence;
         }
+
         #endregion
 
         #region Version Conversion
+
         /// <summary>
         /// Detects the version of the loaded model, and if it needs an "upgrade" prepares it and upgrades it to the current model version.
         /// </summary>
@@ -455,7 +460,7 @@ namespace Controller.MainWindow
                         //{
                         //    mustSpecifyPyhtonScripts = true
                         //};
-                        
+
 
                         OnModelVersionMismatch(args);
 
@@ -466,10 +471,11 @@ namespace Controller.MainWindow
 
                         //RECO find more dynamic way of figuring this out!
                         xml = xml.Replace(ACTIVE_MODEL_CRYPT, V1_MODEL_CRYPT);
-                        reader = XmlDictionaryReader.CreateTextReader(GenerateStreamFromString(xml), new XmlDictionaryReaderQuotas());
+                        reader = XmlDictionaryReader.CreateTextReader(GenerateStreamFromString(xml),
+                            new XmlDictionaryReaderQuotas());
 
                         var deserializer = new DataContractSerializer(typeof(Model.V1.Root.RootModel));
-                        Model.V1.Root.RootModel model = (Model.V1.Root.RootModel)deserializer.ReadObject(reader, true);
+                        Model.V1.Root.RootModel model = (Model.V1.Root.RootModel) deserializer.ReadObject(reader, true);
                         Model.V1.ModelConverter converter = new Model.V1.ModelConverter();
                         result = converter.ConvertToCurrentVersion(model);
                     }
@@ -494,50 +500,55 @@ namespace Controller.MainWindow
 
                             //RECO find more dynamic way of figuring this out!
                             xml = xml.Replace(ACTIVE_MODEL_CRYPT, V2_MODEL_CRYPT);
-                            reader = XmlDictionaryReader.CreateTextReader(GenerateStreamFromString(xml), new XmlDictionaryReaderQuotas());
+                            reader = XmlDictionaryReader.CreateTextReader(GenerateStreamFromString(xml),
+                                new XmlDictionaryReaderQuotas());
 
                             var deserializer = new DataContractSerializer(typeof(Model.V2.Root.RootModel));
-                            Model.V2.Root.RootModel model = (Model.V2.Root.RootModel)deserializer.ReadObject(reader, true);
+                            Model.V2.Root.RootModel model =
+                                (Model.V2.Root.RootModel) deserializer.ReadObject(reader, true);
                             Model.V2.ModelConverter converter = new Model.V2.ModelConverter();
                             result = converter.ConvertToCurrentVersion(model);
-
                         }
-                        else if (modelVersion == 3)//It is version 3
+                        else if (modelVersion == 3) //It is version 3
                         {
                             xml = xml.Replace(ACTIVE_MODEL_XML_SCHEMA, V3_MODEL_XML_SCHEMA);
 
-                            reader = XmlDictionaryReader.CreateTextReader(GenerateStreamFromString(xml), new XmlDictionaryReaderQuotas());
+                            reader = XmlDictionaryReader.CreateTextReader(GenerateStreamFromString(xml),
+                                new XmlDictionaryReaderQuotas());
 
                             var deserializer = new DataContractSerializer(typeof(Model.V3.Root.RootModel));
-                            Model.V3.Root.RootModel model = (Model.V3.Root.RootModel)deserializer.ReadObject(reader, true);
+                            Model.V3.Root.RootModel model =
+                                (Model.V3.Root.RootModel) deserializer.ReadObject(reader, true);
                             Model.V3.ModelConverter converter = new Model.V3.ModelConverter();
                             result = converter.ConvertToCurrentVersion(model);
                         }
-                        else if(modelVersion == 4) // It is version 4
+                        else if (modelVersion == 4) // It is version 4
                         {
                             xml = xml.Replace(ACTIVE_MODEL_XML_SCHEMA, V4_MODEL_XML_SCHEMA);
 
-                            reader = XmlDictionaryReader.CreateTextReader(GenerateStreamFromString(xml), new XmlDictionaryReaderQuotas());
+                            reader = XmlDictionaryReader.CreateTextReader(GenerateStreamFromString(xml),
+                                new XmlDictionaryReaderQuotas());
 
                             var deserializer = new DataContractSerializer(typeof(Model.V4.Root.RootModel));
-                            Model.V4.Root.RootModel model = (Model.V4.Root.RootModel)deserializer.ReadObject(reader, true);
+                            Model.V4.Root.RootModel model =
+                                (Model.V4.Root.RootModel) deserializer.ReadObject(reader, true);
                             Model.V4.ModelConverter converter = new Model.V4.ModelConverter();
                             result = converter.ConvertToCurrentVersion(model);
-                           // MessageBox.Show("You are using an old version of the model"+"\n"+"In this version python scripts are model-specific"+"\n"+"You can add pzthon scripts from (python scripts) button"+"\n"+"Note: In order to modify python scripts, load the model as a primary model","Warning", MessageBoxButton.OK);
-                          
+                            // MessageBox.Show("You are using an old version of the model"+"\n"+"In this version python scripts are model-specific"+"\n"+"You can add pzthon scripts from (python scripts) button"+"\n"+"Note: In order to modify python scripts, load the model as a primary model","Warning", MessageBoxButton.OK);
                         }
-                        else//It is the current version!
+                        else //It is the current version!
                         {
-                            reader = XmlDictionaryReader.CreateTextReader(GenerateStreamFromString(xml), new XmlDictionaryReaderQuotas());
+                            reader = XmlDictionaryReader.CreateTextReader(GenerateStreamFromString(xml),
+                                new XmlDictionaryReaderQuotas());
                             var deserializer = new DataContractSerializer(typeof(RootModel));
-                            result = (RootModel)deserializer.ReadObject(reader, true);
+                            result = (RootModel) deserializer.ReadObject(reader, true);
                         }
-                        if(modelVersion < 5)
+
+                        if (modelVersion < 5)
                         {
-                            OnPythonScriptsMismatch(args);  
+                            OnPythonScriptsMismatch(args);
                         }
                     }
-
                 }
             }
 
@@ -559,6 +570,7 @@ namespace Controller.MainWindow
         //    serializer.WriteObject(writer, result);
         //    writer.Close();
         //}
+
         #endregion
 
         /// <summary>
@@ -573,7 +585,6 @@ namespace Controller.MainWindow
             if (model != null)
             {
                 model = ConvertModelStructureIfNecessary(model);
-               
             }
 
             return model;
