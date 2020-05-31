@@ -87,7 +87,25 @@ Details about all releases can be found [here](https://github.com/coldphysics/ex
 Alternatively, you will need to build the code and create an installer yourself (see the [developer information](#information-for-developers) below).
 
 #### How to configure the database?
-__TODO__
+The application can create entries in a database that correspond to the variables and other aspects of each cycle being executed.
+CPECS is programmed to communicate with a [MySql](https://dev.mysql.com/downloads/) database management system instance.
+The application uses password authentication __(SSL is not supported)__.
+CPECS stores its entries in a table with the following schema (the name of the database, the server, and the table are arbitrary and can be configured from the user profiles):
+
+| Column Name             | Data Type  | Description  |
+|-------------------------|------------|---|
+| `globalCounter`         | `VARCHAR`  | The value of the global counter of the cycle.  |
+| `startTime`             | `DATETIME` | The datetime at which the current cycle started.  |
+| `startCounterOfScans`   | `VARCHAR`  | The value of the global counter when the current set of cycles started, e.g., when the user clicked on _Start_  |
+| `iterationOfScan`       | `VARCHAR`  | The value of the current iteration whithin the current set of cycles.  |
+| `completedScans`        | `VARCHAR`  | The number of times the whole set of iterator variables reached their final values, i.e, the number of complete scans.  |
+| `numberOfIterations`    | `VARCHAR`  | The total number of iterations for the current scan.|
+| `Variables`             | `VARCHAR`  | A comma-separated list of key-value pairs each corresponding to a user-defined variable of any kind (static, iterator, dynamic). The list also contains some other key-value pairs such as the cycle duration.  |
+| `iterators`             | `VARCHAR`  | A comma-separated list of key-value pairs each corresponding to a user-defined iterator variable.  |
+| `operatingMode`         | `VARCHAR`  | `'0'`: static mode, `'1'`: iterating mode, `'2'`: measurement routine mode  |
+| `startCounterOfRoutine` | `VARCHAR`  | If in routine mode: the value of the global counter when the routine started.  |
+| `modelNumber`           | `VARCHAR`  | If in routine mode: the 0-based index of the current model within the measurement routine.|
+| `routineArray`          | `VARCHAR`  | If in routine mode: the contents of the `routineArray` used to get messages in/and out of the measurement routine script.  |
   
 ## Information for Developers
 
