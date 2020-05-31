@@ -105,7 +105,11 @@ CPECS stores its entries in a table with the following schema (the name of the d
 | `operatingMode`         | `VARCHAR`  | `'0'`: static mode, `'1'`: iterating mode, `'2'`: measurement routine mode  |
 | `startCounterOfRoutine` | `VARCHAR`  | If in routine mode: the value of the global counter when the routine started.  |
 | `modelNumber`           | `VARCHAR`  | If in routine mode: the 0-based index of the current model within the measurement routine.|
-| `routineArray`          | `VARCHAR`  | If in routine mode: the contents of the `routineArray` used to get messages in/and out of the measurement routine script.  |
+| `routineArray`          | `VARCHAR`  | If in routine mode: a comma-separated list of the contents of the `routineArray` used to get messages in/and out of the measurement routine script.  |
+
+In the active user profile, you can specifiy whther or not to store entries to this table, and how to connect to it.
+You can also test the connection parameters from the user profiles UI.
+For new experiments, the option `Use Legacy Database Structure` should always be unticked.
   
 ## Information for Developers
 
