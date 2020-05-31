@@ -87,7 +87,29 @@ Details about all releases can be found [here](https://github.com/coldphysics/ex
 Alternatively, you will need to build the code and create an installer yourself (see the [developer information](#information-for-developers) below).
 
 #### How to configure the database?
-__TODO__
+The application can create entries in a database that correspond to the variables and other aspects of each cycle being executed.
+CPECS is programmed to communicate with a [MySql](https://dev.mysql.com/downloads/) database management system instance.
+The application uses password authentication __(SSL is not supported)__.
+CPECS stores its entries in a table with the following schema (the name of the database, the server, and the table are arbitrary and can be configured from the user profiles):
+
+| Column Name             | Data Type  | Description  |
+|-------------------------|------------|---|
+| `globalCounter`         | `VARCHAR`  | The value of the global counter of the cycle.  |
+| `startTime`             | `DATETIME` | The datetime at which the current cycle started.  |
+| `startCounterOfScans`   | `VARCHAR`  | The value of the global counter when the current set of cycles started, e.g., when the user clicked on _Start_  |
+| `iterationOfScan`       | `VARCHAR`  | The value of the current iteration whithin the current set of cycles.  |
+| `completedScans`        | `VARCHAR`  | The number of times the whole set of iterator variables reached their final values, i.e, the number of complete scans.  |
+| `numberOfIterations`    | `VARCHAR`  | The total number of iterations for the current scan.|
+| `Variables`             | `VARCHAR`  | A comma-separated list of key-value pairs each corresponding to a user-defined variable of any kind (static, iterator, dynamic). The list also contains some other key-value pairs such as the cycle duration.  |
+| `iterators`             | `VARCHAR`  | A comma-separated list of key-value pairs each corresponding to a user-defined iterator variable.  |
+| `operatingMode`         | `VARCHAR`  | `'0'`: static mode, `'1'`: iterating mode, `'2'`: measurement routine mode  |
+| `startCounterOfRoutine` | `VARCHAR`  | If in routine mode: the value of the global counter when the routine started.  |
+| `modelNumber`           | `VARCHAR`  | If in routine mode: the 0-based index of the current model within the measurement routine.|
+| `routineArray`          | `VARCHAR`  | If in routine mode: a comma-separated list of the contents of the `routineArray` used to get messages in/and out of the measurement routine script.  |
+
+In the active user profile, you can specifiy whther or not to store entries to this table, and how to connect to it.
+You can also test the connection parameters from the user profiles UI.
+For new experiments, the option `Use Legacy Database Structure` should always be unticked.
   
 ## Information for Developers
 
@@ -192,10 +214,18 @@ Therfore, when having to introduce such changes to the model, the following proc
  7. Add a new converter class inside the old version: `Model.V[X].ModelConverter`. This class must allow the conversion of an old model into the new model. The conversion might be just syntactical, i.e., copying certain values from one property to anoter, or they could be semantical, e.g., splitting a property into multiple new ones, or changing the hierarchy of classes, etc. Consult existing converter classes for examples.
  8. Introduce changes to the `ModelLoader` class:
     1. Locate the `ModelLoader` class inside the `Controller.MainWindow` namespace.
-    2. Add a new constant string class field that correspond to the namespace of the old namespace, e.g., `private const string V4_MODEL_XML_SCHEMA = "http://schemas.datacontract.org/2004/07/Model.V5";`
+    2. Add a new constant string class field that correspond to the namespace of the old namespace, e.g., `private const string V5_MODEL_XML_SCHEMA = "http://schemas.datacontract.org/2004/07/Model.V5";`
     3. Locate the method called `ConvertModelVersionIfNecessary`.
     4. Introduce a new if-else statement that handles the conversion of the old version into the current version (consult similar handling of older versions).
  9. Done!
+ 
 #### How to introduce changes to the data model of the user profiles?
-__TODO__
+User profiles allow the user to select a collection of settings, e.g., hardware type, database connection, number of cards, etc. that correspond to their experiment.
+
+User profiles are stored in the following folder `%AppData%\Computer Control Profiles`.
+When the data model of user profiles changes, e.g., new settings are added or removed, or the nesting of settings is changed, existing profiles need to be removed so that the application creates new ones that correspond to the new model (the whole folder needs to be removed).
+
+The problem is that the user will lose any customizations made in the existing profiles, e.g., database connection information.
+To avoid such loss, the user could copy the corresponding profile to some other folder, rename the extension from `.profile` to `.xml` and use an application like [Visual Studio Code](https://code.visualstudio.com/) with an XML extension like [XML Tools for Visual Studio Code](https://github.com/DotJoshJohnson/vscode-xml) and format the document to a human readable style.
+Then, the user could remove the old profiles folder, start the application, and fill in the data in the new profile(s) using the content of the XML file of the old profile.
 
