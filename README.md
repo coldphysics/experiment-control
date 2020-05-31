@@ -153,6 +153,7 @@ To execute all unit tests in the solution follow these steps:
   3. Ensure that all tests shown in the `Test Explorer` window run successfully, otherwise, fix the causing errors.
 
 #### How to create a new release of CPECS?
+0. Ensure you are a member of the organization!
 1. [Make sure that all tests run successfully](#how-to-run-all-unit-tests)
 2. Update the software version:
    1. In VS's Solution Explorer, right click on the `MainProject` project and click on `Properties`.
@@ -163,15 +164,16 @@ To execute all unit tests in the solution follow these steps:
    6. Save all open files
 3. Generate application installer
    1. While still on the `Publish` window, click on `Publish Wizard`
-   2. Select a local path in which you would like the installer to be placed (__if PI5__, place in the dedicated folder in SVN in a subfolder named according to the pattern `[version]_[date]`, e.g., `v1.4.0_03-05-2020`).
+   2. Select a local path in which you would like the installer to be placed (the folder must be named `v[version]`, e.g., `v1.4.1`).
   3. Finish the remaining steps of the wizard and click finish. The installer will be placed in the path you specified. 
-4. Add, commit and push latest changes of the codebase to Github (__ensure the installer is not pushed to Github!!__)
-5. Generate an apropriate changelog to describe the changes made since the last release. For example, you can use the tool [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator).
-5. Create a code release in Github
-   1. [Click here](https://github.com/coldphysics/experiment-control/releases/new) to start a new release.
+4. Create a binary release by adding, committing and pushing the folder containing the installer (generated in step 3) to the [private release repository](https://github.com/coldphysics/releases).
+5. Add, commit and push latest changes of the codebase to Github (__ensure the installer is not pushed to Github!!__)
+6. Generate an apropriate changelog to describe the changes made since the last release. For example, you can use the tool [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator).
+7. Create a code release in Github
+   1. [Click here](https://github.com/coldphysics/experiment-control/releases/new) to start a new code release.
    2. Name the release according to this convention [Software name][SPACE][version] (e.g., `CPECS v1.4.0`)
    3. In the description place the changelog and enhance it if necessary.
-   4. __For PI5__, add a link to the folder containing the installer files in SVN.
+   4. Add a link to the folder containing the installer files in the private repository.
    5. Click on `Publish Release`.
 6. Done!
 
@@ -193,6 +195,7 @@ Therfore, when having to introduce such changes to the model, the following proc
     2. Add a new constant string class field that correspond to the namespace of the old namespace, e.g., `private const string V4_MODEL_XML_SCHEMA = "http://schemas.datacontract.org/2004/07/Model.V5";`
     3. Locate the method called `ConvertModelVersionIfNecessary`.
     4. Introduce a new if-else statement that handles the conversion of the old version into the current version (consult similar handling of older versions).
+ 9. Done!
 #### How to introduce changes to the data model of the user profiles?
 __TODO__
 
