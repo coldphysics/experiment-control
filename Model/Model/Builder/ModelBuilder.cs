@@ -35,7 +35,6 @@ namespace Model.Builder
         /// <remarks>The result of the building process can be accessed using the <see cref=" GetRootModel"/> method.</remarks>
         public void Build()
         {
-            Profile activeProfile = ProfilesManager.GetInstance().ActiveProfile;
             //Creating new RootModel
             RootModel model = new RootModel();
 

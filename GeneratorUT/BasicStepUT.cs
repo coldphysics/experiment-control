@@ -9,7 +9,7 @@ using Model.Root;
 namespace GeneratorUT
 {
     [TestClass]
-    public class BasicStepUnitTest : ParentUT
+    public class BasicStepUT : ParentUT
     {
         [DataRow("Resources\\disabled-first-sequence.xml.gz", "Dy4thFloor")]
         [DataRow("Resources\\disabled-mid-sequence.xml.gz", "Dy4thFloor")]

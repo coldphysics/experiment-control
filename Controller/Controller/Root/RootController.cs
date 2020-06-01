@@ -96,21 +96,17 @@ namespace Controller.Root
         /// </summary>
         public void CopyToBuffer()
         {
-
             ErrorCollector errorCollector = ErrorCollector.Instance;
             errorCollector.RemoveErrorsOfWindow(ErrorWindow.MainHardware);
+
             if (Model.Verify())
             {
                 //errorCollector.stopBlink();
 
                 if (_enableCopyToBuffer)
                 {
-                    //Console.Write("copy to buffer\n");
-                    ((DoubleBuffer) _buffer).Duration = Duration() * TimesToReplicateOutput;
                     _buffer.CopyData(Model, TimesToReplicateOutput);
                     _pendingChanges = false;
-                    //System.Console.WriteLine("Duration: {0}\n", Duration());
-
                 }
                 else
                 {

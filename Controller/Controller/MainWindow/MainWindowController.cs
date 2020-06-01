@@ -132,7 +132,7 @@ namespace Controller.MainWindow
                 double waitTime = (double)((DecimalSetting)ProfilesManager.GetInstance().ActiveProfile.GetSettingByName(SettingNames.CONSTANT_WAIT_TIME)).Value;
 
                 return
-                    Math.Round((_buffer.Duration * TimesToReplicateOutput + waitTime) * OutputHandler.NumberOfIterations);
+                    Math.Round((_buffer.DurationSeconds + waitTime) * OutputHandler.NumberOfIterations);
             }
         }
 
@@ -428,7 +428,7 @@ namespace Controller.MainWindow
             get
             {
                 decimal waitTime = ((DecimalSetting)ProfilesManager.GetInstance().ActiveProfile.GetSettingByName(SettingNames.CONSTANT_WAIT_TIME)).Value;
-                return "(" + waitTime + ") + " + Math.Round(_buffer.Duration * TimesToReplicateOutput).ToString();
+                return "(" + waitTime + ") + " + Math.Round(_buffer.DurationSeconds);
             }
         }
 

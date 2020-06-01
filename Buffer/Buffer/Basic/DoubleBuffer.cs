@@ -9,7 +9,6 @@ using Buffer.OutputProcessors.CalibrationUnit;
 using Buffer.OutputProcessors.ValidationUnit;
 using Communication.Interfaces.Buffer;
 using Communication.Interfaces.Generator;
-using Communication.Interfaces.Hardware;
 using Communication.Interfaces.Model;
 using Errors.Error;
 using Generator.Generator.Step;
@@ -44,8 +43,8 @@ namespace Buffer.Basic
             public double CycleDuration { set; get; }
             public IModelOutput RawOutput { set; get; }
             public bool IsCurrentModel { set; get; }
-
         }
+
         /// <summary>
         /// Describes the states in which the output-generating thread could be.
         /// </summary>
@@ -55,10 +54,12 @@ namespace Buffer.Basic
             /// The model has changed, but the output-generating thread is still working on a previous model.
             /// </summary>
             GeneratingPendingChanges,
+
             /// <summary>
             /// The output is being generated.
             /// </summary>
             Generating,
+
             /// <summary>
             /// The output-generating thread has finished its work.
             /// </summary>
@@ -66,7 +67,9 @@ namespace Buffer.Basic
         }
 
         // ******************** Variables/Objects ******************** 
+
         #region Attributes
+
         /// <summary>
         /// Event handler for the [finished model generation] event
         /// </summary>
@@ -86,13 +89,12 @@ namespace Buffer.Basic
         public event FinishedModelGenerationEventHandler FinishedModelGeneration;
 
         public static bool ModelIsWrong;
+
         /// <summary>
-        /// The duration of the sequence
+        /// The duration of the sequence in seconds
         /// </summary>
-        /// <remarks>
-        /// The value of this variable is assigned by <see cref=" AbstractController.AbstractRootController"/>.
-        /// </remarks>
-        public double Duration = 0;
+        public double DurationSeconds { private set; get; } = 0;
+
 
         ////Ebaa        
         ///// <summary>
@@ -123,7 +125,6 @@ namespace Buffer.Basic
         private OutputHandler _outputHandler;
 
 
-
         /// <summary>
         /// Stores the current state of the generator.
         /// </summary>
@@ -142,11 +143,7 @@ namespace Buffer.Basic
         /// <summary>
         /// The number of times to replicate output.
         /// </summary>
-        public int TimesToReplicateOutput
-        {
-            private set;
-            get;
-        }
+        public int TimesToReplicateOutput { private set; get; }
 
         private LastValidOutput lastValidOutput;
 
@@ -160,8 +157,6 @@ namespace Buffer.Basic
         /// </summary>
         private bool generateThreadRunning;
 
-
-
         #endregion
 
         // ******************** Properties ********************
@@ -174,7 +169,6 @@ namespace Buffer.Basic
         public OutputHandler OutputHandler
         {
             get { return _outputHandler; }
-
         }
 
         /// <summary>
@@ -188,10 +182,7 @@ namespace Buffer.Basic
         /// </remarks>
         public GeneratorState CurrentGeneratorState
         {
-            get
-            {
-                return _generatorState;
-            }
+            get { return _generatorState; }
 
             private set
             {
@@ -199,6 +190,7 @@ namespace Buffer.Basic
                 {
                     _generatorState = value;
                 }
+
                 UpdateGeneratorState();
             }
         }
@@ -210,13 +202,12 @@ namespace Buffer.Basic
         /// Initializes a new instance of the <see cref="DoubleBuffer"/> class.
         /// </summary>
         /// <param name="generatorRecipe">The generator recipe.</param>
-        /// <param name="hardwareManager">The hardware manager.</param>
         /// <param name="outputHandler">The output handler.</param>
-        public DoubleBuffer(IGeneratorRecipe generatorRecipe, IHardwareManager hardwareManager, OutputHandler outputHandler)
+        public DoubleBuffer(IGeneratorRecipe generatorRecipe, OutputHandler outputHandler)
         {
             _generatorRecipe = generatorRecipe;
             _outputHandler = outputHandler;
-            TimesToReplicateOutput = 1;//The default value
+            TimesToReplicateOutput = 1; //The default value
         }
 
 
@@ -228,13 +219,14 @@ namespace Buffer.Basic
         private void GenerateThread()
         {
             ModelIsWrong = false;
-            bool quit = false;
+            bool quit;
+            RootModel generateThreadLocalCopy;
 
             do
             {
-                Console.WriteLine("Generate!");
+                Console.WriteLine("Generation started!");
+
                 quit = true;
-                RootModel generateThreadLocalCopy;
 
                 lock (lockObj)
                 {
@@ -253,40 +245,44 @@ namespace Buffer.Basic
 
                     IDataGenerator outputGenerator = _generatorRecipe.Cook(generateThreadLocalCopy);
                     IModelOutput rawOutput = outputGenerator.Generate();
-                    ICollection<OutputProcessor> processors = ProcessorListManager.GetInstance().GetOutputProcessorList(generateThreadLocalCopy, TimesToReplicateOutput);
-
+                    ICollection<OutputProcessor> processors = ProcessorListManager.GetInstance()
+                        .GetOutputProcessorList(generateThreadLocalCopy, TimesToReplicateOutput);
 
                     foreach (OutputProcessor processor in processors)
                     {
                         processor.Process(rawOutput);
                     }
 
-                    double cycleDuration = Duration;
+                    DurationSeconds = rawOutput.OutputDurationMillis / 1000.0;
 
                     lastValidOutput = new LastValidOutput
                     {
-                        CycleDuration = cycleDuration,
+                        CycleDuration = DurationSeconds,
                         model = generateThreadLocalCopy,
                         RawOutput = rawOutput,
                         IsCurrentModel = true
                     };
-
                 }
                 catch (CalibrationException e)
                 {
-                    ErrorCollector.Instance.AddError(e.Message /*+ "\nThe last valid model is used instead!"*/, ErrorWindow.MainHardware, false, ErrorTypes.DynamicCompileError);
+                    ErrorCollector.Instance.AddError(e.Message /*+ "\nThe last valid model is used instead!"*/,
+                        ErrorWindow.MainHardware, false, ErrorTypes.DynamicCompileError);
                 }
                 catch (ValidationException e)
                 {
-                    ErrorCollector.Instance.AddError(e.Message /*+ "\nThe last valid model is used instead!"*/, ErrorWindow.Basic, false, ErrorTypes.OutOfRange);
+                    ErrorCollector.Instance.AddError(e.Message /*+ "\nThe last valid model is used instead!"*/,
+                        ErrorWindow.Basic, false, ErrorTypes.OutOfRange);
                 }
                 catch (OutOfMemoryException)
                 {
-                    ErrorCollector.Instance.AddError("Cannot allocate the amount of RAM required for the generation of the model!", ErrorWindow.Basic, false, ErrorTypes.ProgramError);
+                    ErrorCollector.Instance.AddError(
+                        "Cannot allocate the amount of RAM required for the generation of the model!",
+                        ErrorWindow.Basic, false, ErrorTypes.ProgramError);
                 }
                 catch (PythonStepException e)
                 {
-                    ErrorCollector.Instance.AddError(e.Message, ErrorWindow.MainHardware, false, ErrorTypes.DynamicCompileError);
+                    ErrorCollector.Instance.AddError(e.Message, ErrorWindow.MainHardware, false,
+                        ErrorTypes.DynamicCompileError);
                 }
                 catch (Exception e)
                 {
@@ -295,19 +291,21 @@ namespace Buffer.Basic
 
                 if (!lastValidOutput.IsCurrentModel && outputNotCurrentModelError == null)
                 {
-                    outputNotCurrentModelError = ErrorCollector.Instance.AddStickyError("Due to errors in the current model, it is not used for Output. The last valid model is used instead!", ErrorWindow.Basic, true, ErrorTypes.Other);
+                    outputNotCurrentModelError = ErrorCollector.Instance.AddStickyError(
+                        "Due to errors in the current model, it is not used for Output. The last valid model is used instead!",
+                        ErrorWindow.Basic, true, ErrorTypes.Other);
                     ModelIsWrong = true;
                 }
-                else
-                    if (lastValidOutput.IsCurrentModel && outputNotCurrentModelError != null)
-                    {
-                        ErrorCollector.Instance.RemoveSingleError(outputNotCurrentModelError);
-                        outputNotCurrentModelError = null;
-                    }
-               
+                else if (lastValidOutput.IsCurrentModel && outputNotCurrentModelError != null)
+                {
+                    ErrorCollector.Instance.RemoveSingleError(outputNotCurrentModelError);
+                    outputNotCurrentModelError = null;
+                }
+
 
                 //Give the results to the output handler
-                _outputHandler.SetNewCycleData(lastValidOutput.model, lastValidOutput.CycleDuration, lastValidOutput.RawOutput, TimesToReplicateOutput);
+                _outputHandler.SetNewCycleData(lastValidOutput.model, lastValidOutput.CycleDuration,
+                    lastValidOutput.RawOutput, TimesToReplicateOutput);
 
 
                 //Raise the event
@@ -319,7 +317,6 @@ namespace Buffer.Basic
                     args.IsSuccessful = true;
 
                 OnFinishedModelGeneration(args);
-
 
 
                 lock (lockObj)
@@ -335,8 +332,7 @@ namespace Buffer.Basic
                         generateThreadRunning = false;
                     }
                 }
-            }
-            while (!quit);
+            } while (!quit);
 
             CurrentGeneratorState = GeneratorState.Waiting;
         }
@@ -378,7 +374,7 @@ namespace Buffer.Basic
         private Object DeepClone(Object original)
         {
             var stream = new MemoryStream();
-            var formatter = new BinaryFormatter { Context = new StreamingContext(StreamingContextStates.Clone) };
+            var formatter = new BinaryFormatter {Context = new StreamingContext(StreamingContextStates.Clone)};
             formatter.Serialize(stream, original);
             stream.Position = 0;
             return formatter.Deserialize(stream);
@@ -405,7 +401,7 @@ namespace Buffer.Basic
                 }
 
                 hasNewData = true;
-                _localCopy = (RootModel)DeepClone(copyJob);
+                _localCopy = (RootModel) DeepClone(copyJob);
                 TimesToReplicateOutput = timesToReplicateOutput;
 
                 if (!generateThreadRunning)

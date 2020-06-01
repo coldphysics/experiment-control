@@ -12,7 +12,7 @@ using Model.Settings;
 
 namespace MainProject.Builders
 {
-    class DoubleBufferBuilder
+    public class DoubleBufferBuilder
     {
         private DoubleBuffer doubleBuffer;
 
@@ -53,7 +53,7 @@ namespace MainProject.Builders
             HardwareManager hardwareManager = new HardwareManager(experiment);
 
             OutputHandler outputHandler = new OutputHandler(hardwareManager);
-            this.doubleBuffer = new DoubleBuffer(generatorRecipe, hardwareManager, outputHandler);
+            this.doubleBuffer = new DoubleBuffer(generatorRecipe, outputHandler);
         }
 
         public DoubleBuffer GetDoubleBuffer()
