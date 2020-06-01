@@ -56,7 +56,7 @@ namespace Controller.Root
         }
 
         /// <summary>
-        /// Unlock the buffer to allow one of the threads to acess it.
+        /// Unlock the buffer to allow one of the threads to access it.
         /// </summary>
         /// <param name="updateLock">The lock object.</param>
         public bool BulkUpdateEnd(object updateLock)
@@ -72,7 +72,7 @@ namespace Controller.Root
 
         }
         /// <summary>
-        /// reenables the CopyToBuffer function and triggers it once
+        /// Re-enables the CopyToBuffer function and triggers it once
         /// </summary>
         public void EnableCopyToBufferAndCopyChanges()
         {
@@ -106,7 +106,7 @@ namespace Controller.Root
                 if (_enableCopyToBuffer)
                 {
                     //Console.Write("copy to buffer\n");
-                    (_buffer as DoubleBuffer).Duration = Duration();
+                    ((DoubleBuffer) _buffer).Duration = Duration() * TimesToReplicateOutput;
                     _buffer.CopyData(Model, TimesToReplicateOutput);
                     _pendingChanges = false;
                     //System.Console.WriteLine("Duration: {0}\n", Duration());

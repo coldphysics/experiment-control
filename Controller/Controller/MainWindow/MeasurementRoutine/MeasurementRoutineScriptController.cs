@@ -56,9 +56,9 @@ namespace Controller.MainWindow.MeasurementRoutine
             {
                 switch (VariableType)
                 {
-                    case VariableUsageDescriptor.VariableTypeEnum.Boolean:
+                    case VariableTypeEnum.Boolean:
                         return "Boolean";
-                    case VariableUsageDescriptor.VariableTypeEnum.Integer:
+                    case VariableTypeEnum.Integer:
                         return "Integer";
                     case VariableTypeEnum.String:
                         return "String";
@@ -448,6 +448,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                     scriptToAnalyze = InitializationScript + "\n";
 
                 scriptToAnalyze += Script;
+
                 if (!MeasurementRoutineManager.ValidatePythonScript(scriptToAnalyze, out errorMessage, false))
                 {
                     result = errorMessage;
