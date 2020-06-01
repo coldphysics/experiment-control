@@ -81,7 +81,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                 //       "routine_array.Add(0)\n" +
                 //       "routine_array.Add(0)";
                 return "import sys\n"+
-                       "sys.path.append(r'C:\\Program Files (x86)\\IronPython 2.7\\Lib') # to import external libraries\n" +
+                       "sys.path.append(r'C:\\Program Files\\IronPython 2.7\\Lib') # to import external libraries\n" +
                        "import os\n" +
                        "n = -1 # initialize the counter\n" + // this is intialized by -1 because in the sample script we want to run the primary model 5 times before switching to the secondary mode.
                       "# create some cells in the routine array\n" +

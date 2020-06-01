@@ -422,13 +422,13 @@ namespace Controller.MainWindow.MeasurementRoutine
         //Ebaa 29.05.2018
         private void ShowExecutionSteps(object parameter)
         {
-            String stepsInfo="The main execution steps of the measurement routine are as follows:"+"\n"+
-                "1- Execute the repetitive python script and decide which model to be loaded next."+"\n" +
-                "2- Increase current model counters."+"\n" +
-                "3- Load the next model to be executed."+ "\n"+ 
-                "4- Save the next model to be executed to the database." +"\n"+
-                "5- Execute the model that was loaded before.";
-            MessageBox.Show(stepsInfo);
+            String stepsInfo="The execution steps of a measurement routine:\n\n"+
+                "1- Execute the repetitive python script and decide which model to be loaded next.\n"+
+                "2- Increase current model iterators.\n"+
+                "3- Load the next model.\n"+  
+                "4- Save the next model to the database.\n" +
+                "5- Execute the loaded next model.";
+            MessageBox.Show(stepsInfo, "Execution Steps Description", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
 
@@ -460,6 +460,7 @@ namespace Controller.MainWindow.MeasurementRoutine
             }
             else
             {
+                MessageBox.Show("The script successfully passed validation!", "Script OK", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.requiresCodeCheck = false;
             }
         }
