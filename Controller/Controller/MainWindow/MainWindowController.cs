@@ -481,6 +481,7 @@ namespace Controller.MainWindow
             {
                 GetRootController().TimesToReplicateOutput = value;
                 //OnPropertyChanged("TimesToReplicateOutput");
+                GetRootController().CopyToBuffer();
                 GetRootController().EnableCopyToBufferAndCopyChanges();
             }
 

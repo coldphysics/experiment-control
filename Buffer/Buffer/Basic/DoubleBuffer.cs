@@ -1,10 +1,4 @@
-﻿using Communication.Interfaces.Buffer;
-using Communication.Interfaces.Generator;
-using Communication.Interfaces.Hardware;
-using Communication.Interfaces.Model;
-using Errors.Error;
-using Model.Root;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
@@ -13,7 +7,13 @@ using System.Threading;
 using Buffer.OutputProcessors;
 using Buffer.OutputProcessors.CalibrationUnit;
 using Buffer.OutputProcessors.ValidationUnit;
+using Communication.Interfaces.Buffer;
+using Communication.Interfaces.Generator;
+using Communication.Interfaces.Hardware;
+using Communication.Interfaces.Model;
+using Errors.Error;
 using Generator.Generator.Step;
+using Model.Root;
 
 namespace Buffer.Basic
 {
@@ -85,7 +85,7 @@ namespace Buffer.Basic
         /// </summary>
         public event FinishedModelGenerationEventHandler FinishedModelGeneration;
 
-        public static bool ModelIsWrong=false;
+        public static bool ModelIsWrong;
         /// <summary>
         /// The duration of the sequence
         /// </summary>
@@ -153,12 +153,12 @@ namespace Buffer.Basic
         /// <summary>
         /// Indicates that the GUI has given a new root model which not yet processed.
         /// </summary>
-        private bool hasNewData = false;
+        private bool hasNewData;
 
         /// <summary>
         /// Indicates that the output-generating thread is running.
         /// </summary>
-        private bool generateThreadRunning = false;
+        private bool generateThreadRunning;
 
 
 
@@ -232,7 +232,7 @@ namespace Buffer.Basic
 
             do
             {
-                System.Console.WriteLine("Generate!");
+                Console.WriteLine("Generate!");
                 quit = true;
                 RootModel generateThreadLocalCopy;
 
@@ -253,7 +253,7 @@ namespace Buffer.Basic
 
                     IDataGenerator outputGenerator = _generatorRecipe.Cook(generateThreadLocalCopy);
                     IModelOutput rawOutput = outputGenerator.Generate();
-                    ICollection<OutputProcessor> processors = ProcessorListManager.GetInstance().GetOutputProcessorList(generateThreadLocalCopy, this.TimesToReplicateOutput);
+                    ICollection<OutputProcessor> processors = ProcessorListManager.GetInstance().GetOutputProcessorList(generateThreadLocalCopy, TimesToReplicateOutput);
 
 
                     foreach (OutputProcessor processor in processors)
@@ -274,19 +274,19 @@ namespace Buffer.Basic
                 }
                 catch (CalibrationException e)
                 {
-                    Errors.Error.ErrorCollector.Instance.AddError(e.Message /*+ "\nThe last valid model is used instead!"*/, ErrorWindow.MainHardware, false, ErrorTypes.DynamicCompileError);
+                    ErrorCollector.Instance.AddError(e.Message /*+ "\nThe last valid model is used instead!"*/, ErrorWindow.MainHardware, false, ErrorTypes.DynamicCompileError);
                 }
                 catch (ValidationException e)
                 {
-                    Errors.Error.ErrorCollector.Instance.AddError(e.Message /*+ "\nThe last valid model is used instead!"*/, ErrorWindow.Basic, false, ErrorTypes.OutOfRange);
+                    ErrorCollector.Instance.AddError(e.Message /*+ "\nThe last valid model is used instead!"*/, ErrorWindow.Basic, false, ErrorTypes.OutOfRange);
                 }
                 catch (OutOfMemoryException)
                 {
-                    Errors.Error.ErrorCollector.Instance.AddError("Cannot allocate the amount of RAM required for the generation of the model!", ErrorWindow.Basic, false, ErrorTypes.ProgramError);
+                    ErrorCollector.Instance.AddError("Cannot allocate the amount of RAM required for the generation of the model!", ErrorWindow.Basic, false, ErrorTypes.ProgramError);
                 }
                 catch (PythonStepException e)
                 {
-                    Errors.Error.ErrorCollector.Instance.AddError(e.Message, ErrorWindow.MainHardware, false, ErrorTypes.DynamicCompileError);
+                    ErrorCollector.Instance.AddError(e.Message, ErrorWindow.MainHardware, false, ErrorTypes.DynamicCompileError);
                 }
                 catch (Exception e)
                 {
@@ -295,13 +295,13 @@ namespace Buffer.Basic
 
                 if (!lastValidOutput.IsCurrentModel && outputNotCurrentModelError == null)
                 {
-                    outputNotCurrentModelError = Errors.Error.ErrorCollector.Instance.AddStickyError("Due to errors in the current model, it is not used for Output. The last valid model is used instead!", ErrorWindow.Basic, true, ErrorTypes.Other);
+                    outputNotCurrentModelError = ErrorCollector.Instance.AddStickyError("Due to errors in the current model, it is not used for Output. The last valid model is used instead!", ErrorWindow.Basic, true, ErrorTypes.Other);
                     ModelIsWrong = true;
                 }
                 else
                     if (lastValidOutput.IsCurrentModel && outputNotCurrentModelError != null)
                     {
-                        Errors.Error.ErrorCollector.Instance.RemoveSingleError(outputNotCurrentModelError);
+                        ErrorCollector.Instance.RemoveSingleError(outputNotCurrentModelError);
                         outputNotCurrentModelError = null;
                     }
                
@@ -406,7 +406,7 @@ namespace Buffer.Basic
 
                 hasNewData = true;
                 _localCopy = (RootModel)DeepClone(copyJob);
-                this.TimesToReplicateOutput = timesToReplicateOutput;
+                TimesToReplicateOutput = timesToReplicateOutput;
 
                 if (!generateThreadRunning)
                 {

@@ -185,9 +185,9 @@ namespace Controller.OutputVisualizer
             foreach (AbstractSequenceController sequence in sequeces)
             {
                 Color color = Color.FromArgb((byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256));
-                string name = string.Format("{0} ({1})", ((TabController)sequence).Name, sequence.Index().ToString());
+                string name = $"{((TabController) sequence).Name} ({sequence.Index().ToString()})";
                 double startTime = sequence.ActualStartTime();
-                double duration = sequence.LongestDurationAllSequences();
+                double duration = sequence.LongestDurationAllSequences() * GetRootController().TimesToReplicateOutput;
 
                 VisualElement nameOfSequence = new VisualElement();
 
@@ -258,7 +258,7 @@ namespace Controller.OutputVisualizer
         /// <param name="channel">The checked channel to be displayed</param>
         private void AddDataToChannel(CTVItemViewModel channel)
         {
-            ChannelBasicController channelController = (ChannelBasicController)(channel as CheckableTVItemController).Item;
+            ChannelBasicController channelController = (ChannelBasicController)((CheckableTVItemController) channel).Item;
             string cardName = channelController.Parent.Parent.Model.Name;
             OutputVisualizerController ovc = GetControllerOfChannel(channel);
 
@@ -297,10 +297,10 @@ namespace Controller.OutputVisualizer
         }
 
         /// <summary>
-        /// Given a checked tree view element, reurns the corresponding channel visalization controller.
+        /// Given a checked tree view element, returns the corresponding channel visalization controller.
         /// </summary>
         /// <param name="channel">a checked tree view element</param>
-        /// <returns>the corresponding channel visalization controller</returns>
+        /// <returns>the corresponding channel visualization controller</returns>
         private OutputVisualizerController GetControllerOfChannel(CTVItemViewModel channel)
         {
             ChannelBasicController channelController = (ChannelBasicController)(channel as CheckableTVItemController).Item;
@@ -308,8 +308,7 @@ namespace Controller.OutputVisualizer
             string controllerName = cardName + "-" + channelController.ToString();
             // select the corresponding controller
             return AllControllers
-                .Where((controller) => controller.NameOfCardAndChannel.Equals(controllerName))
-                .First();
+                .First(controller => controller.NameOfCardAndChannel.Equals(controllerName));
         }
 
         /// <summary>
