@@ -1,4 +1,5 @@
-﻿using Controller.MainWindow;
+﻿using System;
+using Controller.MainWindow;
 using Generator.Cookbook;
 using Generator.Generator;
 using Model.Root;
@@ -13,8 +14,7 @@ namespace GeneratorUT
         {
             ProfilesManager profileManager = ProfilesManager.GetInstance();
             profileManager.ActiveProfile = profileManager.Profiles
-                .Where(prof => prof.Name == profileName)
-                .First();
+                .First(prof => prof.Name == profileName);
         }
         public RootModel LoadModel(string fileName)
         {         
@@ -28,6 +28,13 @@ namespace GeneratorUT
             RootModel model = LoadModel(modelName);
             GeneratorRecipe recipe = new GeneratorRecipe(new SequenceGroupGeneratorRecipe());
             return (DataOutputGenerator)recipe.Cook(model);
+        }
+
+
+        public static bool DoubleEquals(double value1, double value2)
+        {
+            const double TOLERATED_DIFFERENCE = 1.0E-15;
+            return Math.Abs(value1 - value2) <= TOLERATED_DIFFERENCE;
         }
     }
 }

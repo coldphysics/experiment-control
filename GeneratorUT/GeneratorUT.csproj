@@ -70,6 +70,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DoubleBufferUT.cs" />
     <Compile Include="ModelOutputUT.cs" />
     <Compile Include="ParentUT.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -77,7 +78,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="BasicStepUnitTest.cs" />
+    <Compile Include="BasicStepUT.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -121,6 +122,10 @@
     <ProjectReference Include="..\Generator\Generator\Generator.csproj">
       <Project>{618F796E-6ED6-4F5D-8BA9-08929DD46038}</Project>
       <Name>Generator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MainProject\MainProject.csproj">
+      <Project>{d702d6bc-3b82-46d9-9802-db767b9bc5d1}</Project>
+      <Name>MainProject</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model\Model\Model.csproj">
       <Project>{8E3379F7-41FB-4A3B-B3EC-74451D7E9E6C}</Project>
