@@ -8,14 +8,13 @@ namespace Controller.MainWindow.MeasurementRoutine
 {
     public class RoutineModelController : BaseController
     {
-        private RoutineBasedRootModel routineModel;
 
         private ICommand setPythonScriptsCommand;
 
         public RoutineBasedRootModel RoutineModel
         {
-            get { return routineModel; }
-            set { routineModel = value; }
+            get;
+            set;
         }
 
 
@@ -23,12 +22,12 @@ namespace Controller.MainWindow.MeasurementRoutine
         {
             get
             {
-                return routineModel.FilePath;
+                return RoutineModel.FilePath;
             }
 
             set
             {
-                routineModel.FilePath = value;
+                RoutineModel.FilePath = value;
                 OnPropertyChanged("FilePath");
             }
         }
@@ -37,23 +36,23 @@ namespace Controller.MainWindow.MeasurementRoutine
         {
             get
             {
-                return routineModel.TimesToReplicate;
+                return RoutineModel.TimesToReplicate;
             }
 
             set
             {
-                routineModel.TimesToReplicate = value;
+                RoutineModel.TimesToReplicate = value;
                 OnPropertyChanged("TimesToReplicate");
             }
         }
 
         public RootModel ActualModel
         {
-            set { routineModel.ActualModel = value; }
+            set { RoutineModel.ActualModel = value; }
 
             get
             {
-                return routineModel.ActualModel;
+                return RoutineModel.ActualModel;
             }
         }
 
@@ -68,15 +67,20 @@ namespace Controller.MainWindow.MeasurementRoutine
             }
         }
 
-        public RoutineModelController(RoutineBasedRootModel model)
+        public RoutineModelController(RoutineBasedRootModel rbrm)
         {
-            this.routineModel = model;
+            this.RoutineModel = rbrm;
+        }
+
+        public RoutineModelController(RootModel model)
+            : this(new RoutineBasedRootModel() { TimesToReplicate = 1, ActualModel = model })
+        {
 
         }
 
         public void LoadPythonScripts(object parameter)
         {
-            PythonScriptsController pyhtonScriptsController = new PythonScriptsController(this.routineModel);
+            PythonScriptsController pyhtonScriptsController = new PythonScriptsController(this.RoutineModel);
             Window pyhtonScriptsWindow = WindowsHelper.CreateCustomWindowToHostViewModel(pyhtonScriptsController, false);
 
             pyhtonScriptsWindow.MinHeight = 360;

@@ -10,24 +10,19 @@ using Microsoft.Win32;
 using Model.MeasurementRoutine;
 using Model.Root;
 using Model.Settings;
-using Controller.OutputVisualizer;
-using Controller.Root;
-using CustomElements.CheckableTreeView;
-using Controller.Control.StepBatchAddition;
+using System.Linq;
 
 namespace Controller.MainWindow.MeasurementRoutine
 {
     public class MeasurementRoutineManagerController : ChildController
     {
-        private MeasurementRoutineModel routineData;
         private RoutineModelController selectedSecondaryModel;
         private MeasurementRoutineManager manager;
         private object bufferUpdatesLock = null;
         private string currentStartStopButtonLabel;
         private bool isAdvancedMode = false;
         private int newIndex;
-
-
+        private RoutineScripts scripts;
 
         public string CurrentStartStopButtonLabel
         {
@@ -49,11 +44,11 @@ namespace Controller.MainWindow.MeasurementRoutine
         {
             set
             {
-                routineData.RoutineControlScript = value;
+                scripts.RoutineScript = value;
             }
             get
             {
-                return routineData.RoutineControlScript;
+                return scripts.RoutineScript;
             }
 
         }
@@ -61,12 +56,12 @@ namespace Controller.MainWindow.MeasurementRoutine
         {
             set
             {
-                routineData.RoutineInitializationScript = value;
+                scripts.InitializationScript = value;
             }
 
             get
             {
-                return routineData.RoutineInitializationScript;
+                return scripts.InitializationScript;
             }
         }
         public string CycleState
@@ -76,11 +71,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                 return Parent.CycleState;
             }
         }
-        public MeasurementRoutineModel RoutineData
-        {
-            get { return routineData; }
-            set { routineData = value; }
-        }
+
         public RoutineModelController PrimaryModel
         {
             set;
@@ -221,18 +212,16 @@ namespace Controller.MainWindow.MeasurementRoutine
         public MeasurementRoutineManagerController(MainWindowController parent, IModel initialModel)
             : base(parent)
         {
-            RoutineData = new MeasurementRoutineModel();
-            RoutineData.PrimaryModel.ActualModel = (RootModel)initialModel;
-
-            CreateControllers(RoutineData);
+            scripts = new RoutineScripts();
+            CreateControllers((RootModel)initialModel);
             manager = new MeasurementRoutineManager();
             CurrentStartStopButtonLabel = "Start";
             InitializeCommands();
         }
 
-        private void CreateControllers(MeasurementRoutineModel data)
+        private void CreateControllers(RootModel initialModel)
         {
-            PrimaryModel = new RoutineModelController(data.PrimaryModel);
+            PrimaryModel = new RoutineModelController(initialModel);
             CurrentRoutineModel = PrimaryModel;
             SecondaryModels = new ObservableCollection<RoutineModelController>();
         }
@@ -290,7 +279,7 @@ namespace Controller.MainWindow.MeasurementRoutine
             }
         }
 
-        
+
 
 
         private void LoadPythonScripts(object parameter)
@@ -362,7 +351,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                     loader.ModelVersionMismatchDetected += Parent.loader_ModelVersionMismatchDetected;
                     model = loader.LoadModel(filePath);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     ea.Result = e;
                 }
@@ -374,7 +363,8 @@ namespace Controller.MainWindow.MeasurementRoutine
 
                 if (model == null)
                 {
-                    MessageBox.Show("Failed to load the specified model, a conversion error might exist. Reason: " + ((Exception)ea.Result).Message, "Model Has Errors", MessageBoxButton.OK, MessageBoxImage.Error);
+                    string reason = ea.Result == null ? "?" : ((Exception)ea.Result).Message;
+                    MessageBox.Show("Failed to load the specified model, a conversion error might exist. Reason: " + reason, "Model Has Errors", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -391,7 +381,6 @@ namespace Controller.MainWindow.MeasurementRoutine
                     {
                         RoutineBasedRootModel toAdd = new RoutineBasedRootModel() { ActualModel = model, FilePath = filePath, TimesToReplicate = 1 };
                         RoutineModelController controllerToAdd = new RoutineModelController(toAdd);
-                        this.RoutineData.SecondaryModels.Add(toAdd);
                         this.SecondaryModels.Add(controllerToAdd);
                         //OnPropertyChanged("SecondaryModels");
                         OnPropertyChanged("CanRemoveSelectedSecondaryModel");
@@ -408,13 +397,11 @@ namespace Controller.MainWindow.MeasurementRoutine
 
         private void ConnectControllerToModel(MeasurementRoutineModel model)
         {
-            RoutineData = model;
-
-            PrimaryModel.RoutineModel = RoutineData.PrimaryModel;
+            PrimaryModel.RoutineModel = model.PrimaryModel;
             OnPropertyChanged("PrimaryModel");
             SecondaryModels.Clear();
 
-            foreach (RoutineBasedRootModel sModel in RoutineData.SecondaryModels)
+            foreach (RoutineBasedRootModel sModel in model.SecondaryModels)
             {
                 SecondaryModels.Add(new RoutineModelController(sModel));
             }
@@ -472,7 +459,6 @@ namespace Controller.MainWindow.MeasurementRoutine
         private void RemoveSecondaryModel(object parameter)
         {
             RoutineBasedRootModel model = SelectedSecondaryModel.RoutineModel;
-            RoutineData.SecondaryModels.Remove(model);
             SecondaryModels.Remove(SelectedSecondaryModel);
             //OnPropertyChanged("SecondaryModels");
             OnPropertyChanged("CanRemoveSelectedSecondaryModel");
@@ -500,7 +486,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                 Script = scriptController.Script;
                 //This helps in initializing global variables when necessary so that they can be referenced by scripts
                 if (manager.RequiresInitialization())
-                    manager.RunInitializationScript(routineData);
+                    manager.RunInitializationScript(scripts.InitializationScript);
             }
         }
 
@@ -512,14 +498,12 @@ namespace Controller.MainWindow.MeasurementRoutine
             {
                 if (isUp && index > 0)
                 {
-                    RoutineData.SecondaryModels.Move(index, index - 1);
                     SecondaryModels.Move(index, index - 1);
                     OnPropertyChanged("CanMoveSelectedSecondaryModelUp");
                     OnPropertyChanged("CanMoveSelectedSecondaryModelDown");
                 }
-                else if (!isUp && index < RoutineData.SecondaryModels.Count - 1)
+                else if (!isUp && index < SecondaryModels.Count - 1)
                 {
-                    RoutineData.SecondaryModels.Move(index, index + 1);
                     SecondaryModels.Move(index, index + 1);
                     OnPropertyChanged("CanMoveSelectedSecondaryModelUp");
                     OnPropertyChanged("CanMoveSelectedSecondaryModelDown");
@@ -642,7 +626,17 @@ namespace Controller.MainWindow.MeasurementRoutine
 
         private void SaveMesurementRoutine(object parameter)
         {
-            FileHelper.SaveFile(RoutineData, ".routine.gz", "Measurement Routine (.routine.gz)|*.routine.gz");
+            MeasurementRoutineModel routineData = new MeasurementRoutineModel();
+            routineData.RoutineInitializationScript = scripts.InitializationScript;
+            routineData.RoutineControlScript = scripts.RoutineScript;
+            routineData.PrimaryModel = PrimaryModel.RoutineModel;
+
+            foreach (RoutineModelController controller in SecondaryModels)
+            {
+                routineData.SecondaryModels.Add(controller.RoutineModel);
+            }
+            
+            FileHelper.SaveFile(routineData, ".routine.gz", "Measurement Routine (.routine.gz)|*.routine.gz");
         }
 
         private void LoadMeasurementRoutine(object parameter)
@@ -664,10 +658,11 @@ namespace Controller.MainWindow.MeasurementRoutine
         /// <remarks>If the mode is basic, the method does not run the routine script, but rather returns the primary model.</remarks>
         private RoutineModelController GetNextRoutineModel()
         {
-
             newIndex = 0;
+
             if (IsAdvancedMode) //Only run routine script if in advanced mode
-                newIndex = manager.GetNextModelIndex(routineData, Parent);
+                newIndex = manager.GetNextModelIndex(scripts.InitializationScript, scripts.RoutineScript, PrimaryModel.RoutineModel, 
+                    SecondaryModels.Select(controller => controller.RoutineModel).ToList(), Parent);
 
             RoutineModelController newRoutineModel = null;
 
@@ -675,8 +670,6 @@ namespace Controller.MainWindow.MeasurementRoutine
             if (newIndex == 0)
             {
                 newRoutineModel = PrimaryModel;
-
-
             }
             else
             {
@@ -685,9 +678,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                 if (newIndex >= 0 && newIndex < SecondaryModels.Count)
                 {
                     newRoutineModel = SecondaryModels[newIndex];
-
-                    newIndex = newIndex + 1;
-
+                    newIndex++;
                 }
                 else
                 {
@@ -754,10 +745,10 @@ namespace Controller.MainWindow.MeasurementRoutine
             OnPropertyChanged("LoadedModel");
         }
 
-
-
-
-
-
+        private class RoutineScripts
+        {
+            public string InitializationScript { set; get; }
+            public string RoutineScript { set; get; }
+        }
     }
 }
