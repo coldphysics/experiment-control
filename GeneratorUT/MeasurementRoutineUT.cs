@@ -4,6 +4,8 @@ using Controller.MainWindow.MeasurementRoutine;
 using MainProject.Builders;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Model.MeasurementRoutine;
+using Model.Root;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
@@ -29,89 +31,88 @@ namespace GeneratorUT
             MainWindowController mainWindowController = builder.GetMainController();
             MeasurementRoutineManagerController manager = new MeasurementRoutineManagerController(mainWindowController,
                 mainWindowController.GetRootController().returnModel);
-            bool primaryAlreadyLoaded = false;
 
-            manager.FinishedLoadingModel += (sender, args) =>
-            {
-                if (!primaryAlreadyLoaded)
-                {
-                    Assert.AreNotEqual(null, manager.PrimaryModel);
-                    Assert.AreNotEqual(null, manager.SecondaryModels);
-                    Assert.AreEqual(0, manager.SecondaryModels.Count);
-                    Assert.AreEqual(manager.PrimaryModel, manager.CurrentRoutineModel);
-                    Assert.AreEqual(0, manager.CurrentRoutineModelIndex);
-                    Assert.AreEqual(primaryModel, manager.PrimaryModel.FilePath);
-                    Assert.AreNotEqual(null, manager.PrimaryModel.ActualModel);
-                    manager.IsAdvancedMode = true;
-                    primaryAlreadyLoaded = true;
-                    manager.LoadModel(secondaryModel, false, true);
-                } else
-                {
-                    Assert.AreNotEqual(null, manager.PrimaryModel);
-                    Assert.AreNotEqual(null, manager.SecondaryModels);
-                    Assert.AreEqual(manager.PrimaryModel, manager.CurrentRoutineModel);
-                    Assert.AreEqual(0, manager.CurrentRoutineModelIndex);
-                    Assert.AreEqual(primaryModel, manager.PrimaryModel.FilePath);
-                    Assert.AreNotEqual(null, manager.PrimaryModel.ActualModel);
+            manager.LoadModelAsync(primaryModel, true, true).Wait();
 
-                    Assert.AreEqual(1, manager.SecondaryModels.Count);
-                    RoutineModelController secondaryController = manager.SecondaryModels.First();
-                    Assert.AreEqual(secondaryModel, secondaryController.FilePath);
-                    Assert.AreNotEqual(null, secondaryController.ActualModel);
-                }
+            Assert.AreNotEqual(null, manager.PrimaryModel);
+            Assert.AreNotEqual(null, manager.SecondaryModels);
+            Assert.AreEqual(0, manager.SecondaryModels.Count);
+            Assert.AreEqual(manager.PrimaryModel, manager.CurrentRoutineModel);
+            Assert.AreEqual(0, manager.CurrentRoutineModelIndex);
+            Assert.AreEqual(primaryModel, manager.PrimaryModel.FilePath);
+            Assert.AreNotEqual(null, manager.PrimaryModel.ActualModel);
+            manager.IsAdvancedMode = true;
 
-            };
+            manager.LoadModelAsync(secondaryModel, false, true).Wait();
 
-            manager.LoadModel(primaryModel, true, true);
+            Assert.AreNotEqual(null, manager.PrimaryModel);
+            Assert.AreNotEqual(null, manager.SecondaryModels);
+            Assert.AreEqual(manager.PrimaryModel, manager.CurrentRoutineModel);
+            Assert.AreEqual(0, manager.CurrentRoutineModelIndex);
+            Assert.AreEqual(primaryModel, manager.PrimaryModel.FilePath);
+            Assert.AreNotEqual(null, manager.PrimaryModel.ActualModel);
+            Assert.AreEqual(1, manager.SecondaryModels.Count);
+            RoutineModelController secondaryController = manager.SecondaryModels.First();
+            Assert.AreEqual(secondaryModel, secondaryController.FilePath);
+            Assert.AreNotEqual(null, secondaryController.ActualModel);
         }
 
         [DataRow("Resources\\0.2ms.xml.gz", "Resources\\0.0ms.xml.gz", "Dy4thFloor")]
         [DataTestMethod]
         public void TestSavingAndLoadingMeasurementRoutine(string primaryModel, string secondaryModel, string profileName)
         {
+            // initialize
             SelectProfile(profileName);
             MasterBuilder builder = new MasterBuilder();
             builder.Build();
             MainWindowController mainWindowController = builder.GetMainController();
-            MeasurementRoutineManagerController manager = new MeasurementRoutineManagerController(mainWindowController,
-                mainWindowController.GetRootController().returnModel);
-            bool primaryAlreadyLoaded = false;
+            RootModel initialRootModel = mainWindowController.GetRootController().returnModel;
+            MeasurementRoutineManagerController manager = new MeasurementRoutineManagerController(mainWindowController, initialRootModel);
+            RoutineBasedRootModel initialPrimaryMRM = manager.ConstructMeasurementRoutineModel().PrimaryModel;
+
             manager.IsAdvancedMode = true;
             string temporaryFilePath = Path.GetTempPath() + System.Guid.NewGuid().ToString() + ".routine.gz";
 
-            manager.FinishedLoadingModel += (sender, args) =>
-            {
-                if (!primaryAlreadyLoaded)
-                {   
-                    primaryAlreadyLoaded = true;
-                    manager.LoadModel(secondaryModel, false, true);
-                }
-                else
-                {
-                    
-                    MeasurementRoutineModel routineModel = manager.ConstructMeasurementRoutineModel();
-                    FileHelper.SaveFile(temporaryFilePath, routineModel);
-                    Assert.IsTrue(File.Exists(temporaryFilePath));
-                    manager.LoadMeasurementRoutine(temporaryFilePath, true);
-                }
+            // load primary and secondary models
+            manager.LoadModelAsync(primaryModel, true, true).Wait();
+            manager.LoadModelAsync(secondaryModel, false, true).Wait();
 
-            };
+            // create routine model object and set scripts
+            MeasurementRoutineModel routineModel = manager.ConstructMeasurementRoutineModel();
+            routineModel.RoutineControlScript = "A";
+            routineModel.RoutineInitializationScript = "B";
+            
+            // save model
+            FileHelper.SaveFile(temporaryFilePath, routineModel);
+            Assert.IsTrue(File.Exists(temporaryFilePath));
 
-            manager.FinishedLoadingRoutineModel += (sender, args) => 
-            {
-                Assert.AreNotEqual(null, manager.PrimaryModel);
-                Assert.AreNotEqual(null, manager.SecondaryModels);
-                Assert.AreEqual(manager.PrimaryModel, manager.CurrentRoutineModel);
-                Assert.AreEqual(0, manager.CurrentRoutineModelIndex);
-                Assert.AreEqual(primaryModel, manager.PrimaryModel.FilePath);
-                Assert.AreNotEqual(null, manager.PrimaryModel.ActualModel);
-                Assert.AreEqual(1, manager.SecondaryModels.Count);
-                RoutineModelController secondaryController = manager.SecondaryModels.First();
-                Assert.AreEqual(secondaryModel, secondaryController.FilePath);
-                Assert.AreNotEqual(null, secondaryController.ActualModel);
-            };
+            // reset
+            MeasurementRoutineModel empty = new MeasurementRoutineModel { PrimaryModel = initialPrimaryMRM,
+                SecondaryModels = new ObservableCollection<RoutineBasedRootModel>(), RoutineControlScript = null, RoutineInitializationScript = null };
 
-            manager.LoadModel(primaryModel, true, true);
+            // sanity checks
+            manager.ConnectControllerToModel(empty, true);
+            Assert.AreEqual(initialRootModel, manager.PrimaryModel.ActualModel);
+            Assert.AreEqual(0, manager.SecondaryModels.Count);
+            Assert.AreEqual(0, manager.CurrentRoutineModelIndex);
+            Assert.AreEqual(null, manager.Script);
+            Assert.AreEqual(null, manager.InitializationScript);
+
+            // load routine model
+            manager.LoadMeasurementRoutineAsync(temporaryFilePath, true).Wait();
+
+            Assert.AreNotEqual(null, manager.PrimaryModel);
+            Assert.AreNotEqual(null, manager.SecondaryModels);
+            Assert.AreEqual(manager.PrimaryModel, manager.CurrentRoutineModel);
+            Assert.AreEqual(0, manager.CurrentRoutineModelIndex);
+            Assert.AreEqual(primaryModel, manager.PrimaryModel.FilePath);
+            Assert.AreNotEqual(null, manager.PrimaryModel.ActualModel);
+            Assert.AreEqual(1, manager.SecondaryModels.Count);
+            RoutineModelController secondaryController = manager.SecondaryModels.First();
+            Assert.AreEqual(secondaryModel, secondaryController.FilePath);
+            Assert.AreNotEqual(null, secondaryController.ActualModel);
+            Assert.AreEqual("A", manager.Script);
+            Assert.AreEqual("B", manager.InitializationScript);
         }
     }
 }

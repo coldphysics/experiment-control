@@ -23,14 +23,6 @@ namespace Controller.MainWindow.MeasurementRoutine
         private string currentStartStopButtonLabel;
         private bool isAdvancedMode = false;
         private RoutineScripts scripts;
-        /// <summary>
-        /// Triggered when loading a primary or a secondary model.
-        /// </summary>
-        public event EventHandler FinishedLoadingModel;
-        /// <summary>
-        /// Triggered when loading a routine model.
-        /// </summary>
-        public event EventHandler FinishedLoadingRoutineModel;
 
         public string CurrentStartStopButtonLabel
         {
@@ -244,7 +236,7 @@ namespace Controller.MainWindow.MeasurementRoutine
             return false;
         }
 
-        private void LoadPrimaryModel(object parameters)
+        private async void LoadPrimaryModel(object parameters)
         {
             var fileDialog = new OpenFileDialog { DefaultExt = ".xml.gz", Filter = "Sequence (.xml.gz)|*.xml.gz" };
             bool? result = fileDialog.ShowDialog();
@@ -258,7 +250,9 @@ namespace Controller.MainWindow.MeasurementRoutine
                     MessageBox.Show("The model you are trying to load as a primary model is already loaded as a secondary model. You cannot load the same model more than once.", "Model already loaded", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
-                    LoadModel(fileName, true);
+                {
+                    await LoadModelAsync(fileName, true);
+                }
 
             }
         }
@@ -268,7 +262,7 @@ namespace Controller.MainWindow.MeasurementRoutine
             PrimaryModel.LoadPythonScripts(null);
         }
 
-        private void LoadSecondaryModel(object parameters)
+        private async void LoadSecondaryModel(object parameters)
         {
             var fileDialog = new OpenFileDialog { DefaultExt = ".xml.gz", Filter = "Sequence (.xml.gz)|*.xml.gz" };
             bool? result = fileDialog.ShowDialog();
@@ -286,12 +280,12 @@ namespace Controller.MainWindow.MeasurementRoutine
                     if (r == MessageBoxResult.Yes)
                     {
                         Parent.CreateNewModel();
-                        LoadModel(fileName, false);
+                        await LoadModelAsync(fileName, false);
                     }
                 }
                 else
                 {
-                    LoadModel(fileName, false);
+                    await LoadModelAsync(fileName, false);
                 }
             }
         }
@@ -319,57 +313,18 @@ namespace Controller.MainWindow.MeasurementRoutine
             Parent.FileName = filePath;
         }
 
-        public void LoadModel(string filePath, bool isPrimaryModel, bool isSilent = false)
-        {
-            BackgroundWorker worker = new BackgroundWorker();
-            RootModel model = null;
-
-            //this is where the long running process should go
-            worker.DoWork += (o, ea) =>
-            {
-                
-            };
-
-            worker.RunWorkerCompleted += (o, ea) =>
-            {
-
-            };
-
-
-            
-            worker.RunWorkerAsync();
-        }
-
         public async Task<RootModel> LoadModelAsync(string filePath, bool isPrimaryModel, bool isSilent = false)
         {
             Parent.BlockUI("Loading Model...");
+
             try
             {
                 RootModel model = await DoLoadModel(filePath, isSilent);
-            } catch (Exception e)
-            {
-                if (!isSilent)
-                {
-                    string reason = e.Message;
-                    MessageBox.Show("Failed to load the specified model, a conversion error might exist. Reason: " + reason, "Model Has Errors", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-            finally
-            {
                 Parent.UnblockUI();
-            }
 
-
-            if (model == null)
-            {
-                
-
-            }
-            else
-            {
                 if (isPrimaryModel)
                 {
-                    SetPrimaryModel(model, filePath, true);
+                    SetPrimaryModel(model, filePath, isSilent);
                 }
                 else
                 {
@@ -393,30 +348,40 @@ namespace Controller.MainWindow.MeasurementRoutine
                     }
 
                 }
+                return model;
+
+            }
+            catch (Exception e)
+            {
+                Parent.UnblockUI();
+                if (!isSilent)
+                {
+                    string reason = e.Message;
+                    MessageBox.Show("Failed to load the specified model, a conversion error might exist. Reason: " + reason, "Model Has Errors", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                return null;
             }
 
-            FinishedLoadingModel?.Invoke(this, null);
-
-            return model;
         }
 
         private async Task<RootModel> DoLoadModel(string filePath, bool isSilent)
         {
-            return await Task.Run(() => 
+            return await Task.Run(() =>
             {
-                    ModelLoader loader = new ModelLoader();
+                ModelLoader loader = new ModelLoader();
 
-                    if (!isSilent)
-                    {
-                        loader.ModelStructureMismatchDetected += Parent.loader_ModelStructureMismatchDetected;
-                        loader.ModelVersionMismatchDetected += Parent.loader_ModelVersionMismatchDetected;
-                    }
+                if (!isSilent)
+                {
+                    loader.ModelStructureMismatchDetected += Parent.loader_ModelStructureMismatchDetected;
+                    loader.ModelVersionMismatchDetected += Parent.loader_ModelVersionMismatchDetected;
+                }
 
-                    return loader.LoadModel(filePath);            
+                return loader.LoadModel(filePath);
             });
         }
 
-        private void ConnectControllerToModel(MeasurementRoutineModel model, bool isSilent)
+        public void ConnectControllerToModel(MeasurementRoutineModel model, bool isSilent)
         {
             PrimaryModel.RoutineModel = model.PrimaryModel;
             OnPropertyChanged("PrimaryModel");
@@ -427,26 +392,30 @@ namespace Controller.MainWindow.MeasurementRoutine
                 SecondaryModels.Add(new RoutineModelController(sModel));
             }
 
-            OnPropertyChanged("CanRemoveSelectedSecondaryModel");
-            OnPropertyChanged("CanMoveSelectedSecondaryModelUp");
-            OnPropertyChanged("CanMoveSelectedSecondaryModelDown");
-
             CurrentRoutineModel = PrimaryModel;
-            //Check changed structure or variables
-            Parent.PrimaryModelPostLoadChecks(CurrentRoutineModel.ActualModel);
+
+            if (!isSilent)
+            {
+                //Check changed structure or variables
+                Parent.PrimaryModelPostLoadChecks(CurrentRoutineModel.ActualModel);
+            }
 
             //Make this the primary model
             Parent.LoadModel(CurrentRoutineModel.ActualModel, CurrentRoutineModel.TimesToReplicate, null, isSilent);
             Parent.FileName = CurrentRoutineModel.FilePath;
+            scripts.InitializationScript = model.RoutineInitializationScript;
+            scripts.RoutineScript = model.RoutineControlScript;
+
+            OnPropertyChanged("CanRemoveSelectedSecondaryModel");
+            OnPropertyChanged("CanMoveSelectedSecondaryModelUp");
+            OnPropertyChanged("CanMoveSelectedSecondaryModelDown");
         }
 
-        public void LoadMeasurementRoutine(string filePath, bool isSilent = false)
+        public async Task<MeasurementRoutineModel> LoadMeasurementRoutineAsync(string filePath, bool isSilent = false)
         {
-            BackgroundWorker worker = new BackgroundWorker();
-            MeasurementRoutineModel model = null;
+            Parent.BlockUI("Loading Model...");
 
-            //this is where the long running process should go
-            worker.DoWork += (o, ea) =>
+            MeasurementRoutineModel model = await Task.Run(() =>
             {
                 MeasurementRoutineLoader loader = new MeasurementRoutineLoader();
 
@@ -456,24 +425,19 @@ namespace Controller.MainWindow.MeasurementRoutine
                     loader.ModelVersionMismatchDetected += Parent.loader_ModelVersionMismatchDetected;
                     loader.ModelFileNotFound += loader_ModelFileNotFound;
                 }
-                
-                model = loader.LoadMeasurementRoutine(filePath);
-            };
 
-            worker.RunWorkerCompleted += (o, ea) =>
+                return loader.LoadMeasurementRoutine(filePath);
+            });
+
+            Parent.UnblockUI();
+
+            if (model != null)
             {
-                Parent.UnblockUI();
+                ConnectControllerToModel(model, isSilent);
+            }
 
-                if (model != null)
-                {
-                    ConnectControllerToModel(model, isSilent);
-                }
+            return model;
 
-                FinishedLoadingRoutineModel?.Invoke(this, null);
-            };
-
-            Parent.BlockUI("Loading Model...");
-            worker.RunWorkerAsync();
         }
 
         private void loader_ModelFileNotFound(object sender, ModelFileNotFoundEventArgs e)
@@ -655,7 +619,7 @@ namespace Controller.MainWindow.MeasurementRoutine
 
         private void SaveMesurementRoutine(object parameter)
         {
-            MeasurementRoutineModel routineData = ConstructMeasurementRoutineModel();  
+            MeasurementRoutineModel routineData = ConstructMeasurementRoutineModel();
             FileHelper.SaveFile(routineData, ".routine.gz", "Measurement Routine (.routine.gz)|*.routine.gz");
         }
         public MeasurementRoutineModel ConstructMeasurementRoutineModel()
@@ -673,14 +637,14 @@ namespace Controller.MainWindow.MeasurementRoutine
             return routineData;
         }
 
-        private void LoadMeasurementRoutine(object parameter)
+        private async void LoadMeasurementRoutine(object parameter)
         {
             var fileDialog = new OpenFileDialog { DefaultExt = ".routine.gz", Filter = "Measurement Routine (.routine.gz)|*.routine.gz" };
             bool? result = fileDialog.ShowDialog();
             if (result == true)
             {
                 string fileName = fileDialog.FileName;
-                LoadMeasurementRoutine(fileName);
+                await LoadMeasurementRoutineAsync(fileName);
             }
         }
 
@@ -695,7 +659,7 @@ namespace Controller.MainWindow.MeasurementRoutine
             int newIndex = 0;
 
             if (IsAdvancedMode) //Only run routine script if in advanced mode
-                newIndex = manager.GetNextModelIndex(scripts.InitializationScript, scripts.RoutineScript, PrimaryModel.RoutineModel, 
+                newIndex = manager.GetNextModelIndex(scripts.InitializationScript, scripts.RoutineScript, PrimaryModel.RoutineModel,
                     SecondaryModels.Select(controller => controller.RoutineModel).ToList(), Parent);
 
             RoutineModelController newRoutineModel = null;
@@ -722,7 +686,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                 }
             }
 
-            return new NextRoutineModelInfo { Model = newRoutineModel, ModelIndex = newIndex};
+            return new NextRoutineModelInfo { Model = newRoutineModel, ModelIndex = newIndex };
         }
 
         /// <summary>
