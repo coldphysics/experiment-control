@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DoubleBufferUT.cs" />
+    <Compile Include="MeasurementRoutineUT.cs" />
     <Compile Include="ModelOutputUT.cs" />
     <Compile Include="ParentUT.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

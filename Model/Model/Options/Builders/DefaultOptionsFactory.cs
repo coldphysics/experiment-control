@@ -38,8 +38,16 @@ namespace Model.Options.Builders
             //General
             OptionsGroupBuilder displayGeneralOGB = new OptionsGroupBuilder();
             displayGeneralOGB.SetName("Display");
-            Uri iconUri = new Uri("pack://application:,,,/View;component/Resources/cr.png", UriKind.RelativeOrAbsolute);
-            displayGeneralOGB.AddFileSetting(OptionNames.ICON_PATH, iconUri.AbsolutePath, new List<string>() { "PNG files|*.png", "JPEG files|*.jpg;*.jpeg", "ICON files|*.ico" });
+
+            try
+            {
+                Uri iconUri = new Uri("pack://application:,,,/View;component/Resources/cr.png", UriKind.RelativeOrAbsolute);
+                displayGeneralOGB.AddFileSetting(OptionNames.ICON_PATH, iconUri.AbsolutePath, new List<string>() { "PNG files|*.png", "JPEG files|*.jpg;*.jpeg", "ICON files|*.ico" });
+            } catch (Exception e)
+            {
+                displayGeneralOGB.AddFileSetting(OptionNames.ICON_PATH, "", new List<string>() { "PNG files|*.png", "JPEG files|*.jpg;*.jpeg", "ICON files|*.ico" });
+            }
+
             displayGeneralOGB.AddBooleanSetting(OptionNames.AUTOMATICALLY_OPEN_WINDOWS, true, null);
             displayGeneralOGB.AddChildOptionsGroup(variablesWindowOG);
             displayGeneralOGB.AddChildOptionsGroup(visualizationOG);
