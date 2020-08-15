@@ -113,6 +113,9 @@ namespace GeneratorUT
             Assert.AreNotEqual(null, secondaryController.ActualModel);
             Assert.AreEqual("A", manager.Script);
             Assert.AreEqual("B", manager.InitializationScript);
+
+            // Cleanup
+            File.Delete(temporaryFilePath);
         }
     }
 }
