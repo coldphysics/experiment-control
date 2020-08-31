@@ -1409,7 +1409,7 @@ namespace Controller.MainWindow
             return str;
         }
 
-        public void LoadModel(RootModel model, int timesToReplicate, GenerationFinishedCallback callback = null)
+        public void LoadModel(RootModel model, int timesToReplicate, GenerationFinishedCallback callback = null, bool isSilent = false)
         {
             _model = model;
             ModelSpecificCounters counters = MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters;
@@ -1454,19 +1454,22 @@ namespace Controller.MainWindow
             GetRootController().CopyToBuffer(); // to ensure copying to the buffer for the first time after start (this sets pending changes to true for the first time).
             GetRootController().EnableCopyToBufferAndCopyChanges();
 
-            //The following block of code ensures that if a none-UI thread tries to create the windows no exception will occur
-            Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
-            if (dispatcher != null)
+            if (!isSilent)
             {
-                // We know the thread have a dispatcher that we can use.
-                HandleWindowsAfterModelLoad();
-            }
-            else
-            {
-                Application.Current.Dispatcher.InvokeAsync(new Action(() =>
+                //The following block of code ensures that if a none-UI thread tries to create the windows no exception will occur
+                Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+                if (dispatcher != null)
                 {
+                    // We know the thread have a dispatcher that we can use.
                     HandleWindowsAfterModelLoad();
-                }));
+                }
+                else
+                {
+                    Application.Current.Dispatcher.InvokeAsync(new Action(() =>
+                    {
+                        HandleWindowsAfterModelLoad();
+                    }));
+                }
             }
 
         }

@@ -34,10 +34,7 @@ namespace Controller.MainWindow.MeasurementRoutine
         public const string VAR_CONTROL_LE_CROY = "controlLeCroy";
         public const string VAR_STOP_AFTER_SCAN = "stopAfterScan";
         public const string VAR_SHUFFLE_ITERATIONS = "shuffleIterations";
-
-        //The name of next iteration should be last iteration, this follows from the execution order of the measurement routine.
-        public const string VAR_NEXT_ITERATION = "lastIteration";
-        //public const string VAR_NEXT_ITERATION = "nextIteration";
+        public const string VAR_LAST_ITERATION = "lastIteration";
 
         private static MeasurementRoutineScriptAnalyzer analyzer;
         
@@ -77,7 +74,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                 VAR_CONTROL_LE_CROY,
                 VAR_CURRENT_MODE,
                 VAR_GLOBAL_COUNTER,
-                VAR_NEXT_ITERATION,
+                VAR_LAST_ITERATION,
                 VAR_NUMBER_OF_ITERATIONS,
                 VAR_PREVIOUS_MODE,
                 VAR_PRIMARY_MODEL,
@@ -100,13 +97,13 @@ namespace Controller.MainWindow.MeasurementRoutine
             GlobalVariablesManager.GetInstance().SetVariableValueByName(GlobalVariableNames.ROUTINE_ARRAY, globalArray);
         }
 
-        public void RunInitializationScript(MeasurementRoutineModel model)
+        public void RunInitializationScript(string initializationScript)
         {
             GlobalVariablesManager.GetInstance().ResetGlobalVariables();
             string script;
 
-            if (!String.IsNullOrEmpty(model.RoutineInitializationScript))
-                script = model.RoutineInitializationScript;
+            if (!String.IsNullOrEmpty(initializationScript))
+                script = initializationScript;
             else
                 script = "pass";
 
@@ -130,21 +127,21 @@ namespace Controller.MainWindow.MeasurementRoutine
 
         }
 
-        private void PrepareExecuter(MeasurementRoutineModel model, MainWindowController controller)
+        private void PrepareExecuter(string routineControlScript, RoutineBasedRootModel primaryModel, ICollection<RoutineBasedRootModel> secondaryModels, MainWindowController controller)
         {
-            executer.Script = model.RoutineControlScript;
+            executer.Script = routineControlScript;
             executer.SetVariableValue(VAR_CURRENT_MODE, currentMode);
             executer.SetVariableValue(VAR_COMPLETED_SCANS, controller.CompletedScans);
             executer.SetVariableValue(VAR_CONTROL_LE_CROY, controller.ControlLecroy);
             executer.SetVariableValue(VAR_GLOBAL_COUNTER, controller.GlobalCounter);
-            executer.SetVariableValue(VAR_NEXT_ITERATION, controller.IterationOfScan);
+            executer.SetVariableValue(VAR_LAST_ITERATION, controller.IterationOfScan);
             executer.SetVariableValue(VAR_NUMBER_OF_ITERATIONS, controller.NumberOfIterations);
             executer.SetVariableValue(VAR_PREVIOUS_MODE, lastMode);
-            executer.SetVariableValue(VAR_PRIMARY_MODEL, model.PrimaryModel.FilePath);
+            executer.SetVariableValue(VAR_PRIMARY_MODEL, primaryModel.FilePath);
             executer.SetVariableValue(VAR_SCAN_ONLY_ONCE, controller.IsOnceChecked);
 
             List<string> secondaryModelsFilePaths = new List<string>();
-            foreach (var item in model.SecondaryModels)
+            foreach (var item in secondaryModels)
             {
                 secondaryModelsFilePaths.Add(item.FilePath);
             }
@@ -171,12 +168,13 @@ namespace Controller.MainWindow.MeasurementRoutine
         /// <param name="controller">The controller.</param>
         /// <returns></returns>
         /// <exception cref="Controller.MainWindow.MeasurementRoutine.MeasurementRoutineException"></exception>
-        public int GetNextModelIndex(MeasurementRoutineModel model, MainWindowController controller)
+        public int GetNextModelIndex(string routineInitializationScript, string routineControlScript, RoutineBasedRootModel primaryModel, 
+            ICollection<RoutineBasedRootModel> secondaryModels, MainWindowController controller)
         {
             if (RequiresInitialization())
-                RunInitializationScript(model);
+                RunInitializationScript(routineInitializationScript);
 
-            PrepareExecuter(model, controller);
+            PrepareExecuter(routineControlScript, primaryModel, secondaryModels, controller);
             isFirstCycle = false;
 
             try

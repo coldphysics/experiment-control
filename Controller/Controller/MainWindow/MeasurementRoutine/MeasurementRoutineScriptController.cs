@@ -331,7 +331,7 @@ namespace Controller.MainWindow.MeasurementRoutine
 
                 //Ebaa 29.05.2018 The name of next iteration should be last iteration
                  new VariableUsageDescriptor(){
-                    VariableName = MeasurementRoutineManager.VAR_NEXT_ITERATION,
+                    VariableName = MeasurementRoutineManager.VAR_LAST_ITERATION,
                     Remarks = "The number of the previous iteration within the current scan (1 if not iterating)"
                 //new VariableUsageDescriptor(){
                 //    VariableName = MeasurementRoutineManager.VAR_NEXT_ITERATION,

@@ -7,7 +7,7 @@ using Model.Root;
 
 namespace MainProject.Builders
 {
-    class MasterBuilder
+    public class MasterBuilder
     {
         private MainWindowController mainController;
 

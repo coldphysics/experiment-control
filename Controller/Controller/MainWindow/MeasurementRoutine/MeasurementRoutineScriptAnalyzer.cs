@@ -41,7 +41,7 @@ namespace Controller.MainWindow.MeasurementRoutine
             builder.SetVariableValue(MeasurementRoutineManager.VAR_CONTROL_LE_CROY, DUMMY_VAL_CONTROL_LE_CROY);
             builder.SetVariableValue(MeasurementRoutineManager.VAR_CURRENT_MODE, DUMMY_VAL_CURRENT_MODE);
             builder.SetVariableValue(MeasurementRoutineManager.VAR_GLOBAL_COUNTER, DUMMY_VAL_GLOBAL_COUNTER);
-            builder.SetVariableValue(MeasurementRoutineManager.VAR_NEXT_ITERATION, DUMMY_VAL_NEXT_ITERATION);
+            builder.SetVariableValue(MeasurementRoutineManager.VAR_LAST_ITERATION, DUMMY_VAL_NEXT_ITERATION);
             builder.SetVariableValue(MeasurementRoutineManager.VAR_NUMBER_OF_ITERATIONS, DUMMY_VAL_NUMBER_OF_ITERATIONS);
             builder.SetVariableValue(MeasurementRoutineManager.VAR_PREVIOUS_MODE, DUMMY_VAL_PREVIOUS_MODE);
             builder.SetVariableValue(MeasurementRoutineManager.VAR_PRIMARY_MODEL, DUMMY_VAL_PRIMARY_MODEL);
