@@ -34,10 +34,7 @@ namespace Controller.MainWindow.MeasurementRoutine
         public const string VAR_CONTROL_LE_CROY = "controlLeCroy";
         public const string VAR_STOP_AFTER_SCAN = "stopAfterScan";
         public const string VAR_SHUFFLE_ITERATIONS = "shuffleIterations";
-
-        //The name of next iteration should be last iteration, this follows from the execution order of the measurement routine.
-        public const string VAR_NEXT_ITERATION = "lastIteration";
-        //public const string VAR_NEXT_ITERATION = "nextIteration";
+        public const string VAR_LAST_ITERATION = "lastIteration";
 
         private static MeasurementRoutineScriptAnalyzer analyzer;
         
@@ -77,7 +74,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                 VAR_CONTROL_LE_CROY,
                 VAR_CURRENT_MODE,
                 VAR_GLOBAL_COUNTER,
-                VAR_NEXT_ITERATION,
+                VAR_LAST_ITERATION,
                 VAR_NUMBER_OF_ITERATIONS,
                 VAR_PREVIOUS_MODE,
                 VAR_PRIMARY_MODEL,
@@ -137,7 +134,7 @@ namespace Controller.MainWindow.MeasurementRoutine
             executer.SetVariableValue(VAR_COMPLETED_SCANS, controller.CompletedScans);
             executer.SetVariableValue(VAR_CONTROL_LE_CROY, controller.ControlLecroy);
             executer.SetVariableValue(VAR_GLOBAL_COUNTER, controller.GlobalCounter);
-            executer.SetVariableValue(VAR_NEXT_ITERATION, controller.IterationOfScan);
+            executer.SetVariableValue(VAR_LAST_ITERATION, controller.IterationOfScan);
             executer.SetVariableValue(VAR_NUMBER_OF_ITERATIONS, controller.NumberOfIterations);
             executer.SetVariableValue(VAR_PREVIOUS_MODE, lastMode);
             executer.SetVariableValue(VAR_PRIMARY_MODEL, primaryModel.FilePath);
