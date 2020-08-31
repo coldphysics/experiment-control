@@ -137,6 +137,9 @@
     <Compile Include="AdWin\Simulator\SimulatorView.xaml.cs">
       <DependentUpon>SimulatorView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\CustomMessageBoxView.xaml.cs">
+      <DependentUpon>CustomMessageBoxView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\StepBatchAdderUC.xaml.cs">
       <DependentUpon>StepBatchAdderUC.xaml</DependentUpon>
     </Compile>
@@ -279,6 +282,10 @@
     <Page Include="AdWin\Simulator\SimulatorResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Common\CustomMessageBoxView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Control\StepBatchAdderUC.xaml">
       <SubType>Designer</SubType>

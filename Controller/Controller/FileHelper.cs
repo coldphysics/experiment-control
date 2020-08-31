@@ -34,5 +34,25 @@ namespace Controller
                 }
             }
         }
+
+        public static string GenerateTemporaryFilePath(string fileExtension)
+        {
+            return Path.GetTempPath() + Guid.NewGuid().ToString() + fileExtension;
+        }
+
+        /// <summary>
+        /// Creates a temporary file (i.e., that resides in the temp directory of the current user) with a random name, and the specified
+        /// extension, and populates with the contents of the specified string.
+        /// </summary>
+        /// <param name="fileContent">The content of the file</param>
+        /// <param name="fileExtension">The extension of the file</param>
+        /// <returns>The full path of the created file</returns>
+        public static string CreateTemporaryFile(string fileContent, string fileExtension)
+        {
+            string temporaryFilePath = GenerateTemporaryFilePath(fileExtension);
+            File.WriteAllText(temporaryFilePath, fileContent);
+
+            return temporaryFilePath;
+        }
     }
 }

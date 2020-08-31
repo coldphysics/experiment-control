@@ -71,7 +71,7 @@ namespace GeneratorUT
             RoutineBasedRootModel initialPrimaryMRM = manager.ConstructMeasurementRoutineModel().PrimaryModel;
 
             manager.IsAdvancedMode = true;
-            string temporaryFilePath = Path.GetTempPath() + System.Guid.NewGuid().ToString() + ".routine.gz";
+            string temporaryFilePath = FileHelper.GenerateTemporaryFilePath(".routine.gz");
 
             // load primary and secondary models
             manager.LoadModelAsync(primaryModel, true, true).Wait();

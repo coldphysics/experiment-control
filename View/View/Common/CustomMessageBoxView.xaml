@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="View.Common.CustomMessageBoxView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.Common"
+             mc:Ignorable="d" 
+             Name="UC"
+             d:DesignHeight="100" d:DesignWidth="450" SnapsToDevicePixels="True" UseLayoutRounding="False" IsManipulationEnabled="True" IsHitTestVisible="False">
+    <UserControl.Background>
+        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}"/>
+    </UserControl.Background>
+    <StackPanel Name="stkpnlMessageBody" Height="Auto">
+        <TextBlock Name="txtbMessage" Text="{Binding Message}" HorizontalAlignment="Left" VerticalAlignment="Stretch"  FontWeight="Normal" Height="Auto" Margin="10,10,15,10" TextWrapping="Wrap">
+        </TextBlock>
+        <CheckBox Name="dontShowAgain" IsChecked="{Binding DontShowAgain}"  Margin="10,0,0,10">Don't show this message again.</CheckBox>
+        <Grid VerticalAlignment="Bottom" Height="35">
+            <Grid.Background>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
+            </Grid.Background>
+            <Button Name="btnYes" Content="OK" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="Normal" Height="20" Width="65" Command="{Binding OkClicked}" CommandParameter="{Binding ElementName=UC}"/>
+        </Grid>
+    </StackPanel>
+</UserControl>

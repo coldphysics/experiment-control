@@ -123,6 +123,7 @@
     <Compile Include="AdWin\Simulator\ChannelSnapshot.cs" />
     <Compile Include="AdWin\Simulator\SimulatorController.cs" />
     <Compile Include="AdWin\Simulator\ViewModelBase.cs" />
+    <Compile Include="Common\CustomMessageBoxController.cs" />
     <Compile Include="Control\Compare\VariableComparison.xaml.cs">
       <DependentUpon>VariableComparison.xaml</DependentUpon>
     </Compile>
