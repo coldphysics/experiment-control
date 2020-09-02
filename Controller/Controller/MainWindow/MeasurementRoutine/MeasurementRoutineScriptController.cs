@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using Communication.Commands;
 using Model.MeasurementRoutine.GlobalVariables;
 using System.Linq;
+using Controller.Common;
 
 namespace Controller.MainWindow.MeasurementRoutine
 {
@@ -163,12 +164,14 @@ namespace Controller.MainWindow.MeasurementRoutine
         /// </summary>
         private RelayCommand _openControlScriptInExternalEditor;
 
-        private RelayCommand _checkCodeCommand;        /// <summary>
-                                                       /// Gets or sets the initialization script.
-                                                       /// </summary>
-                                                       /// <value>
-                                                       /// The initialization script.
-                                                       /// </value>
+        private RelayCommand _checkCodeCommand;
+
+        /// <summary>
+        /// Gets or sets the initialization script.
+        /// </summary>
+        /// <value>
+        /// The initialization script.
+        /// </value>
         public string InitializationScript
         {
             get { return initializationScript; }
@@ -285,11 +288,36 @@ namespace Controller.MainWindow.MeasurementRoutine
                     _openInitializationScriptInExternalEditor = new RelayCommand((parameter) =>
                     {
                         string newContent = OpenPythonScriptInExternalEditor(InitializationScript);
-                        InitializationScript = newContent;
+
+                        if (newContent!= InitializationScript)
+                        {
+                            InitializationScript = newContent;
+                        }
                     });
                 }
 
                 return _openInitializationScriptInExternalEditor;
+            }
+        }
+
+        public RelayCommand OpenControlScriptInExternalEditor
+        {
+            get
+            {
+                if (_openControlScriptInExternalEditor == null)
+                {
+                    _openControlScriptInExternalEditor = new RelayCommand((parameter) =>
+                    {
+                        string newContent = OpenPythonScriptInExternalEditor(Script);
+
+                        if (newContent != Script)
+                        {
+                            Script = newContent;
+                        }
+                    });
+                }
+
+                return _openControlScriptInExternalEditor;
             }
         }
 
@@ -460,6 +488,24 @@ namespace Controller.MainWindow.MeasurementRoutine
         }
 
 
+        private void ShowExternalEditorForInitializationScript(object parameter)
+        {
+            CustomMessageBoxController message = new CustomMessageBoxController(this);
+            message.Message = "When you click on OK, the default program associated with the \".py\" extension will be used to " +
+                "apply changes to the initialization script of the measurement routine. When you are done applying changes, simply save them " + 
+                "and close the program. If no default program is specified for the \".py\" extension, a dialog will appear that will allow you " +
+                "to choose a program yourself.";
+            Window w = WindowsHelper.CreateWindowToHostViewModel(message, true);
+            w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            w.Title = "Launching External Editor for Python Script";
+            w.ShowDialog();
+
+            if (message.DontShowAgain)
+            {
+                Console.Write("DontShowAgain clicked");
+            }
+        }
+
         private void CheckCode(object parameter)
         {
             String result = "";
@@ -522,6 +568,28 @@ namespace Controller.MainWindow.MeasurementRoutine
 
         private string OpenPythonScriptInExternalEditor(string script)
         {
+            if (Model.Properties.Settings.Default.ShowEditPythonExternallyHint)
+            {
+                CustomMessageBoxController message = new CustomMessageBoxController(this);
+                message.Message = "When you click on OK, the default editor associated with the \".py\" extension will be used to " +
+                    "apply changes to the script. When you are done, simply save the open file " +
+                    "and close the editor.\n\n If no default program is specified for the \".py\" extension, a dialog will appear that will allow you " +
+                    "to choose a program yourself.";
+                Window w = WindowsHelper.CreateWindowToHostViewModel(message, true, true);
+                w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                w.Title = "Launching External Editor for Python Script";
+
+                // only consider the value of the "don't show again" check box if the user explicitly clicked on OK (not X).
+                if (w.ShowDialog().GetValueOrDefault(false))
+                {
+                    if (message.DontShowAgain)
+                    {
+                        Model.Properties.Settings.Default.ShowEditPythonExternallyHint = false;
+                        Model.Properties.Settings.Default.Save();
+                    }
+                }
+            }
+
             string filePath = FileHelper.CreateTemporaryFile(script, ".py");
             ProcessStartInfo processStart = new ProcessStartInfo(filePath);
             processStart.UseShellExecute = true;

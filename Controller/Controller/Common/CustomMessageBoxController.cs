@@ -1,10 +1,6 @@
 ﻿using Communication.Commands;
 using Controller.MainWindow;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,7 +15,7 @@ namespace Controller.Common
 
         public string Message { set; get; }
 
-        public RelayCommand OkClicked
+        public ICommand OkClicked
         {
             get
             {
@@ -40,7 +36,9 @@ namespace Controller.Common
         {
             UserControl uc = (UserControl)parameter;
             Window w = Window.GetWindow(uc);
+            w.DialogResult = true;
             w.Close();
         }
+
     }
 }

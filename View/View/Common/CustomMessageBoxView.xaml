@@ -3,22 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:View.Common"
              mc:Ignorable="d" 
              Name="UC"
-             d:DesignHeight="100" d:DesignWidth="450" SnapsToDevicePixels="True" UseLayoutRounding="False" IsManipulationEnabled="True" IsHitTestVisible="False">
+             d:DesignHeight="100" d:DesignWidth="500">
     <UserControl.Background>
         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}"/>
     </UserControl.Background>
-    <StackPanel Name="stkpnlMessageBody" Height="Auto">
-        <TextBlock Name="txtbMessage" Text="{Binding Message}" HorizontalAlignment="Left" VerticalAlignment="Stretch"  FontWeight="Normal" Height="Auto" Margin="10,10,15,10" TextWrapping="Wrap">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Width="450" Text="{Binding Message}" HorizontalAlignment="Left" VerticalAlignment="Stretch" TextAlignment="Justify" FontWeight="Normal" Height="Auto" Margin="10,10,10,30" TextWrapping="Wrap">
         </TextBlock>
-        <CheckBox Name="dontShowAgain" IsChecked="{Binding DontShowAgain}"  Margin="10,0,0,10">Don't show this message again.</CheckBox>
-        <Grid VerticalAlignment="Bottom" Height="35">
+        <CheckBox Grid.Row="1" IsChecked="{Binding DontShowAgain}" Margin="10,0,10,10">Don't show this message again.</CheckBox>
+        <Grid Grid.Row="2" VerticalAlignment="Bottom" Height="35">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
             <Grid.Background>
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
             </Grid.Background>
-            <Button Name="btnYes" Content="OK" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="Normal" Height="20" Width="65" Command="{Binding OkClicked}" CommandParameter="{Binding ElementName=UC}"/>
+            <Button  Grid.Row="0" Content="OK" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="Normal" Height="20" Width="65" Command="{Binding OkClicked}" CommandParameter="{Binding ElementName=UC}"/>
         </Grid>
-    </StackPanel>
+    </Grid>
 </UserControl>
