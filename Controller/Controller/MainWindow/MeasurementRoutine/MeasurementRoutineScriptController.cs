@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Communication.Commands;
 using Model.MeasurementRoutine.GlobalVariables;
+using System.Linq;
+using Controller.Common;
 
 namespace Controller.MainWindow.MeasurementRoutine
 {
@@ -150,8 +155,17 @@ namespace Controller.MainWindow.MeasurementRoutine
         /// The command that shows a window with sample scripts
         /// </summary>
         private RelayCommand _showSampleScriptCommand;
+        /// <summary>
+        /// This commands opens the initialization script in the default Python editor
+        /// </summary>
+        private RelayCommand _openInitializationScriptInExternalEditor;
+        /// <summary>
+        /// This command opens the control script in the default Python 
+        /// </summary>
+        private RelayCommand _openControlScriptInExternalEditor;
 
         private RelayCommand _checkCodeCommand;
+
         /// <summary>
         /// Gets or sets the initialization script.
         /// </summary>
@@ -161,8 +175,8 @@ namespace Controller.MainWindow.MeasurementRoutine
         public string InitializationScript
         {
             get { return initializationScript; }
-            set 
-            { 
+            set
+            {
                 initializationScript = value;
                 this.requiresCodeCheck = true;
                 OnPropertyChanged("InitializationScript");
@@ -197,7 +211,7 @@ namespace Controller.MainWindow.MeasurementRoutine
             }
         }
 
-        
+
         /// <summary>
         /// Gets the save command.
         /// </summary>
@@ -240,7 +254,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                     _showExecutionStepsInfo = new RelayCommand(ShowExecutionSteps);
                 return _showExecutionStepsInfo;
             }
-           
+
 
         }
         public RelayCommand ShowSampleScriptCommand
@@ -255,7 +269,8 @@ namespace Controller.MainWindow.MeasurementRoutine
                 return _showSampleScriptCommand;
             }
         }
-        public RelayCommand CheckCodeCommand {
+        public RelayCommand CheckCodeCommand
+        {
             get
             {
                 if (_checkCodeCommand == null)
@@ -264,15 +279,56 @@ namespace Controller.MainWindow.MeasurementRoutine
                 return _checkCodeCommand;
             }
         }
+        public RelayCommand OpenInitializationScriptInExternalEditor
+        {
+            get
+            {
+                if (_openInitializationScriptInExternalEditor == null)
+                {
+                    _openInitializationScriptInExternalEditor = new RelayCommand((parameter) =>
+                    {
+                        string newContent = OpenPythonScriptInExternalEditor(InitializationScript);
 
+                        if (newContent!= InitializationScript)
+                        {
+                            InitializationScript = newContent;
+                        }
+                    });
+                }
 
-        public  VariableUsageDescriptor[] BuiltInVariables { set; get; }
+                return _openInitializationScriptInExternalEditor;
+            }
+        }
 
+        public RelayCommand OpenControlScriptInExternalEditor
+        {
+            get
+            {
+                if (_openControlScriptInExternalEditor == null)
+                {
+                    _openControlScriptInExternalEditor = new RelayCommand((parameter) =>
+                    {
+                        string newContent = OpenPythonScriptInExternalEditor(Script);
+
+                        if (newContent != Script)
+                        {
+                            Script = newContent;
+                        }
+                    });
+                }
+
+                return _openControlScriptInExternalEditor;
+            }
+        }
+
+        public VariableUsageDescriptor[] BuiltInVariables { set; get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MeasurementRoutineScriptController"/> class.
         /// </summary>
         /// <param name="initializationScript">The initial script.</param>
+        /// <param name="repetitiveScript">The control script</param>
+        /// <param name="isReadOnly">Indicates whether the instance is read-only or not</param>
         public MeasurementRoutineScriptController(string initializationScript, string repetitiveScript, bool isReadOnly)
         {
             this.requiresCodeCheck = true;
@@ -297,7 +353,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                     Remarks = String.Format(
                     "A list of double values accessible from python scripts outside the measurement routine (e.g., dynamic variables). Use \"{0}.Add(15)\" to add the value \"15\" at the end of the list (increases the size of the list). Use \"{0}[0]\" to read or write an existing element at the position 0 of the list."
                     , GlobalVariableNames.ROUTINE_ARRAY)
-                    
+
                 },
                 new VariableUsageDescriptor(){
                     VariableName= MeasurementRoutineManager.VAR_PRIMARY_MODEL,
@@ -309,7 +365,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                     VariableType = VariableUsageDescriptor.VariableTypeEnum.StringArray,
                     Remarks = "An array of the paths of secondary models"
                 },
-                
+
                 new VariableUsageDescriptor(){
                     VariableName = MeasurementRoutineManager.VAR_PREVIOUS_MODE,
                     Remarks = "The index of the previous model (0 for the primary model, higher for secondary models)"
@@ -365,7 +421,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                     VariableType = VariableUsageDescriptor.VariableTypeEnum.Boolean,
                     Remarks = "Indicates whether iterations are shuffled or not."
                 }
-                
+
             };
         }
 
@@ -422,15 +478,33 @@ namespace Controller.MainWindow.MeasurementRoutine
         //Ebaa 29.05.2018
         private void ShowExecutionSteps(object parameter)
         {
-            String stepsInfo="The execution steps of a measurement routine:\n\n"+
-                "1- Execute the repetitive python script and decide which model to be loaded next.\n"+
-                "2- Increase current model iterators.\n"+
-                "3- Load the next model.\n"+  
-                "4- Save the next model to the database.\n" +
+            String stepsInfo = "The execution steps of a measurement routine:\n\n" +
+                "1- Execute the repetitive python script and decide which model to be loaded next.\n" +
+                "2- Increase current model iterators.\n" +
+                "3- Load the next model.\n" +
+                "4- Save the next model info to the database.\n" +
                 "5- Execute the loaded next model.";
             MessageBox.Show(stepsInfo, "Execution Steps Description", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+
+        private void ShowExternalEditorForInitializationScript(object parameter)
+        {
+            CustomMessageBoxController message = new CustomMessageBoxController(this);
+            message.Message = "When you click on OK, the default program associated with the \".py\" extension will be used to " +
+                "apply changes to the initialization script of the measurement routine. When you are done applying changes, simply save them " + 
+                "and close the program. If no default program is specified for the \".py\" extension, a dialog will appear that will allow you " +
+                "to choose a program yourself.";
+            Window w = WindowsHelper.CreateWindowToHostViewModel(message, true);
+            w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            w.Title = "Launching External Editor for Python Script";
+            w.ShowDialog();
+
+            if (message.DontShowAgain)
+            {
+                Console.Write("DontShowAgain clicked");
+            }
+        }
 
         private void CheckCode(object parameter)
         {
@@ -457,7 +531,7 @@ namespace Controller.MainWindow.MeasurementRoutine
 
             if (result.Length > 0)
             {
-                MessageBox.Show(result, "Invalid Python Script", MessageBoxButton.OK, MessageBoxImage.Error);   
+                MessageBox.Show(result, "Invalid Python Script", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
             {
@@ -480,7 +554,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                 switch (columnName)
                 {
                     case "Script":
-                        
+
                         break;
 
                     default:
@@ -490,5 +564,59 @@ namespace Controller.MainWindow.MeasurementRoutine
                 return result;
             }
         }
+
+
+        private string OpenPythonScriptInExternalEditor(string script)
+        {
+            if (Model.Properties.Settings.Default.ShowEditPythonExternallyHint)
+            {
+                CustomMessageBoxController message = new CustomMessageBoxController(this);
+                message.Message = "When you click on OK, the default editor associated with the \".py\" extension will be used to " +
+                    "apply changes to the script. When you are done, simply save the open file " +
+                    "and close the editor.\n\n If no default program is specified for the \".py\" extension, a dialog will appear that will allow you " +
+                    "to choose a program yourself.";
+                Window w = WindowsHelper.CreateWindowToHostViewModel(message, true, true);
+                w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                w.Title = "Launching External Editor for Python Script";
+
+                // only consider the value of the "don't show again" check box if the user explicitly clicked on OK (not X).
+                if (w.ShowDialog().GetValueOrDefault(false))
+                {
+                    if (message.DontShowAgain)
+                    {
+                        Model.Properties.Settings.Default.ShowEditPythonExternallyHint = false;
+                        Model.Properties.Settings.Default.Save();
+                    }
+                }
+            }
+
+            string filePath = FileHelper.CreateTemporaryFile(script, ".py");
+            ProcessStartInfo processStart = new ProcessStartInfo(filePath);
+            processStart.UseShellExecute = true;
+
+            // determine whether the .py extension is already associated with an application or not
+            if (processStart.Verbs.Where(verb => verb.ToLower() == "open").Count() == 0)
+            {
+                processStart.Verb = "openas";
+            }
+            else
+            {
+                processStart.Verb = "open";
+            }
+
+            Process myProcess = Process.Start(processStart);
+            myProcess.WaitForExit();
+
+            if (File.Exists(filePath))
+            {
+                string result = File.ReadAllText(filePath);
+                File.Delete(filePath);
+
+                return result;
+            }
+
+            return null;
+        }
+
     }
 }

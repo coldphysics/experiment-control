@@ -19,9 +19,8 @@
 			 xmlns:vmfifodebug="clr-namespace:Controller.AdWin.Debug;assembly=Controller"
 			 xmlns:vwfifodebug="clr-namespace:View.AdWin.Debug;assembly=View"
 			 xmlns:vmmain="clr-namespace:Controller.MainWindow.MeasurementRoutine;assembly=Controller"
-           
-               
-      
+             xmlns:vmcommon="clr-namespace:Controller.Common;assembly=Controller"
+             xmlns:vwcommon="clr-namespace:View.Common;assembly=View" 
 			 xmlns:vwmain="clr-namespace:View.Main;assembly=View"
              StartupUri="MainWindow.xaml">
 	<Application.Resources>
@@ -84,6 +83,10 @@
 		<DataTemplate DataType="{x:Type vmmain:MeasurementRoutineSampleScriptController}">
 			<vwmain:MeasurementRoutineSampleScriptView  />
 		</DataTemplate>
-		
-	</Application.Resources>
+
+        <DataTemplate DataType="{x:Type vmcommon:CustomMessageBoxController}">
+            <vwcommon:CustomMessageBoxView  />
+        </DataTemplate>
+
+    </Application.Resources>
 </Application>

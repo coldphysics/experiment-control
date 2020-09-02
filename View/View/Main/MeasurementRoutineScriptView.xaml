@@ -6,43 +6,75 @@
              mc:Ignorable="d" 
 			 Name="UC"
              d:DesignHeight="600" d:DesignWidth="800">
-	<UserControl.Resources>
-		<Style TargetType="{x:Type TextBlock}" x:Key="WrapText">
-			<Setter Property="TextWrapping" Value="Wrap"/>
-		</Style>
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}" x:Key="WrapText">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
 
-		<Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
-			<Style.Triggers>
-				<Trigger Property="Validation.HasError" Value="true">
-					<Setter Property="ToolTip"
+        <Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
               Value="{Binding RelativeSource={x:Static RelativeSource.Self},Path=(Validation.Errors).CurrentItem.ErrorContent}"/>
-				</Trigger>
-			</Style.Triggers>
-		</Style>
-	</UserControl.Resources>
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="auto"/>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="1"/>
-			<RowDefinition Height="55"/>
-		</Grid.RowDefinitions>
-		<Grid Grid.Row="0" Grid.Column="1">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="auto"/>
-				<RowDefinition Height="auto"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="auto"/>
-				<RowDefinition Height="auto"/>
-				<RowDefinition Height="3*"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--https://acrocontext.wordpress.com/2013/09/02/c-wpf-mouse-over-animation-with-opacity/-->
+        <Style x:Key="FadeOutButton" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent">
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Control.MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard >
+                            <DoubleAnimation Duration="0:0:0.2" To="1" Storyboard.TargetProperty="Opacity"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="Control.MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard >
+                            <DoubleAnimation Duration="0:0:0.2" To="0.4" Storyboard.TargetProperty="Opacity"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="1"/>
+            <RowDefinition Height="55"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="3*"/>
                 <RowDefinition Height="35"/>
             </Grid.RowDefinitions>
-			<Label Grid.Row="0" Content="Initialization Script" FontWeight="Bold" FontSize="13"/>
-			<TextBlock Grid.Row="1" Margin="5,0,0,0" Text="This script runs once when the routine starts"/>
-			<TextBox IsReadOnly="{Binding IsReadOnly}" Margin="5" Grid.Row="2"  Style="{StaticResource textBoxInError}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left"  Text="{Binding InitializationScript, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Visible" AcceptsReturn="True" />
+
+            <Label Grid.Row="0" Content="Initialization Script" FontWeight="Bold" FontSize="13"/>
+            <TextBlock Grid.Row="1" Margin="5,0,0,0" Text="This script runs once when the routine starts"/>
+            <TextBox IsReadOnly="{Binding IsReadOnly}" Margin="5" Grid.Row="2" Panel.ZIndex="0" Style="{StaticResource textBoxInError}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left"  Text="{Binding InitializationScript, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Visible" AcceptsReturn="True" Padding="0,0,24,0"/>
+            <Button Width="20" Opacity=".4" Height="20" Grid.Column="0" Grid.Row="2" Panel.ZIndex="1" Margin="7" ToolTip="Open in External Editor" Command="{Binding OpenInitializationScriptInExternalEditor}" HorizontalContentAlignment="Right" IsCancel="True" HorizontalAlignment="Right" IsDefault="True" VerticalAlignment="Top" Style="{StaticResource FadeOutButton}">
+                <Image Source="/View;component/Resources/1490114946_Export.png" Stretch="Uniform" FocusVisualStyle="{x:Null}"/>
+            </Button>
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -51,43 +83,48 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                
+
                 <Label Grid.Row="0"  Grid.Column="0"  Content="Repetitive Script" FontWeight="Bold" FontSize="13"/>
-                <Button Grid.Row="0"  Grid.Column="1" Content="Info" Command="{Binding ShowExecutionStepsInfo}"/>
+
+                <Button Grid.Row="0" Width="20" Height="20" Grid.Column="1" ToolTip="Show Info" Command="{Binding ShowExecutionStepsInfo}">
+                    <Image Source="/View;component/Resources/info-icon.png" Stretch="Uniform"/>
+                </Button>
             </Grid>
-			<TextBlock Grid.Row="4" Margin="5,0,0,0" Text="This script runs once at the beginning of each cycle"/>
-
-			<TextBox IsReadOnly="{Binding IsReadOnly}" Margin="5" Grid.Row="5"  Style="{StaticResource textBoxInError}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left"  Text="{Binding Script, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Visible" AcceptsReturn="True" />
+            <TextBlock Grid.Row="4" Margin="5,0,0,0" Text="This script runs once at the beginning of each cycle"/>
+            <Button Opacity="0.4" Grid.Row="5" Panel.ZIndex="1" Width="20" Height="20" ToolTip="Open in External Editor" Command="{Binding OpenControlScriptInExternalEditor}" VerticalAlignment="Top" Margin="7" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Style="{StaticResource FadeOutButton}">
+                <Image Source="/View;component/Resources/1490114946_Export.png" Stretch="Uniform" FocusVisualStyle="{x:Null}"/>
+            </Button>
+            <TextBox IsReadOnly="{Binding IsReadOnly}" Margin="5" Grid.Row="5" Panel.ZIndex="0" Style="{StaticResource textBoxInError}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left"  Text="{Binding Script, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Visible" AcceptsReturn="True" Padding="0,0,24,0" />
             <Button Grid.Row="6"  Grid.Column="0" Content="Check Script" Command="{Binding CheckCodeCommand}"/>
-		</Grid>
+        </Grid>
 
-		
-		<ScrollViewer VerticalScrollBarVisibility="Auto">
-			<StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
-				<TextBlock  Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Margin="5,5,5,0"  MaxWidth="500" HorizontalAlignment="Left">
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
+                <TextBlock  Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Margin="5,5,5,0"  MaxWidth="500" HorizontalAlignment="Left">
 			<Run Text="A Python script that controls the execution of the measurement routine. Its most important task is determining the model of the following cycle. Within the script you can use the following variables:"/>
 			<LineBreak/>
 
-				</TextBlock>
+                </TextBlock>
 
-				<DataGrid  ItemsSource="{Binding BuiltInVariables}" AutoGenerateColumns="False" SelectionMode="Single"  SelectionUnit="Cell" MinWidth="400">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Variable" Width="Auto" IsReadOnly="True" Binding="{Binding VariableName}"/>
-						<DataGridTextColumn Header="Type" Width="Auto" IsReadOnly="True" Binding="{Binding VariableTypeAsString}" Foreground="Blue"/>
-						<DataGridTextColumn Header="Read/Write" Width="Auto" IsReadOnly="True" Binding="{Binding ReadOrWrite}"/>
-						<DataGridTextColumn Header="Remarks" Width="200" IsReadOnly="True" Binding="{Binding Remarks}" MaxWidth="600" ElementStyle="{StaticResource WrapText}"/>
-					</DataGrid.Columns>
-				</DataGrid>
-			</StackPanel>
-		</ScrollViewer>
+                <DataGrid  ItemsSource="{Binding BuiltInVariables}" AutoGenerateColumns="False" SelectionMode="Single"  SelectionUnit="Cell" MinWidth="400">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Variable" Width="Auto" IsReadOnly="True" Binding="{Binding VariableName}"/>
+                        <DataGridTextColumn Header="Type" Width="Auto" IsReadOnly="True" Binding="{Binding VariableTypeAsString}" Foreground="Blue"/>
+                        <DataGridTextColumn Header="Read/Write" Width="Auto" IsReadOnly="True" Binding="{Binding ReadOrWrite}"/>
+                        <DataGridTextColumn Header="Remarks" Width="200" IsReadOnly="True" Binding="{Binding Remarks}" MaxWidth="600" ElementStyle="{StaticResource WrapText}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </ScrollViewer>
 
-		<Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"  Stroke="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Margin="5,0,5,0"/>
+        <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"  Stroke="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Margin="5,0,5,0"/>
 
-		<StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"  Grid.ColumnSpan="2" >
-			<Button Content="Cancel" Width="70" Height="25" VerticalAlignment="Top" Margin="25,15,10,5" Command="{Binding CloseCommand}" CommandParameter="{Binding ElementName=UC}"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"  Grid.ColumnSpan="2" >
+            <Button Content="Cancel" Width="70" Height="25" VerticalAlignment="Top" Margin="25,15,10,5" Command="{Binding CloseCommand}" CommandParameter="{Binding ElementName=UC}"/>
             <Button Content="OK" Width="70"  Height="25" VerticalAlignment="Top" Margin="0,15,0,5" Command="{Binding SaveCommand}" CommandParameter="{Binding ElementName=UC}" ToolTip="OK button activates after successful script check" ToolTipService.ShowOnDisabled="True"/>
-			<Button Content="Sample" Width="70"  Height="25" VerticalAlignment="Top" Margin="10,15,0,5" Command="{Binding ShowSampleScriptCommand}" CommandParameter="{Binding ElementName=UC}" />
-		</StackPanel>
+            <Button Content="Sample" Width="70"  Height="25" VerticalAlignment="Top" Margin="10,15,0,5" Command="{Binding ShowSampleScriptCommand}" CommandParameter="{Binding ElementName=UC}" />
+        </StackPanel>
 
-	</Grid>
+    </Grid>
 </UserControl>
