@@ -87,7 +87,6 @@ namespace Controller.OutputVisualizer
                 _visualizationWindow.Width = _visualizationWindow.MinWidth;
                 _visualizationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 _visualizationWindow.Title = "Output Visualizer";
-                //visulizationWindow.ShowDialog();
             }
 
             _outputVisualizationController.HandleWindowOpeningEvent();

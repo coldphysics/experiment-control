@@ -58,3 +58,8 @@ https://www.nuget.org/packages/MSTest.TestAdapter/2.1.1/license
 ### MSTest.TestFramework
 License: MIT
 https://www.nuget.org/packages/MSTest.TestFramework/2.1.1/license
+
+### CsvHelper
+License: Microsoft Public License (MS-PL), Apache License, Version 2.0
+https://opensource.org/licenses/MS-PL
+https://opensource.org/licenses/Apache-2.0

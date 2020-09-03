@@ -90,6 +90,9 @@
     <None Include="Resources\0.2ms.xml.gz">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\1715_Excite_on_P_branch_ARBs_ODT_lowDensity.xml.gz">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\disabled-first-sequence.xml.gz">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

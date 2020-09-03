@@ -33,7 +33,43 @@ namespace Model.Settings
         /// <summary>
         /// The number of occurrences of a single time unit (ms) during one second, i.e., 1000
         /// </summary>
-        private const double INPUT_TIME_BASE = 1000.0;
+        private const decimal INPUT_TIME_BASE = 1000.0M;
+
+        /// <summary>
+        /// Gets the value of the sample rate in Hz (decimal)
+        /// </summary>
+        /// <value>
+        /// The sample rate value in Hz.
+        /// </value>
+        public decimal SampleRateValueDecimal
+        {
+            get
+            {
+                ProfilesManager manager = ProfilesManager.GetInstance();
+                SampleRateSetting setting = (SampleRateSetting)manager.ActiveProfile.GetSettingByName(SettingNames.SAMPLE_RATE);
+                SampleRateUnit unit = setting.UnitOfSampleRate;
+                int sampleRateValueOriginal = setting.Value;
+                decimal _sampleRateValue = -1.0M;
+
+                switch (unit)
+                {
+                    case SampleRateUnit.Hz:
+                        _sampleRateValue = sampleRateValueOriginal;
+                        break;
+                    case SampleRateUnit.kHz:
+                        _sampleRateValue = sampleRateValueOriginal * 1e3M;
+                        break;
+                    case SampleRateUnit.MHz:
+                        _sampleRateValue = sampleRateValueOriginal * 1e6M;
+                        break;
+                    case SampleRateUnit.GHz:
+                        _sampleRateValue = sampleRateValueOriginal * 1e9M;
+                        break;
+                }
+
+                return _sampleRateValue;
+            }
+        }
 
         /// <summary>
         /// Gets the value of the sample rate in Hz
@@ -45,29 +81,7 @@ namespace Model.Settings
         {
             get
             {
-                ProfilesManager manager = ProfilesManager.GetInstance();
-                SampleRateSetting setting = (SampleRateSetting)manager.ActiveProfile.GetSettingByName(SettingNames.SAMPLE_RATE);
-                SampleRateUnit unit = setting.UnitOfSampleRate;
-                int sampleRateValueOriginal = setting.Value;
-                double _sampleRateValue = -1.0;
-
-                switch (unit)
-                {
-                    case SampleRateUnit.Hz:
-                        _sampleRateValue = sampleRateValueOriginal;
-                        break;
-                    case SampleRateUnit.kHz:
-                        _sampleRateValue = sampleRateValueOriginal * 1e3;
-                        break;
-                    case SampleRateUnit.MHz:
-                        _sampleRateValue = sampleRateValueOriginal * 1e6;
-                        break;
-                    case SampleRateUnit.GHz:
-                        _sampleRateValue = sampleRateValueOriginal * 1e9;
-                        break;
-                }
-
-                return _sampleRateValue;
+                return (double)SampleRateValueDecimal;
             }
         }
 
@@ -86,6 +100,20 @@ namespace Model.Settings
         }
 
         /// <summary>
+        /// Gets the input time base as a decimal.
+        /// </summary>
+        /// <value>
+        /// The input time base.
+        /// </value>
+        public decimal InputTimeBaseDecimal
+        {
+            get
+            {
+                return INPUT_TIME_BASE;
+            }
+        }
+
+        /// <summary>
         /// Gets the input time base as a double.
         /// </summary>
         /// <value>
@@ -95,7 +123,21 @@ namespace Model.Settings
         {
             get
             {
-                return INPUT_TIME_BASE;
+                return (double)InputTimeBaseDecimal;
+            }
+        }
+
+        /// <summary>
+        /// Gets the smallest time step measured in ms (decimal).
+        /// </summary>
+        /// <value>
+        /// The smallest time step measured in ms.
+        /// </value>
+        public decimal SmallestTimeStepDecimal
+        {
+            get
+            {
+                return InputTimeBaseDecimal / SampleRateValueDecimal;
             }
         }
 
@@ -109,7 +151,7 @@ namespace Model.Settings
         {
             get
             {
-                return InputTimeBase / SampleRateValue;
+                return (double)SmallestTimeStepDecimal;
             }
         }
 
