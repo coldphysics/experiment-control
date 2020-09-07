@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Controller.OutputVisualizer.Export
+namespace Controller.OutputVisualizer.Export.Abstract
 {
     public abstract class OutputExporter
     {
@@ -14,9 +14,7 @@ namespace Controller.OutputVisualizer.Export
             this.modelOutput = modelOutput;
         }
 
-        public abstract Task ExportSingleChannelOutput(string cardName, int channelNumber);
-
-        public abstract Task ExportMultiChannelOutputs(Dictionary<string, List<int>> channels);
+        public abstract Task ExportOutput(ExportOptions options);
         
     }
 }

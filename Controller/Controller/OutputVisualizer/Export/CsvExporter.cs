@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Communication.Interfaces.Generator;
+using Controller.OutputVisualizer.Export.Abstract;
 using CsvHelper;
-using Model.Settings;
+using CsvHelper.Configuration;
+
 
 namespace Controller.OutputVisualizer.Export
 {
-    public class CsvExporter : OutputExporter
+    public class CsvExporter : NonQuantizedOutputExporter
     {
         public string OutputPath
         {
@@ -20,39 +23,21 @@ namespace Controller.OutputVisualizer.Export
 
         public CsvExporter(IModelOutput modelOutput) : base(modelOutput)
         {
-            
+
         }
 
-        public override async Task ExportMultiChannelOutputs(Dictionary<string, List<int>> channels)
-        {
-            List<DataPoint> dataPoints = new List<DataPoint>();
-            List<DataPoint> current;
 
-            foreach(string card in channels.Keys)
-            {
-                foreach(int channel in channels[card])
-                {
-                    current = ConvertChannelToDataPoints(card, channel);
-                    dataPoints.AddRange(current);
-                }
-            }
 
-            await WriteDataPointsToFile(dataPoints);
-        }
-
-        public override async Task ExportSingleChannelOutput(string cardName, int channelNumber)
-        {
-            List<DataPoint> dataPoints = ConvertChannelToDataPoints(cardName, channelNumber);
-
-            await WriteDataPointsToFile(dataPoints);
-        }
-
-        private async Task WriteDataPointsToFile(List<DataPoint> dataPoints)
+        protected override async Task PerformExport(List<DataPoint> dataPoints, ExportOptions options)
         {
             using (var writer = new StreamWriter(OutputPath))
             {
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
+                    csv.Configuration.RegisterClassMap(new DataPointMap(options));
+                    csv.WriteHeader<DataPoint>();
+                    await csv.NextRecordAsync();
+
                     foreach (DataPoint dp in dataPoints)
                     {
                         csv.WriteRecord(dp);
@@ -65,48 +50,72 @@ namespace Controller.OutputVisualizer.Export
 
         }
 
-        private List<DataPoint> ConvertChannelToDataPoints(string cardName, int channelNumber)
+    }
+    public class DataPointMap : ClassMap<DataPoint>
+    {
+        public DataPointMap()
         {
-            List<DataPoint> result = null;
-            // a KeyNotFoundException might be thrown here if the cardName is not found
-            ICardOutput card = modelOutput.Output[cardName];
-
-            if (card is INonQuantizedCardOutput)
-            {
-                double[] channelOutput = ((INonQuantizedCardOutput)card).GetChannelOutput(channelNumber);
-                decimal TIME_STEP_MILLIS = TimeSettingsInfo.GetInstance().SmallestTimeStepDecimal;
-                decimal currentTimeMillis = 0.0M;
-                DataPoint current;
-                result = new List<DataPoint>();
-
-                foreach (double ouputPoint in channelOutput)
-                {
-                    current = new DataPoint()
-                    {
-                        CardName = cardName,
-                        ChannelIndex = channelNumber,
-                        OutputValue = ouputPoint,
-                        TimeMillis = currentTimeMillis
-                    };
-
-                    result.Add(current);
-                    currentTimeMillis += TIME_STEP_MILLIS;
-
-                }
-            }
-
-            return result;
+            AutoMap(CultureInfo.CurrentCulture);
         }
 
-        class DataPoint
+        public DataPointMap(ExportOptions options) : this()
         {
-            public string CardName { set; get; }
+            if (options.OutputFields != null)
+            {
+                if (options.OutputFields.Contains(OutputField.CardName))
+                {
+                    Map(m => m.CardName).Index(0);
+                }
+                else
+                {
+                    Map(m => m.CardName).Ignore();
+                }
 
-            public int ChannelIndex { set; get; }
+                if (options.OutputFields.Contains(OutputField.ChannelIndex))
+                {
+                    Map(m => m.ChannelIndex).Index(1);
+                }
+                else
+                {
+                    Map(m => m.ChannelIndex).Ignore();
+                }
 
-            public double OutputValue { set; get; }
+                if (options.OutputFields.Contains(OutputField.SequenceIndex))
+                {
+                    Map(m => m.SequenceIndex).Index(2);
+                }
+                else
+                {
+                    Map(m => m.SequenceIndex).Ignore();
+                }
 
-            public decimal TimeMillis { set; get; }
+                if (options.OutputFields.Contains(OutputField.SequenceName))
+                {
+                    Map(m => m.SequenceName).Index(3);
+                }
+                else
+                {
+                    Map(m => m.SequenceName).Ignore();
+                }
+
+                if (options.OutputFields.Contains(OutputField.TimeMillis))
+                {
+                    Map(m => m.TimeMillis).Index(4);
+                }
+                else
+                {
+                    Map(m => m.TimeMillis).Ignore();
+                }
+
+                if (options.OutputFields.Contains(OutputField.OutputValue))
+                {
+                    Map(m => m.OutputValue).Index(5);
+                }
+                else
+                {
+                    Map(m => m.OutputValue).Ignore();
+                }
+            }
         }
     }
 }
