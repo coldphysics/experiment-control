@@ -121,7 +121,7 @@ namespace AbstractController.Data.Sequence
         }
 
         /// <summary>
-        /// Gets the duration of this sequence which is the maximum duration of channels this sequence has
+        /// Gets the duration of this sequence which is the maximum duration of channels this sequence has within this card!
         /// </summary>
         /// <returns>The duration of the sequence.</returns>
         public double ActualDuration()

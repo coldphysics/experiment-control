@@ -60,7 +60,43 @@ namespace GeneratorUT
             Assert.IsTrue(DoubleEquals(outputGenerator.Duration() * 1000.0 * 3, output.OutputDurationMillis));
         }
 
-        [DataRow("Resources\\1 khz-3 sequences-1s 1s 2s.xml.gz", "NoOutput", "AO1", 0)]
+        [DataRow("Resources\\1715_Excite_on_P_branch_ARBs_ODT_lowDensity.xml.gz", "NoOutput", "AO1", 0)]
+        [DataTestMethod]
+        public void TestBasicExportToCsv(string modelName, string profileName, string cardName, int channelIndex)
+        {
+            SelectProfile(profileName);
+            MasterBuilder builder = new MasterBuilder();
+            builder.Build();
+            MainWindowController mainWindowController = builder.GetMainController();
+            MeasurementRoutineManagerController manager = new MeasurementRoutineManagerController(mainWindowController,
+                mainWindowController.GetRootController().returnModel);
+
+            Task<RootModel> loadTask = manager.LoadModelAsync(modelName, true, true);
+            loadTask.Wait();
+            RootModel model = loadTask.Result;
+            GeneratorRecipe recipe = new GeneratorRecipe(new SequenceGroupGeneratorRecipe());
+            DataOutputGenerator outputGenerator = (DataOutputGenerator)recipe.Cook(model);
+            IModelOutput output = outputGenerator.Generate();
+            int stepsCount = ((INonQuantizedCardOutput)output.Output[cardName]).GetChannelOutput(channelIndex).Length;
+            decimal stepTime = TimeSettingsInfo.GetInstance().SmallestTimeStepDecimal;
+
+            ObservableCollection<AbstractSequenceController> sequences = mainWindowController.GetRootController().DataController.SequenceGroup.Windows.First().Tabs;
+
+            string filePath = ExportCsv(cardName, channelIndex, output, sequences, null, null);
+
+            List<OutputField> headers = new List<OutputField>() {
+                OutputField.CardName,
+                OutputField.ChannelIndex,
+                OutputField.SequenceName,
+                OutputField.SequenceIndex,
+                OutputField.OutputValue,
+                OutputField.TimeMillis
+            };
+
+            EvaluateCsvFileValidity_Columns_Time(filePath, headers, stepTime, stepsCount);
+        }
+
+        [DataRow("Resources\\3 sequences-1ms 1ms 2ms.xml.gz", "NoOutput", "AO1", 0)]
         [DataTestMethod]
         public void TestExportToCsv(string modelName, string profileName, string cardName, int channelIndex)
         {
@@ -95,7 +131,7 @@ namespace GeneratorUT
                 OutputField.TimeMillis
             };
 
-            EvaluateCsvFileValidity(filePath, headers, stepTime, stepsCount);
+            EvaluateCsvFileValidity_Columns_Time(filePath, headers, stepTime, stepsCount);
 
             // Now, we try passing no header fields
             headers = new List<OutputField>
@@ -104,7 +140,7 @@ namespace GeneratorUT
             };
 
             filePath = ExportCsv(cardName, channelIndex, output, sequences, headers, null);
-            EvaluateCsvFileValidity(filePath, headers, stepTime, stepsCount);
+            EvaluateCsvFileValidity_Columns_Time(filePath, headers, stepTime, stepsCount);
 
             // Now, we try passing some of the output fields
             headers = new List<OutputField>
@@ -114,7 +150,7 @@ namespace GeneratorUT
             };
 
             filePath = ExportCsv(cardName, channelIndex, output, sequences, headers, null);
-            EvaluateCsvFileValidity(filePath, headers, stepTime, stepsCount);
+            EvaluateCsvFileValidity_Columns_Time(filePath, headers, stepTime, stepsCount);
 
 
             // Now, we try passing all of the output fields
@@ -129,13 +165,57 @@ namespace GeneratorUT
             };
 
             filePath = ExportCsv(cardName, channelIndex, output, sequences, headers, null);
-            EvaluateCsvFileValidity(filePath, headers, stepTime, stepsCount);
+            EvaluateCsvFileValidity_Columns_Time(filePath, headers, stepTime, stepsCount);
+
+
+            // We test including and excluding sequences
+            List<int> allSeqIndices = new List<int>();
+
+            for (int i = 0; i < sequences.Count; i++)
+            {
+                allSeqIndices.Add(i);
+            }
+
+            List<int> sequenceIndices = allSeqIndices;
+            // We try passing null
+            filePath = ExportCsv(cardName, channelIndex, output, sequences, headers, null);
+            EvaluateCsvFileValidity_Sequences(filePath, sequenceIndices, sequences, stepTime);
+
+            // We try including no sequences at all
+            sequenceIndices = new List<int>
+            {
+
+            };
+            filePath = ExportCsv(cardName, channelIndex, output, sequences, headers, sequenceIndices);
+            EvaluateCsvFileValidity_Sequences(filePath, sequenceIndices, sequences, stepTime);
+
+
+            //We try including 1 sequence only
+            sequenceIndices = new List<int>
+            {
+                1
+            };
+            filePath = ExportCsv(cardName, channelIndex, output, sequences, headers, sequenceIndices);
+            EvaluateCsvFileValidity_Sequences(filePath, sequenceIndices, sequences, stepTime);
+
+            //We try including 2 non-consequitive sequence only
+            sequenceIndices = new List<int>
+            {
+                0,2
+            };
+            filePath = ExportCsv(cardName, channelIndex, output, sequences, headers, sequenceIndices);
+            EvaluateCsvFileValidity_Sequences(filePath, sequenceIndices, sequences, stepTime);
+
+            //We try including all sequences
+            sequenceIndices = allSeqIndices;
+            filePath = ExportCsv(cardName, channelIndex, output, sequences, headers, sequenceIndices);
+            EvaluateCsvFileValidity_Sequences(filePath, sequenceIndices, sequences, stepTime);
         }
 
         private string ExportCsv(string cardName, int channelIndex, IModelOutput output, IList<AbstractSequenceController> sequences, List<OutputField> includedHeaders, List<int> includedSequences)
         {
             CsvExporter exporter = new CsvExporter(output);
-            exporter.SetAllSequences(sequences);
+            exporter.SetAllSequences(sequences, TimeSettingsInfo.GetInstance().SmallestTimeStepDecimal);
             ExportOptions options = ExportOptionsBuilder
                 .NewInstance(cardName, channelIndex)
                 .SetOutputFields(includedHeaders)
@@ -148,9 +228,19 @@ namespace GeneratorUT
             return filePath;
         }
 
-        private void EvaluateCsvFileValidity(string filePath, List<OutputField> expectedHeaders, decimal stepTime, int stepCount)
+
+        /// <summary>
+        /// This method evaluates the correct sequencing and timing of records in the exported csv file.
+        /// It also tests the inclusion of a selective set of output columns.
+        /// The method removes the csv file.
+        /// </summary>
+        /// <param name="filePath">The path to the csv file</param>
+        /// <param name="expectedHeaders">A list of the columns that are expected to be in the csv file</param>
+        /// <param name="stepTime">The time (in millis) of a single time step</param>
+        /// <param name="stepsCount">The expected number of timesteps (records) in the csv file</param>
+        private void EvaluateCsvFileValidity_Columns_Time(string filePath, List<OutputField> expectedHeaders, decimal stepTime, int stepsCount)
         {
-            Assert.IsTrue(File.Exists(filePath));
+            File.Exists(filePath);
 
             using (var reader = new StreamReader(filePath))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
@@ -161,7 +251,6 @@ namespace GeneratorUT
                 }
                 else
                 {
-                    var records = new List<DataPoint>();
                     csv.Read();
                     csv.ReadHeader();
                     Assert.IsNotNull(csv.Context.HeaderRecord);
@@ -172,12 +261,13 @@ namespace GeneratorUT
                         Assert.IsTrue(csv.Context.HeaderRecord.Contains(headerField.ToString()));
                     }
 
-                    int count = 0;
                     decimal lastReadTime = -1M;
+                    List<dynamic> all = new List<dynamic>();
 
                     while (csv.Read())
                     {
                         dynamic record = csv.GetRecord<dynamic>();
+                        all.Add(record);
 
                         if (expectedHeaders.Contains(OutputField.TimeMillis))
                         {
@@ -186,13 +276,54 @@ namespace GeneratorUT
                             {
                                 Assert.AreEqual(lastReadTime + stepTime, decimal.Parse(record.TimeMillis));
                             }
-                        }
 
-                        lastReadTime = decimal.Parse(record.TimeMillis);
-                        ++count;
+                            lastReadTime = decimal.Parse(record.TimeMillis);
+                        }
                     }
 
-                    Assert.AreEqual(stepCount, count);
+                    Assert.AreEqual(stepsCount, all.Count);
+                }
+            }
+
+            File.Delete(filePath);
+        }
+
+        /// <summary>
+        /// This method evaluates the inclusion of a selective set of sequences.
+        /// The method removes the csv file.
+        /// </summary>
+        /// <param name="filePath">The path to the csv file</param>
+        /// <param name="expectedSequences">The expected set of sequence indices to be included in the csv file</param>
+        /// <param name="allSequences">The set of all sequences (to get information from them)</param>
+        /// <param name="stepTime">The time (in millis) of a single time step</param>
+        private void EvaluateCsvFileValidity_Sequences(string filePath, List<int> expectedSequences, IList<AbstractSequenceController> allSequences, decimal stepTime)
+        {
+            File.Exists(filePath);
+
+            using (var reader = new StreamReader(filePath))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                if (expectedSequences.Count == 0)
+                {
+                    Assert.AreEqual(0, csv.GetRecords<DataPoint>().Count());
+                }
+                else
+                {
+                    decimal expectedRecordsCount = allSequences
+                        .Where(aSeq => expectedSequences.Contains(aSeq.Index()))
+                        .Select(aSeq => (decimal)aSeq.ActualDuration() / stepTime)
+                        .Sum();
+                    var records = csv.GetRecords<DataPoint>().ToList();
+
+                    Assert.AreEqual(expectedRecordsCount, records.Count());
+                    List<int> actual = records.Select(record => record.SequenceIndex).Distinct().ToList();
+                    Assert.AreEqual(expectedSequences.Count, actual.Count);
+
+                    foreach (int sequenceIndex in expectedSequences)
+                    {
+                        Assert.IsTrue(actual.Contains(sequenceIndex));
+                    }
+
                 }
             }
 

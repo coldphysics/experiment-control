@@ -103,10 +103,10 @@
     <None Include="Resources\0.2ms.xml.gz">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\1 khz-3 sequences-1s 1s 2s.xml.gz">
+    <None Include="Resources\1715_Excite_on_P_branch_ARBs_ODT_lowDensity.xml.gz">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\1715_Excite_on_P_branch_ARBs_ODT_lowDensity.xml.gz">
+    <None Include="Resources\3 sequences-1ms 1ms 2ms.xml.gz">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Resources\disabled-first-sequence.xml.gz">

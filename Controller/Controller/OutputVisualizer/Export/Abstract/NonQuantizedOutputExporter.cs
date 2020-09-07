@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AbstractController.Data.Sequence;
 using Communication.Interfaces.Generator;
-using Model.Data.Sequences;
 using Model.Settings;
 
 namespace Controller.OutputVisualizer.Export.Abstract
@@ -22,17 +18,21 @@ namespace Controller.OutputVisualizer.Export.Abstract
         {
         }
 
-        public void SetAllSequences(IList<AbstractSequenceController> allSequences)
+        public void SetAllSequences(IList<AbstractSequenceController> allSequences, decimal stepTime)
         {
             _allSequences = allSequences.Select(sequenceC =>
             {
-                return new SequenceInfo()
+                decimal startTime = (decimal)sequenceC.ActualStartTime();
+                decimal duration = (decimal)sequenceC.LongestDurationAllSequences();
+                SequenceInfo result = new SequenceInfo()
                 {
                     SequenceIndex = sequenceC.Index(),
                     SequenceName = sequenceC.GetModel().Name,
-                    StartTimeInclusive = (decimal)sequenceC.ActualStartTime(),
-                    EndTimeExclusive = (decimal)sequenceC.ActualStartTime() + (decimal)sequenceC.ActualDuration()
+                    NumberOfSteps = (int)(duration / stepTime),
+                    StartIndexOfSteps = (int)(startTime / stepTime)
                 };
+
+                return result;
             }).ToList();
         }
 
@@ -40,7 +40,11 @@ namespace Controller.OutputVisualizer.Export.Abstract
         {
             if (options.SequenceIndices != null)
             {
-                _includedSequences = _allSequences.Where(item => options.SequenceIndices.IndexOf(item.SequenceIndex) > 0).ToList();
+                _includedSequences = _allSequences.Where(item => options.SequenceIndices.Contains(item.SequenceIndex)).ToList();
+            }
+            else
+            {
+                _includedSequences = _allSequences;
             }
 
             List<DataPoint> dataPoints = new List<DataPoint>();
@@ -71,58 +75,33 @@ namespace Controller.OutputVisualizer.Export.Abstract
             {
                 double[] channelOutput = ((INonQuantizedCardOutput)card).GetChannelOutput(channelNumber);
                 decimal TIME_STEP_MILLIS = TimeSettingsInfo.GetInstance().SmallestTimeStepDecimal;
-                decimal currentTimeMillis = 0.0M;
                 DataPoint currentDP;
-                SequenceInfo currentSI;
                 result = new List<DataPoint>();
+                int dpIndex;
 
-                foreach (double ouputPoint in channelOutput)
+                foreach (SequenceInfo sequence in _includedSequences)
                 {
-                    currentSI = FindSequenceOfDataPoint(currentTimeMillis);
+                    dpIndex = sequence.StartIndexOfSteps;
 
-                    if (currentSI != null)
+                    for (int i = 0; i < sequence.NumberOfSteps; i++)
                     {
                         currentDP = new DataPoint()
                         {
                             CardName = cardName,
                             ChannelIndex = channelNumber,
-                            OutputValue = ouputPoint,
-                            TimeMillis = currentTimeMillis,
-                            SequenceIndex = currentSI.SequenceIndex,
-                            SequenceName = currentSI.SequenceName
+                            OutputValue = channelOutput[dpIndex],
+                            TimeMillis = dpIndex * TIME_STEP_MILLIS,
+                            SequenceIndex = sequence.SequenceIndex,
+                            SequenceName = sequence.SequenceName
                         };
+                        ++dpIndex;
 
                         result.Add(currentDP);
                     }
-
-                    currentTimeMillis += TIME_STEP_MILLIS;
-
                 }
             }
 
             return result;
-        }
-
-        private SequenceInfo FindSequenceOfDataPoint(decimal dataPointTime)
-        {
-            if (_includedSequences != null)
-            {
-                return FindSequenceOfDataPoint(dataPointTime, _includedSequences);
-            }
-
-            return FindSequenceOfDataPoint(dataPointTime, _allSequences);
-        }
-
-
-        private SequenceInfo FindSequenceOfDataPoint(decimal dataPointTime, IList<SequenceInfo> sequences)
-        {
-            foreach (SequenceInfo sequence in sequences)
-            {
-                if (sequence.IsInside(dataPointTime))
-                    return sequence;
-            }
-
-            return null;
         }
 
 
@@ -132,14 +111,10 @@ namespace Controller.OutputVisualizer.Export.Abstract
 
             public string SequenceName { set; get; }
 
-            public decimal StartTimeInclusive { set; get; }
+            public int NumberOfSteps { set; get; }
 
-            public decimal EndTimeExclusive { set; get; }
+            public int StartIndexOfSteps { set; get; }
 
-            public bool IsInside(decimal dataPointTime)
-            {
-                return dataPointTime >= StartTimeInclusive && dataPointTime < EndTimeExclusive;
-            }
         }
 
     }
