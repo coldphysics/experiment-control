@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using Communication.Commands;
 using Controller.Data.Channels;
 using Controller.Root;
+using Controller.Common;
 using CustomElements.CheckableTreeView;
 
 namespace Controller.Control.StepBatchAddition

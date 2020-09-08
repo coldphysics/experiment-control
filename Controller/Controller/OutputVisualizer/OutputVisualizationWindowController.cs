@@ -116,7 +116,7 @@ namespace Controller.OutputVisualizer
 
         //******************** Methods ********************      
 
-        private RootController GetRootController()
+        public RootController GetRootController()
         {
             return ((MainWindowController)parent).GetRootController();
         }

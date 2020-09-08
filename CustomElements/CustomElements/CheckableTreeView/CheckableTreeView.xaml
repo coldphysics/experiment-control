@@ -1,50 +1,40 @@
-﻿<UserControl 
-  x:Class="CustomElements.CheckableTreeView.CheckableTreeView"
-  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:local="clr-namespace:CustomElements.CheckableTreeView"
-  FontSize="13"
-  >
-	<UserControl.Resources>
-		<ResourceDictionary>
-			<!-- Load this specific theme because the Aero theme for CheckBox has issues. -->
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="/PresentationFramework.Royale;V3.0.0.0;31bf3856ad364e35;component\themes\royale.normalcolor.xaml" />
-			</ResourceDictionary.MergedDictionaries>
+﻿<UserControl
+    x:Class="CustomElements.CheckableTreeView.CheckableTreeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:CustomElements.CheckableTreeView"
+    FontSize="13">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!--  Load this specific theme because the Aero theme for CheckBox has issues.  -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PresentationFramework.Royale;V3.0.0.0;31bf3856ad364e35;component\themes\royale.normalcolor.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-			<Style x:Key="TreeViewItemStyle" TargetType="TreeViewItem">
-				<Setter Property="IsExpanded" Value="{Binding IsInitiallyExpanded, Mode=OneTime}" />
-				<Setter Property="IsSelected" Value="{Binding IsInitiallySelected, Mode=OneTime}" />
-				<Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
-				<Setter Property="local:VirtualToggleButton.IsVirtualToggleButton" Value="True" />
-				<Setter Property="local:VirtualToggleButton.IsChecked" Value="{Binding IsChecked}" />
-			</Style>
+            <Style x:Key="TreeViewItemStyle" TargetType="TreeViewItem">
+                <Setter Property="IsExpanded" Value="{Binding IsInitiallyExpanded, Mode=OneTime}" />
+                <Setter Property="IsSelected" Value="{Binding IsInitiallySelected, Mode=OneTime}" />
+                <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                <Setter Property="local:VirtualToggleButton.IsVirtualToggleButton" Value="True" />
+                <Setter Property="local:VirtualToggleButton.IsChecked" Value="{Binding IsChecked}" />
+            </Style>
 
-			<HierarchicalDataTemplate 
-        x:Key="CheckBoxItemTemplate"
-        ItemsSource="{Binding Children, Mode=OneTime}"
-        >
-				<StackPanel Orientation="Horizontal">
-					<!-- These elements are bound to a FooViewModel object. -->
-					<CheckBox
-            Focusable="False" 
-            IsChecked="{Binding IsChecked}" 
-            VerticalAlignment="Center"
-            />
-					<ContentPresenter 
-            Content="{Binding Name, Mode=OneTime}" 
-            Margin="2,0"
-            />
-				</StackPanel>
-			</HierarchicalDataTemplate>
-		</ResourceDictionary>
-	</UserControl.Resources>
+            <HierarchicalDataTemplate x:Key="CheckBoxItemTemplate" ItemsSource="{Binding Children, Mode=OneTime}">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox
+                        VerticalAlignment="Center"
+                        Focusable="False"
+                        IsChecked="{Binding IsChecked}" />
+                    <ContentPresenter Margin="2,0" Content="{Binding Name, Mode=OneTime}" />
+                </StackPanel>
+            </HierarchicalDataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
-	<TreeView 
-      x:Name="tree"
-      ItemContainerStyle="{StaticResource TreeViewItemStyle}"
-      ItemsSource="{Binding Mode=OneTime}"
-      ItemTemplate="{StaticResource CheckBoxItemTemplate}"
-      />
+    <TreeView
+        x:Name="tree"
+        ItemContainerStyle="{StaticResource TreeViewItemStyle}"
+        ItemTemplate="{StaticResource CheckBoxItemTemplate}"
+        ItemsSource="{Binding Mode=OneTime}" />
 
 </UserControl>

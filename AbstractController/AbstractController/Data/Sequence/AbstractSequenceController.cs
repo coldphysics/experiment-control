@@ -143,5 +143,11 @@ namespace AbstractController.Data.Sequence
 
             return duration;
         }
+
+
+        public override string ToString()
+        {
+            return string.Format("({0}) {1}", Index(), Model.Name);
+        }
     }
 }

@@ -146,7 +146,7 @@
     <Compile Include="Control\SimpleStringOkWindow.xaml.cs">
       <DependentUpon>SimpleStringOkWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Control\StepBatchAddition\ModelBasedCTVBuilder.cs" />
+    <Compile Include="Common\ModelBasedCTVBuilder.cs" />
     <Compile Include="Control\StepBatchAddition\StepBatchAdderController.cs" />
     <Compile Include="Control\SwitchWindowController.cs" />
     <Compile Include="Control\WindowList.cs" />
@@ -187,6 +187,7 @@
     <Compile Include="OutputVisualizer\Export\Abstract\NonQuantizedOutputExporter.cs" />
     <Compile Include="OutputVisualizer\Export\CsvExporter.cs" />
     <Compile Include="OutputVisualizer\Export\Abstract\OutputExporter.cs" />
+    <Compile Include="OutputVisualizer\Export\ExportWindowController.cs" />
     <Compile Include="OutputVisualizer\OutputVisualizationWindowController.cs" />
     <Compile Include="OutputVisualizer\OutputVisualizerController.cs" />
     <Compile Include="OutputVisualizer\VisualizationWindowManager.cs" />
