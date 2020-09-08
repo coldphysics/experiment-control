@@ -106,6 +106,9 @@
     <None Include="Resources\1715_Excite_on_P_branch_ARBs_ODT_lowDensity.xml.gz">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\2 seq - 1ms 1ms_2 cards - AO1,ch0 AO2,ch1 - different durations.xml.gz">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\3 sequences-1ms 1ms 2ms.xml.gz">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

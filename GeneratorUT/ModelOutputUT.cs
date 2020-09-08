@@ -62,7 +62,7 @@ namespace GeneratorUT
 
         [DataRow("Resources\\1715_Excite_on_P_branch_ARBs_ODT_lowDensity.xml.gz", "NoOutput", "AO1", 0)]
         [DataTestMethod]
-        public void TestBasicExportToCsv(string modelName, string profileName, string cardName, int channelIndex)
+        public void TestExportToCsv_LargeFile(string modelName, string profileName, string cardName, int channelIndex)
         {
             SelectProfile(profileName);
             MasterBuilder builder = new MasterBuilder();
@@ -98,7 +98,7 @@ namespace GeneratorUT
 
         [DataRow("Resources\\3 sequences-1ms 1ms 2ms.xml.gz", "NoOutput", "AO1", 0)]
         [DataTestMethod]
-        public void TestExportToCsv(string modelName, string profileName, string cardName, int channelIndex)
+        public void TestExportToCsv_Sequences_Columns(string modelName, string profileName, string cardName, int channelIndex)
         {
             SelectProfile(profileName);
             MasterBuilder builder = new MasterBuilder();
@@ -212,12 +212,58 @@ namespace GeneratorUT
             EvaluateCsvFileValidity_Sequences(filePath, sequenceIndices, sequences, stepTime);
         }
 
+        [DataRow("Resources\\2 seq - 1ms 1ms_2 cards - AO1,ch0 AO2,ch1 - different durations.xml.gz", "NoOutput", "AO1", "AO2", 0, 1)]
+        [DataTestMethod]
+        public void TestExportToCsv_2Channels(string modelName, string profileName, string card1Name, string card2Name, int channel1Index, int channel2Index)
+        {
+            SelectProfile(profileName);
+            MasterBuilder builder = new MasterBuilder();
+            builder.Build();
+            MainWindowController mainWindowController = builder.GetMainController();
+            MeasurementRoutineManagerController manager = new MeasurementRoutineManagerController(mainWindowController,
+                mainWindowController.GetRootController().returnModel);
+
+            Task<RootModel> loadTask = manager.LoadModelAsync(modelName, true, true);
+            loadTask.Wait();
+            RootModel model = loadTask.Result;
+            GeneratorRecipe recipe = new GeneratorRecipe(new SequenceGroupGeneratorRecipe());
+            DataOutputGenerator outputGenerator = (DataOutputGenerator)recipe.Cook(model);
+            IModelOutput output = outputGenerator.Generate();
+            int stepsCount = ((INonQuantizedCardOutput)output.Output[card1Name]).GetChannelOutput(channel1Index).Length;
+            decimal stepTime = TimeSettingsInfo.GetInstance().SmallestTimeStepDecimal;
+
+            ObservableCollection<AbstractSequenceController> sequences = mainWindowController.GetRootController().DataController.SequenceGroup.Windows.First().Tabs;
+            Dictionary<string, List<int>> channels = new Dictionary<string, List<int>>();
+            channels.Add(card1Name, new List<int>() { channel1Index });
+            channels.Add(card2Name, new List<int>() { channel2Index });
+
+            string filePath = ExportCsv(channels, output, sequences, null, null);
+
+            List<OutputField> headers = new List<OutputField>() {
+                OutputField.CardName,
+                OutputField.ChannelIndex,
+                OutputField.SequenceName,
+                OutputField.SequenceIndex,
+                OutputField.OutputValue,
+                OutputField.TimeMillis
+            };
+
+            EvaluateCsvFileValidity_Channels(filePath, channels, stepsCount);
+        }
         private string ExportCsv(string cardName, int channelIndex, IModelOutput output, IList<AbstractSequenceController> sequences, List<OutputField> includedHeaders, List<int> includedSequences)
+        {
+            Dictionary<string, List<int>> channels = new Dictionary<string, List<int>>();
+            channels.Add(cardName, new List<int>() { channelIndex });
+
+            return ExportCsv(channels, output, sequences, includedHeaders, includedSequences);
+        }
+
+        private string ExportCsv(Dictionary<string, List<int>> channels, IModelOutput output, IList<AbstractSequenceController> sequences, List<OutputField> includedHeaders, List<int> includedSequences)
         {
             CsvExporter exporter = new CsvExporter(output);
             exporter.SetAllSequences(sequences, TimeSettingsInfo.GetInstance().SmallestTimeStepDecimal);
             ExportOptions options = ExportOptionsBuilder
-                .NewInstance(cardName, channelIndex)
+                .NewInstance(channels)
                 .SetOutputFields(includedHeaders)
                 .SetSequenceIndices(includedSequences)
                 .Build();
@@ -328,6 +374,44 @@ namespace GeneratorUT
             }
 
             File.Delete(filePath);
+        }
+
+        /// <summary>
+        /// This method evaluates the inclusion of a selective set of sequences.
+        /// The method removes the csv file.
+        /// </summary>
+        /// <param name="filePath">The path to the csv file</param>
+        /// <param name="expectedSequences">The expected set of sequence indices to be included in the csv file</param>
+        /// <param name="allSequences">The set of all sequences (to get information from them)</param>
+        /// <param name="stepTime">The time (in millis) of a single time step</param>
+        private void EvaluateCsvFileValidity_Channels(string filePath, Dictionary<string, List<int>> channels, decimal totalSteps)
+        {
+            File.Exists(filePath);
+
+            using (var reader = new StreamReader(filePath))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+
+                var records = csv.GetRecords<DataPoint>().ToList();
+                int totalChannelsCount = 0;
+
+                // check that all expected channels are there, and that each of them has the same number of dp's,
+                // which is equal to the expected number of dp's
+                foreach (string cardName in channels.Keys)
+                {
+                    foreach (int channelIndex in channels[cardName])
+                    {
+                        Assert.AreEqual(totalSteps, records.Where(dp => dp.ChannelIndex == channelIndex && dp.CardName == cardName).Count());
+                        ++totalChannelsCount;
+                    }
+                }
+
+                // check no extra dp's exist
+                Assert.AreEqual(totalSteps * totalChannelsCount, records.Count());
+
+            }
+
+            //File.Delete(filePath);
         }
     }
 }
