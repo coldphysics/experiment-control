@@ -35,7 +35,7 @@ namespace Controller.OutputVisualizer
         /// (3) receiveing an automatic refresh (if applicable).
         /// Needed so that just selecting or unselecting displayed channels does not do an implicit refresh.
         /// </summary>
-        private IModelOutput lastKnownOutput;
+        public IModelOutput LastKnownOutput { private set; get; }
 
         // ******************** Properties ******************** 
         #region Properties
@@ -193,7 +193,7 @@ namespace Controller.OutputVisualizer
 
                 //the position of the sequence name
                 nameOfSequence.X = startTime + (duration / 2);
-                nameOfSequence.Y = Double.NaN;
+                nameOfSequence.Y = double.NaN;
 
                 TextBlock text = new TextBlock();
                 text.Text = name;
@@ -262,9 +262,9 @@ namespace Controller.OutputVisualizer
             string cardName = channelController.Parent.Parent.Model.Name;
             OutputVisualizerController ovc = GetControllerOfChannel(channel);
 
-            if (lastKnownOutput.Output[cardName] is INonQuantizedCardOutput)
+            if (LastKnownOutput.Output[cardName] is INonQuantizedCardOutput)
             {
-                double[] tempList = ((INonQuantizedCardOutput)lastKnownOutput.Output[cardName]).GetChannelOutput(channelController.Index());
+                double[] tempList = ((INonQuantizedCardOutput)LastKnownOutput.Output[cardName]).GetChannelOutput(channelController.Index());
                 // select the corresponding controller
                 ovc.SetData(tempList);
                 OutputVisualizerCollectionUC.Add(ovc);
@@ -284,7 +284,7 @@ namespace Controller.OutputVisualizer
 
         private void AddDataToVisibleChannels()
         {
-            if (lastKnownOutput != null)
+            if (LastKnownOutput != null)
             {
                 ICollection<CTVItemViewModel> checkedChannels = this.visualizationTreeViewController.GetCheckedLeaves();
 
@@ -305,10 +305,9 @@ namespace Controller.OutputVisualizer
         {
             ChannelBasicController channelController = (ChannelBasicController)(channel as CheckableTVItemController).Item;
             string cardName = channelController.Parent.Parent.Model.Name;
-            string controllerName = cardName + "-" + channelController.ToString();
             // select the corresponding controller
             return AllControllers
-                .First(controller => controller.NameOfCardAndChannel.Equals(controllerName));
+                .First(controller => controller.CardName == cardName && controller.ChannelIndex == channelController.Index());
         }
 
         /// <summary>
@@ -322,7 +321,7 @@ namespace Controller.OutputVisualizer
             if (plm.saver != null)
             {
                 // Get the output that was saved before the quantization and compression steps.
-                this.lastKnownOutput = plm.saver.GetVisualizerOutput();
+                this.LastKnownOutput = plm.saver.GetVisualizerOutput();
 
                 OutputVisualizerCollectionUC.Clear();
                 BuildSectionsForVisibleChannels();
@@ -337,9 +336,7 @@ namespace Controller.OutputVisualizer
             {
                 foreach (AbstractChannelController channel in card.Tabs.First().Channels)
                 {
-                    OutputVisualizerController ovc = new OutputVisualizerController();
-                    //to display the name of each sequence in the outputVisualizer control.
-                    ovc.NameOfCardAndChannel = card.Model.Name + "-" + channel.ToString();
+                    OutputVisualizerController ovc = new OutputVisualizerController(card.Model.Name, channel.ToString(), channel.Index());
                     ovc.alignTriggered += controller_AlignTriggered;
                     AllControllers.Add(ovc);
                 }

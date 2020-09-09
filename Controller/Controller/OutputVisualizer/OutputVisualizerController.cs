@@ -1,4 +1,5 @@
 ﻿using Communication.Commands;
+using Controller.OutputVisualizer.Export;
 using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Defaults;
@@ -8,6 +9,8 @@ using Model.Options;
 using Model.Settings;
 using Model.Settings.Settings;
 using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace Controller.OutputVisualizer
 {
@@ -67,6 +70,12 @@ namespace Controller.OutputVisualizer
         // ******************** Properties ******************** 
         #region Properties
 
+        public string CardName { set; get; }
+
+        public string ChannelName { set; get; }
+
+        public int ChannelIndex { set; get; }
+
         private SectionsCollection sectionCollection;
 
         /// <summary>
@@ -120,7 +129,7 @@ namespace Controller.OutputVisualizer
         public string NameOfCardAndChannel
         {
             get { return nameOfCardAndChannel; }
-            set
+            private set
             {
                 nameOfCardAndChannel = value;
                 OnPropertyChanged("NameOfCardAndChannel");
@@ -212,13 +221,21 @@ namespace Controller.OutputVisualizer
         /// </summary>
         public RelayCommand RangeChangedCommand { get; set; }
 
+
+        public RelayCommand ExportChannelCommand { set; get; }
+
         #endregion
 
         #region Constructor
         //************** Constructor*************
 
-        public OutputVisualizerController()
+        public OutputVisualizerController(string cardName, string channelName, int channelIndex)
         {
+            CardName = cardName;
+            ChannelName = channelName;
+            ChannelIndex = channelIndex;
+            NameOfCardAndChannel = cardName + "-" + channelName;
+
             NUMBER_OF_SAMPLES = OptionsManager.GetInstance().GetOptionValueByName<int>(OptionNames.VISUALIZED_SAMPLES);
             // Maps the 100 nanosecond values that are passed as datetime type (number of ticks) to millisecond, and display the y values without any change (in volt)
             var toMillisMapper = Mappers.Xy<DateTimePoint>()
@@ -239,6 +256,7 @@ namespace Controller.OutputVisualizer
             RangeChangedCommand = new RelayCommand(OnAxisChanged);
             //align
             AlignTriggeredCommand = new RelayCommand(AlignUserControls);
+            ExportChannelCommand = new RelayCommand(ShowExportWindow);
         }
         #endregion
 
@@ -358,6 +376,18 @@ namespace Controller.OutputVisualizer
             }
 
             ManipulatedArray = tempArray;
+        }
+
+        private void ShowExportWindow(object parameter)
+        {
+            Dictionary<string, List<int>> channels = new Dictionary<string, List<int>>
+            {
+                { CardName, new List<int>() { ChannelIndex } }
+            };
+
+            ExportWindowController controller = new ExportWindowController(VisualizationWindowManager.GetInstance().OutputVisualizationController, channels );
+            Window window = WindowsHelper.CreateWindowToHostViewModel(controller, true, true);
+            window.Title = "Output Exporter";
         }
         #endregion
 

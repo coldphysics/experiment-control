@@ -9,74 +9,80 @@
     d:DesignHeight="300"
     d:DesignWidth="450"
     mc:Ignorable="d">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="1" />
-            <RowDefinition Height="auto" />
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+    <StackPanel VerticalAlignment="Stretch">
+        <Label FontSize="14" FontWeight="SemiBold">Please select what you want to export:</Label>
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="1" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <StackPanel
-                Grid.Row="0"
-                Grid.Column="0"
-                Margin="5"
-                VerticalAlignment="Stretch">
-                <Label>Select the channels to be included:</Label>
-                <ce:CheckableTreeView DataContext="{Binding SelectedChannelsTV}" />
-            </StackPanel>
-            <StackPanel
-                Grid.Row="0"
-                Grid.Column="1"
-                Margin="5"
-                VerticalAlignment="Stretch">
-                <Label>Select the sequences to be included:</Label>
-                <ce:CheckableTreeView DataContext="{Binding SelectedSequencesTV}" />
-            </StackPanel>
-            <StackPanel
+            <Grid Grid.Row="0" Margin="0,10,0,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="5"
+                    VerticalAlignment="Stretch">
+                    <Label>Select the channels to be included:</Label>
+                    <ce:CheckableTreeView DataContext="{Binding SelectedChannelsTV}" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="5"
+                    VerticalAlignment="Stretch">
+                    <Label>Select the sequences to be included:</Label>
+                    <ce:CheckableTreeView DataContext="{Binding SelectedSequencesTV}" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="5"
+                    VerticalAlignment="Stretch">
+                    <Label>Select the data fields to be included:</Label>
+                    <ce:CheckableTreeView DataContext="{Binding SelectedColumnsTV}" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="5"
+                    VerticalAlignment="Stretch">
+                    <Label>Select the format of the export:</Label>
+                    <ComboBox ItemsSource="{Binding ExportFormats}" SelectedItem="{Binding SelectedExportFormat}" />
+                </StackPanel>
+            </Grid>
+            <Rectangle
                 Grid.Row="1"
-                Grid.Column="0"
-                Margin="5"
-                VerticalAlignment="Stretch">
-                <Label>Select the data fields to be included:</Label>
-                <ce:CheckableTreeView DataContext="{Binding SelectedColumnsTV}" />
-            </StackPanel>
+                Margin="5,0,5,0"
+                HorizontalAlignment="Stretch"
+                Stroke="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
             <StackPanel
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="5"
-                VerticalAlignment="Stretch">
-                <Label>Select the format of the export:</Label>
-                <ComboBox ItemsSource="{Binding ExportFormats}" SelectedItem="{Binding SelectedExportFormat}" />
+                Grid.Row="2"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Top"
+                Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                FlowDirection="RightToLeft"
+                Orientation="Horizontal">
+                <Button
+                    Width="50"
+                    Margin="10"
+                    Command="{Binding ExportClickedCommand}"
+                    Content="Export" />
+                <Button
+                    Width="50"
+                    Margin="10"
+                    Command="{Binding CancelClickedCommand}"
+                    Content="Cancel" />
             </StackPanel>
         </Grid>
-        <Rectangle
-            Grid.Row="1"
-            Margin="5,0,5,0"
-            HorizontalAlignment="Stretch"
-            Stroke="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
-        <StackPanel
-            Grid.Row="2"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Top"
-            Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-            FlowDirection="RightToLeft"
-            Orientation="Horizontal">
-            <Button
-                Width="45"
-                Margin="5"
-                Content="Export" />
-            <Button
-                Width="45"
-                Margin="5"
-                Content="Cancel" />
-        </StackPanel>
-    </Grid>
+    </StackPanel>
+
 </UserControl>

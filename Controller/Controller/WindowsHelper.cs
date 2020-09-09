@@ -6,7 +6,7 @@ namespace Controller
     public class WindowsHelper
     {
         //RECO create a common type for view models and pass it here
-        public static Window CreateWindowToHostViewModel(object viewModel, bool sizeToContent, bool isMessageBox=false)
+        public static Window CreateWindowToHostViewModel(object viewModel, bool sizeToContent, bool isFixedSize=false)
         {
             ContentControl contentUI = new ContentControl();
             contentUI.Content = viewModel;
@@ -21,7 +21,7 @@ namespace Controller
                 hostWindow.SizeToContent = SizeToContent.WidthAndHeight;
             }
 
-            if (isMessageBox)
+            if (isFixedSize)
             {
                 hostWindow.ResizeMode = ResizeMode.NoResize;
             }

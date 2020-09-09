@@ -1,6 +1,7 @@
 ﻿using AbstractController.Data.Card;
 using AbstractController.Data.Channels;
 using AbstractController.Data.Sequence;
+using Communication.Interfaces.Generator;
 using Controller.Common;
 using Controller.MainWindow;
 using Controller.OutputVisualizer.Export.Abstract;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace Controller.OutputVisualizer.Export
 {
@@ -76,6 +78,31 @@ namespace Controller.OutputVisualizer.Export
             }
         }
 
+        private Dictionary<string, List<int>> GetSelectedChannels()
+        {
+            Dictionary<string, List<int>> result = new Dictionary<string, List<int>>();
+            var leaves = SelectedChannelsTV
+                .GetCheckedLeaves()
+                .Cast<CheckableTVItemController>()
+                .Select(item => item.Item as AbstractChannelController);
+
+            foreach (var cc in leaves)
+            {
+                string cardName = cc.Parent.Parent.Model.Name;
+
+                if (!result.ContainsKey(cardName))
+                {
+                    result[cardName] = new List<int>();
+                }
+
+                result[cardName].Add(cc.Index());
+            }
+
+            return result;
+        }
+
+      
+
         /// <summary>
         /// Creates a checkable tree view containing the names (and indices) of the sequences of this model
         /// </summary>
@@ -130,5 +157,54 @@ namespace Controller.OutputVisualizer.Export
                 root
             };
         }
+
+
+        private void PerformExport(object parameter)
+        {
+            if (Model.Properties.Settings.Default.ShowStopOutputOnExportHint)
+            {
+                CustomMessageBoxController customMessageBoxController = new CustomMessageBoxController(this);
+                customMessageBoxController.Message = "The export operation may take a while. It is recommended to perform the export while the output is stopped";
+                Window modalWindow = WindowsHelper.CreateWindowToHostViewModel(customMessageBoxController, true, true);
+                bool? dialogResult = modalWindow.ShowDialog();
+
+                if (dialogResult.GetValueOrDefault(false))
+                {
+                    if (customMessageBoxController.DontShowAgain)
+                    {
+                        Model.Properties.Settings.Default.ShowStopOutputOnExportHint = false;
+                        Model.Properties.Settings.Default.Save();
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            IModelOutput modelOutput = ((OutputVisualizationWindowController)parent).LastKnownOutput;
+            OutputExporter outputExporter = ExporterFactory.GetInstance().GetNewExporter(SelectedExportFormat, modelOutput);
+            Dictionary<string, List<int>> channels = GetSelectedChannels();
+            List<OutputField> outputFields = SelectedColumnsTV
+                .GetCheckedLeaves()
+                .Cast<CheckableTVItemController>()
+                .Select(leaf => (OutputField)leaf.Item)
+                .ToList();
+            List<int> sequenceIndices = SelectedColumnsTV
+                .GetCheckedLeaves()
+                .Cast<CheckableTVItemController>()
+                .Select(leaf => (AbstractSequenceController)leaf.Item)
+                .Select(c=>c.Index())
+                .ToList();
+
+            ExportOptions options = ExportOptionsBuilder
+                .NewInstance(channels)
+                .SetOutputFields(outputFields)
+                .SetSequenceIndices(sequenceIndices)
+                .Build();
+
+            
+        }
+
     }
 }
