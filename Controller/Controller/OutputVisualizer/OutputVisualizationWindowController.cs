@@ -8,6 +8,7 @@ using Controller.Control.StepBatchAddition;
 using Controller.Data.Channels;
 using Controller.Data.Tabs;
 using Controller.MainWindow;
+using Controller.OutputVisualizer.Export;
 using Controller.Root;
 using CustomElements.CheckableTreeView;
 using LiveCharts;
@@ -83,6 +84,9 @@ namespace Controller.OutputVisualizer
         /// </summary>
         public RelayCommand UserControlCollectionCommand { get; private set; }
 
+
+        public RelayCommand ExportSelectedChannelsCommand { private set; get; }
+
         /// <summary>
         /// Indicates whether automatic refreshes of the last known output model are enabled or not.
         /// Automatic refreshes take place when a new output generation operation is done.
@@ -109,6 +113,7 @@ namespace Controller.OutputVisualizer
             OutputVisualizerCollectionUC = new ObservableCollection<OutputVisualizerController>();
             AllControllers = new ObservableCollection<OutputVisualizerController>();
             UserControlCollectionCommand = new RelayCommand(RefreshControllers);
+            ExportSelectedChannelsCommand = new RelayCommand(ExportSelectedChannels);
             // We create the sub-controllers only once so we retain their views when the underlying data changes
             BuildControllers(mainWindowController.GetRootController());
             VisualizationTreeViewController.CheckStateChanged += VisualizationTreeViewController_CheckStateChanged;
@@ -357,6 +362,19 @@ namespace Controller.OutputVisualizer
                 controller.MaxValue = args.MaxValue;
                 controller.ChangeAxis();
             }
+        }
+
+        /// <summary>
+        /// Shows the output export window initialized with the set of channels selected in this window
+        /// </summary>
+        /// <param name="parameter">not used</param>
+        private void ExportSelectedChannels(object parameter)
+        {
+            ExportWindowController controller = new ExportWindowController(this, visualizationTreeViewController);
+            Window window = WindowsHelper.CreateWindowToHostViewModel(controller, true, true);
+            window.Title = "Output Exporter";
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            window.ShowDialog();
         }
 
     }

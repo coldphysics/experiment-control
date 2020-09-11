@@ -3,6 +3,10 @@
 
 namespace Controller.OutputVisualizer.Export.Abstract
 {
+    /// <summary>
+    /// Represents the set of options that configure how the export operation should happen
+    /// Use <see cref="ExportOptionsBuilder"/> to build instances of this class
+    /// </summary>
     public class ExportOptions
     {
         /// <summary>
@@ -25,6 +29,9 @@ namespace Controller.OutputVisualizer.Export.Abstract
 
     }
 
+    /// <summary>
+    /// Builds an instance of the <see cref="ExportOptions"/> class 
+    /// </summary>
     public class ExportOptionsBuilder
     {
         private Dictionary<string, List<int>> _channels;
@@ -101,6 +108,9 @@ namespace Controller.OutputVisualizer.Export.Abstract
         }
     }
 
+    /// <summary>
+    /// Enumerates the fields that can be included in the output
+    /// </summary>
     public enum OutputField
     {
         TimeMillis,

@@ -144,7 +144,13 @@ namespace CustomElements.CheckableTreeView
                     break;
                 }
             }
+            
             this.SetIsChecked(state, false, true);
+
+            if (state == null || state.Value)
+            {
+                IsInitiallyExpanded = true;
+            }
         }
 
         #endregion // IsChecked

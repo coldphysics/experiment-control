@@ -17,11 +17,21 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Button
+            <StackPanel
                 Grid.Row="0"
-                Margin="5,10,5,0"
-                Command="{Binding UserControlCollectionCommand}"
-                Content="Refresh" />
+                HorizontalAlignment="Center"
+                VerticalAlignment="Stretch"
+                Orientation="Horizontal">
+                <Button
+                    Margin="5,10,5,0"
+                    Command="{Binding UserControlCollectionCommand}"
+                    Content="Manual Refresh" />
+                <Button
+                    Margin="5,10,5,0"
+                    Command="{Binding ExportSelectedChannelsCommand}"
+                    Content="Export Selected Channels" />
+            </StackPanel>
+
             <CheckBox
                 Grid.Row="1"
                 Margin="5,10,5,0"

@@ -16,8 +16,10 @@ namespace Controller.OutputVisualizer
     {
         private static VisualizationWindowManager _singleton;
         private Window _visualizationWindow;
-        public OutputVisualizationWindowController OutputVisualizationController { private set; get; }
         private bool isVisualizationWindowOpen = false;
+
+        public OutputVisualizationWindowController OutputVisualizationController { private set; get; }
+
 
         private VisualizationWindowManager(MainWindowController mainWindowController)
         {
@@ -91,5 +93,7 @@ namespace Controller.OutputVisualizer
             _visualizationWindow.Show();
             _visualizationWindow.Focus();
         }
+
+
     }
 }

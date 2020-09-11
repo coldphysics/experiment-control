@@ -1,6 +1,7 @@
 ﻿using AbstractController.Data.Card;
 using AbstractController.Data.Channels;
 using AbstractController.Data.Sequence;
+using Communication.Commands;
 using Communication.Interfaces.Generator;
 using Controller.Common;
 using Controller.MainWindow;
@@ -10,12 +11,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
+using System.Windows.Shell;
 
 namespace Controller.OutputVisualizer.Export
 {
+    /// <summary>
+    /// The view model for the output export window
+    /// </summary>
     public class ExportWindowController : ChildController
     {
+        private bool _isExporting;
+        public bool IsExporting
+        {
+            set
+            {
+                _isExporting = value;
+                NotifyPropertyChanged("IsExporting");
+            }
+            get
+            { return _isExporting; }
+        }
+
         public CTVViewModel SelectedChannelsTV { set; get; }
 
         public CTVViewModel SelectedSequencesTV { set; get; }
@@ -27,6 +49,10 @@ namespace Controller.OutputVisualizer.Export
             "CSV"
         };
 
+        public RelayCommand ExportClickedCommand { private set; get; }
+
+        public RelayCommand CancelClickedCommand { private set; get; }
+
         public string SelectedExportFormat { set; get; }
 
         public ExportWindowController(OutputVisualizationWindowController parent)
@@ -36,12 +62,27 @@ namespace Controller.OutputVisualizer.Export
             CreateSequencesTV(parent);
             CreateColumnsTV();
             SelectedExportFormat = ExportFormats[0];
+            ExportClickedCommand = new RelayCommand(async (parameter) =>
+            {
+                await PerformExport(parameter);
+            });
+            CancelClickedCommand = new RelayCommand(Cancel);
         }
 
         public ExportWindowController(OutputVisualizationWindowController parent, Dictionary<string, List<int>> initialSelectedChannels)
             : this(parent)
         {
             InitilizeSelectedChannelsTV(initialSelectedChannels);
+        }
+
+        /// <summary>
+        /// This constructor can be used if the set of selected channels is represented via a Checkable Tree View instance (<see cref="CTVViewModel"/>)
+        /// </summary>
+        /// <param name="parent">The parent controller</param>
+        /// <param name="initialSelectedChannelTreeRoot"> The checkable tree view instance</param>
+        public ExportWindowController(OutputVisualizationWindowController parent, CTVViewModel initialSelectedChannelTreeRoot)
+            : this(parent, GetSelectedChannels(initialSelectedChannelTreeRoot))
+        {
         }
 
         /// <summary>
@@ -78,10 +119,10 @@ namespace Controller.OutputVisualizer.Export
             }
         }
 
-        private Dictionary<string, List<int>> GetSelectedChannels()
+        private static Dictionary<string, List<int>> GetSelectedChannels(CTVViewModel root)
         {
             Dictionary<string, List<int>> result = new Dictionary<string, List<int>>();
-            var leaves = SelectedChannelsTV
+            var leaves = root
                 .GetCheckedLeaves()
                 .Cast<CheckableTVItemController>()
                 .Select(item => item.Item as AbstractChannelController);
@@ -101,7 +142,7 @@ namespace Controller.OutputVisualizer.Export
             return result;
         }
 
-      
+
 
         /// <summary>
         /// Creates a checkable tree view containing the names (and indices) of the sequences of this model
@@ -146,7 +187,7 @@ namespace Controller.OutputVisualizer.Export
                 // add spaces to the enum name (see: https://stackoverflow.com/questions/5796383/insert-spaces-between-words-on-a-camel-cased-token)
                 currentColumn.Name = Regex.Replace(field.ToString(), "(\\B[A-Z])", " $1");
 
-                if (field == OutputField.CardName || field == OutputField.ChannelIndex)
+                if (field == OutputField.TimeMillis || field == OutputField.OutputValue)
                     currentColumn.IsChecked = true;
 
                 root.AddChild(currentColumn);
@@ -159,13 +200,25 @@ namespace Controller.OutputVisualizer.Export
         }
 
 
-        private void PerformExport(object parameter)
+        private async Task PerformExport(object parameter)
         {
+            // this prevents the export window from closing via the 'x' button while the export is running
+            UserControl uc = (UserControl)parameter;
+            Window w = Window.GetWindow(uc);
+            w.Closing += (sender, args) =>
+            {
+                if (IsExporting)
+                    args.Cancel = true;
+            };
+
+
+            // show a warning message
             if (Model.Properties.Settings.Default.ShowStopOutputOnExportHint)
             {
                 CustomMessageBoxController customMessageBoxController = new CustomMessageBoxController(this);
                 customMessageBoxController.Message = "The export operation may take a while. It is recommended to perform the export while the output is stopped";
                 Window modalWindow = WindowsHelper.CreateWindowToHostViewModel(customMessageBoxController, true, true);
+                modalWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 bool? dialogResult = modalWindow.ShowDialog();
 
                 if (dialogResult.GetValueOrDefault(false))
@@ -182,19 +235,19 @@ namespace Controller.OutputVisualizer.Export
                 }
             }
 
-            IModelOutput modelOutput = ((OutputVisualizationWindowController)parent).LastKnownOutput;
-            OutputExporter outputExporter = ExporterFactory.GetInstance().GetNewExporter(SelectedExportFormat, modelOutput);
-            Dictionary<string, List<int>> channels = GetSelectedChannels();
+            // prepare configuration for output
+            Dictionary<string, List<int>> channels = GetSelectedChannels(SelectedChannelsTV);
+
             List<OutputField> outputFields = SelectedColumnsTV
                 .GetCheckedLeaves()
                 .Cast<CheckableTVItemController>()
                 .Select(leaf => (OutputField)leaf.Item)
                 .ToList();
-            List<int> sequenceIndices = SelectedColumnsTV
+            List<int> sequenceIndices = SelectedSequencesTV
                 .GetCheckedLeaves()
                 .Cast<CheckableTVItemController>()
                 .Select(leaf => (AbstractSequenceController)leaf.Item)
-                .Select(c=>c.Index())
+                .Select(c => c.Index())
                 .ToList();
 
             ExportOptions options = ExportOptionsBuilder
@@ -203,7 +256,58 @@ namespace Controller.OutputVisualizer.Export
                 .SetSequenceIndices(sequenceIndices)
                 .Build();
 
-            
+            IModelOutput modelOutput = ((OutputVisualizationWindowController)parent).LastKnownOutput;
+            IList<AbstractSequenceController> allSequences = ((OutputVisualizationWindowController)parent)
+                .GetRootController()
+                .DataController
+                .SequenceGroup
+                .Windows
+                .First()
+                .Tabs;
+            OutputExporter outputExporter = ExporterFactory.GetInstance().GetNewExporter(SelectedExportFormat, modelOutput, allSequences);
+            bool performExport = false;
+
+            // if the desired exporter is file-based, we open a save file dialog
+            // other types of exporters should have other dialogs if necessary
+            if (outputExporter is IFileBasedExporter)
+            {
+                string filter = string.Format("{0} Files (.{1})| *.{1}", SelectedExportFormat.ToUpper(), SelectedExportFormat.ToLower());
+                string filePath = FileHelper.PickFilePath(SelectedExportFormat, filter);
+
+                if (filePath != null)
+                {
+                    ((IFileBasedExporter)outputExporter).OutputPath = filePath;
+                    performExport = true;
+                }
+            }
+
+            if (performExport)
+            {
+                // asynchronously perform the output
+                IsExporting = true;
+                bool outcome = await outputExporter.ExportOutput(options);
+                IsExporting = false;
+
+                if (outcome)
+                {
+                    MessageBox.Show("The export operation was successful", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("The export operation failed (is the file open?)", "Failure", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+
+            w.Close();
+        }
+
+
+        private void Cancel(object parameter)
+        {
+            UserControl uc = (UserControl)parameter;
+            Window w = Window.GetWindow(uc);
+            w.DialogResult = false;
+            w.Close();
         }
 
     }

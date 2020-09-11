@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Communication.Interfaces.Generator;
 using Controller.OutputVisualizer.Export.Abstract;
@@ -13,44 +11,49 @@ using CsvHelper.Configuration;
 
 namespace Controller.OutputVisualizer.Export
 {
-    public class CsvExporter : NonQuantizedOutputExporter
+    /// <summary>
+    /// Exports the output to a csv file.
+    /// Before performing the export, make sure the OutputPath is set to a valid value.
+    /// </summary>
+    public class CsvExporter : NonQuantizedOutputExporter, IFileBasedExporter
     {
-        public string OutputPath
-        {
-            set;
-            get;
-        }
+        public string OutputPath { set; get; }
 
         public CsvExporter(IModelOutput modelOutput) : base(modelOutput)
         {
 
         }
 
-
-
-        protected override async Task PerformExport(List<DataPoint> dataPoints, ExportOptions options)
+        protected override async Task<bool> PerformExport(List<DataPoint> dataPoints, ExportOptions options)
         {
-            using (var writer = new StreamWriter(OutputPath))
+            try
             {
-                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                await Task.Run(() =>
                 {
-                    csv.Configuration.RegisterClassMap(new DataPointMap(options));
-                    csv.WriteHeader<DataPoint>();
-                    await csv.NextRecordAsync();
-
-                    foreach (DataPoint dp in dataPoints)
+                    using (var writer = new StreamWriter(OutputPath))
                     {
-                        csv.WriteRecord(dp);
-                        await csv.NextRecordAsync();
+                        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                        {
+                            csv.Configuration.RegisterClassMap(new DataPointMap(options));
+                            csv.WriteRecords(dataPoints);
+                        }
                     }
-
-                    await csv.FlushAsync();
-                }
+                });
+                
+            }
+            catch (Exception)
+            {
+                return false;
             }
 
-        }
+            return true;
 
+        }
     }
+
+    /// <summary>
+    /// Selects the included columns based on the passed options
+    /// </summary>
     public class DataPointMap : ClassMap<DataPoint>
     {
         public DataPointMap()

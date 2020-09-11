@@ -7,6 +7,9 @@ using Model.Settings;
 
 namespace Controller.OutputVisualizer.Export.Abstract
 {
+    /// <summary>
+    /// Represents an exporter that deals with non-quantized non-compressed output
+    /// </summary>
     public abstract class NonQuantizedOutputExporter : OutputExporter
     {
         private List<SequenceInfo> _allSequences;
@@ -36,7 +39,7 @@ namespace Controller.OutputVisualizer.Export.Abstract
             }).ToList();
         }
 
-        public override async Task ExportOutput(ExportOptions options)
+        public override async Task<bool> ExportOutput(ExportOptions options)
         {
             if (options.SequenceIndices != null)
             {
@@ -59,10 +62,10 @@ namespace Controller.OutputVisualizer.Export.Abstract
                 }
             }
 
-            await PerformExport(dataPoints, options);
+            return await PerformExport(dataPoints, options);
         }
 
-        protected abstract Task PerformExport(List<DataPoint> dataPoints, ExportOptions options);
+        protected abstract Task<bool> PerformExport(List<DataPoint> dataPoints, ExportOptions options);
 
 
         private List<DataPoint> ConvertChannelToDataPoints(string cardName, int channelNumber)

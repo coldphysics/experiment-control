@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace Controller.OutputVisualizer.Export.Abstract
 {
+    /// <summary>
+    /// Represents a single data point (sample) in the output.
+    /// </summary>
     public class DataPoint
     {
         public string CardName { set; get; }

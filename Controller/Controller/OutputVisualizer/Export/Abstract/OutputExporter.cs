@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Controller.OutputVisualizer.Export.Abstract
 {
+    /// <summary>
+    /// An abstract class to represent the functionality of exporting the output to some target format
+    /// </summary>
     public abstract class OutputExporter
     {
         protected IModelOutput modelOutput;
@@ -14,7 +17,7 @@ namespace Controller.OutputVisualizer.Export.Abstract
             this.modelOutput = modelOutput;
         }
 
-        public abstract Task ExportOutput(ExportOptions options);
+        public abstract Task<bool> ExportOutput(ExportOptions options);
         
     }
 }

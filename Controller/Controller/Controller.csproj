@@ -184,9 +184,11 @@
     <Compile Include="Options\OptionsManagerController.cs" />
     <Compile Include="OutputVisualizer\Export\Abstract\DataPoint.cs" />
     <Compile Include="OutputVisualizer\Export\Abstract\ExportOptions.cs" />
+    <Compile Include="OutputVisualizer\Export\Abstract\IFileBasedExporter.cs" />
     <Compile Include="OutputVisualizer\Export\Abstract\NonQuantizedOutputExporter.cs" />
     <Compile Include="OutputVisualizer\Export\CsvExporter.cs" />
     <Compile Include="OutputVisualizer\Export\Abstract\OutputExporter.cs" />
+    <Compile Include="OutputVisualizer\Export\ExporterFactory.cs" />
     <Compile Include="OutputVisualizer\Export\ExportWindowController.cs" />
     <Compile Include="OutputVisualizer\OutputVisualizationWindowController.cs" />
     <Compile Include="OutputVisualizer\OutputVisualizerController.cs" />

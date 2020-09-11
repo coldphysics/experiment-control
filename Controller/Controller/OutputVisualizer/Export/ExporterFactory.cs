@@ -1,13 +1,14 @@
-﻿using Communication.Interfaces.Generator;
+﻿using AbstractController.Data.Sequence;
+using Communication.Interfaces.Generator;
 using Controller.OutputVisualizer.Export.Abstract;
-using System;
+using Model.Settings;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Controller.OutputVisualizer.Export
 {
+    /// <summary>
+    /// Creates an instance of one of the implementations of the <see cref="OutputExporter"/> class based on a string provided by the user.
+    /// </summary>
     public class ExporterFactory
     {
         private static ExporterFactory instance;
@@ -15,6 +16,10 @@ namespace Controller.OutputVisualizer.Export
         private ExporterFactory()
         {}
 
+        /// <summary>
+        /// Get an instance of this class
+        /// </summary>
+        /// <returns>The one and only instance of this class.</returns>
         public static ExporterFactory GetInstance()
         {
             if (instance == null)
@@ -25,13 +30,22 @@ namespace Controller.OutputVisualizer.Export
             return instance;
         }
 
-        public OutputExporter GetNewExporter(string exporterName, IModelOutput modelOuput)
+        /// <summary>
+        /// Creates a new instance of the exporter specified by the user
+        /// </summary>
+        /// <param name="exporterName">the name of the exporter. Currently, only "CSV" is supported</param>
+        /// <param name="modelOuput">"the snapshot of the output to be exported"</param>
+        /// <param name="allSequences">a set of <see cref="AbstractSequenceController"/> that represent all existing sequences in the output</param>
+        /// <returns>A new instance of the specified exporter. The instance might need further initialization based on its type.</returns>
+        public OutputExporter GetNewExporter(string exporterName, IModelOutput modelOuput, IList<AbstractSequenceController> allSequences)
         {
             switch (exporterName)
             {
                 case "CSV":
                 default:
-                    return new CsvExporter(modelOuput);
+                    CsvExporter exporter = new CsvExporter(modelOuput);
+                    exporter.SetAllSequences(allSequences, TimeSettingsInfo.GetInstance().SmallestTimeStepDecimal);
+                    return exporter;
             }
         }
     }

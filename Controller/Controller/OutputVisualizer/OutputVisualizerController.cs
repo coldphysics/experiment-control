@@ -388,6 +388,8 @@ namespace Controller.OutputVisualizer
             ExportWindowController controller = new ExportWindowController(VisualizationWindowManager.GetInstance().OutputVisualizationController, channels );
             Window window = WindowsHelper.CreateWindowToHostViewModel(controller, true, true);
             window.Title = "Output Exporter";
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            window.ShowDialog();
         }
         #endregion
 
