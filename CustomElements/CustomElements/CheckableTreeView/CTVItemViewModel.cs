@@ -78,7 +78,7 @@ namespace CustomElements.CheckableTreeView
         /// <value>
         /// The name.
         /// </value>
-        public abstract string Name { get; }
+        public abstract string Name { get; set; }
 
         #region IsChecked
 
@@ -138,13 +138,19 @@ namespace CustomElements.CheckableTreeView
                 {
                     state = current;
                 }
-                else if (state != current)
+                else if (state != current)// if the children are of different state, set to null (indetermined)
                 {
                     state = null;
                     break;
                 }
             }
+            
             this.SetIsChecked(state, false, true);
+
+            if (state == null || state.Value)
+            {
+                IsInitiallyExpanded = true;
+            }
         }
 
         #endregion // IsChecked
@@ -183,6 +189,7 @@ namespace CustomElements.CheckableTreeView
 
             children.Add(child);
             child._parent = this;
+            VerifyCheckState();
         }
 
         private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

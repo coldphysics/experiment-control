@@ -213,6 +213,9 @@
     <Compile Include="Options\OptionsManagerView.xaml.cs">
       <DependentUpon>OptionsManagerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="OutputVisualizer\Export\ExportWindowView.xaml.cs">
+      <DependentUpon>ExportWindowView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="OutputVisualizer\OutputVisualizationWindow.xaml.cs">
       <DependentUpon>OutputVisualizationWindow.xaml</DependentUpon>
     </Compile>
@@ -378,6 +381,10 @@
     <Page Include="Options\OptionsManagerView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="OutputVisualizer\Export\ExportWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="OutputVisualizer\OutputVisualizationWindow.xaml">
       <SubType>Designer</SubType>

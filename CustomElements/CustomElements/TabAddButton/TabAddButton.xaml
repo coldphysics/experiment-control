@@ -1,5 +1,7 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:TabAddButton="clr-namespace:CustomElements.TabAddButton">
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:TabAddButton="clr-namespace:CustomElements.TabAddButton">
     <!--<Style x:Key="ButtonStyle1" TargetType="Button">-->
     <Style TargetType="{x:Type TabAddButton:TabAddButton}">
         <Style.Resources>
@@ -19,19 +21,26 @@
         <!--<Setter Property="Cursor" Value="Hand" />-->
         <Setter Property="Focusable" Value="False" />
 
-        <!-- The control template. -->
+        <!--  The control template.  -->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Grid Background="Transparent">
 
-                        <!-- The background of the button, as an ellipse. -->
+                        <!--  The background of the button, as an ellipse.  -->
                         <Ellipse x:Name="backgroundEllipse" />
 
-                        <!-- A path that renders a cross. -->
-                        <Path x:Name="ButtonPath" Margin="3"
-                              Stroke="{StaticResource TabItemCloseButtonNormalForegroundBrush}" StrokeThickness="1.5" StrokeStartLineCap="Square"
-                              StrokeEndLineCap="Square" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <!--  A path that renders a cross.  -->
+                        <Path
+                            x:Name="ButtonPath"
+                            Margin="3"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Stretch="Uniform"
+                            Stroke="{StaticResource TabItemCloseButtonNormalForegroundBrush}"
+                            StrokeEndLineCap="Square"
+                            StrokeStartLineCap="Square"
+                            StrokeThickness="1.5">
                             <Path.Data>
                                 <PathGeometry>
                                     <PathGeometry.Figures>
@@ -47,24 +56,19 @@
                         </Path>
                     </Grid>
 
-                    <!-- The triggers. -->
+                    <!--  The triggers.  -->
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="backgroundEllipse" Property="Fill"
-                                    Value="{StaticResource TabItemCloseButtonHoverBackgroundBrush}" />
-                            <Setter TargetName="ButtonPath" Property="Stroke"
-                                    Value="{StaticResource TabItemCloseButtonHoverForegroundBrush}" />
+                            <Setter TargetName="backgroundEllipse" Property="Fill" Value="{StaticResource TabItemCloseButtonHoverBackgroundBrush}" />
+                            <Setter TargetName="ButtonPath" Property="Stroke" Value="{StaticResource TabItemCloseButtonHoverForegroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="backgroundEllipse" Property="Fill"
-                                    Value="{StaticResource TabItemCloseButtonPressedBackgroundBrush}" />
-                            <Setter TargetName="backgroundEllipse" Property="Stroke"
-                                    Value="{StaticResource TabItemCloseButtonPressedBorderBrush}" />
-                            <Setter TargetName="ButtonPath" Property="Stroke"
-                                    Value="{StaticResource TabItemCloseButtonPressedForegroundBrush}" />
+                            <Setter TargetName="backgroundEllipse" Property="Fill" Value="{StaticResource TabItemCloseButtonPressedBackgroundBrush}" />
+                            <Setter TargetName="backgroundEllipse" Property="Stroke" Value="{StaticResource TabItemCloseButtonPressedBorderBrush}" />
+                            <Setter TargetName="ButtonPath" Property="Stroke" Value="{StaticResource TabItemCloseButtonPressedForegroundBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

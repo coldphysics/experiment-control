@@ -4,10 +4,12 @@ using AbstractController.Data.Sequence;
 using Buffer.OutputProcessors;
 using Communication.Commands;
 using Communication.Interfaces.Generator;
+using Controller.Common;
 using Controller.Control.StepBatchAddition;
 using Controller.Data.Channels;
 using Controller.Data.Tabs;
 using Controller.MainWindow;
+using Controller.OutputVisualizer.Export;
 using Controller.Root;
 using CustomElements.CheckableTreeView;
 using LiveCharts;
@@ -35,7 +37,7 @@ namespace Controller.OutputVisualizer
         /// (3) receiveing an automatic refresh (if applicable).
         /// Needed so that just selecting or unselecting displayed channels does not do an implicit refresh.
         /// </summary>
-        private IModelOutput lastKnownOutput;
+        public IModelOutput LastKnownOutput { private set; get; }
 
         // ******************** Properties ******************** 
         #region Properties
@@ -83,6 +85,9 @@ namespace Controller.OutputVisualizer
         /// </summary>
         public RelayCommand UserControlCollectionCommand { get; private set; }
 
+
+        public RelayCommand ExportSelectedChannelsCommand { private set; get; }
+
         /// <summary>
         /// Indicates whether automatic refreshes of the last known output model are enabled or not.
         /// Automatic refreshes take place when a new output generation operation is done.
@@ -102,13 +107,13 @@ namespace Controller.OutputVisualizer
         /// </summary>
         /// <param name="mainWindowController">The parent controller (gives access to the buffer)</param>
         /// <param name="treeViewController">The visualization tree view controller</param>
-        public OutputVisualizationWindowController(CTVViewModel treeViewController, MainWindowController mainWindowController)
+        public OutputVisualizationWindowController(MainWindowController mainWindowController)
             : base(mainWindowController)
         {
-            this.VisualizationTreeViewController = treeViewController;
             OutputVisualizerCollectionUC = new ObservableCollection<OutputVisualizerController>();
             AllControllers = new ObservableCollection<OutputVisualizerController>();
             UserControlCollectionCommand = new RelayCommand(RefreshControllers);
+            ExportSelectedChannelsCommand = new RelayCommand(ExportSelectedChannels);
             // We create the sub-controllers only once so we retain their views when the underlying data changes
             BuildControllers(mainWindowController.GetRootController());
             VisualizationTreeViewController.CheckStateChanged += VisualizationTreeViewController_CheckStateChanged;
@@ -116,7 +121,7 @@ namespace Controller.OutputVisualizer
 
         //******************** Methods ********************      
 
-        private RootController GetRootController()
+        public RootController GetRootController()
         {
             return ((MainWindowController)parent).GetRootController();
         }
@@ -125,7 +130,7 @@ namespace Controller.OutputVisualizer
         /// Invoked whenever a new output is generated
         /// </summary>
         public void HandleNewGeneratedOutputEvent()
-        {
+        { 
             if (AutomaticRefresh)
             {
                 RefreshControllers(null);
@@ -137,6 +142,8 @@ namespace Controller.OutputVisualizer
         /// </summary>
         public void HandleWindowOpeningEvent()
         {
+            // refresh the checkable tree view (in case number of cards or names of channels change)
+            VisualizationTreeViewController = ModelBasedCTVBuilder.BuildCheckableTree(GetRootController());
             RefreshControllers(null);
         }
 
@@ -193,7 +200,7 @@ namespace Controller.OutputVisualizer
 
                 //the position of the sequence name
                 nameOfSequence.X = startTime + (duration / 2);
-                nameOfSequence.Y = Double.NaN;
+                nameOfSequence.Y = double.NaN;
 
                 TextBlock text = new TextBlock();
                 text.Text = name;
@@ -262,9 +269,9 @@ namespace Controller.OutputVisualizer
             string cardName = channelController.Parent.Parent.Model.Name;
             OutputVisualizerController ovc = GetControllerOfChannel(channel);
 
-            if (lastKnownOutput.Output[cardName] is INonQuantizedCardOutput)
+            if (LastKnownOutput.Output[cardName] is INonQuantizedCardOutput)
             {
-                double[] tempList = ((INonQuantizedCardOutput)lastKnownOutput.Output[cardName]).GetChannelOutput(channelController.Index());
+                double[] tempList = ((INonQuantizedCardOutput)LastKnownOutput.Output[cardName]).GetChannelOutput(channelController.Index());
                 // select the corresponding controller
                 ovc.SetData(tempList);
                 OutputVisualizerCollectionUC.Add(ovc);
@@ -284,7 +291,7 @@ namespace Controller.OutputVisualizer
 
         private void AddDataToVisibleChannels()
         {
-            if (lastKnownOutput != null)
+            if (LastKnownOutput != null)
             {
                 ICollection<CTVItemViewModel> checkedChannels = this.visualizationTreeViewController.GetCheckedLeaves();
 
@@ -305,10 +312,9 @@ namespace Controller.OutputVisualizer
         {
             ChannelBasicController channelController = (ChannelBasicController)(channel as CheckableTVItemController).Item;
             string cardName = channelController.Parent.Parent.Model.Name;
-            string controllerName = cardName + "-" + channelController.ToString();
             // select the corresponding controller
             return AllControllers
-                .First(controller => controller.NameOfCardAndChannel.Equals(controllerName));
+                .First(controller => controller.CardName == cardName && controller.ChannelIndex == channelController.Index());
         }
 
         /// <summary>
@@ -317,12 +323,13 @@ namespace Controller.OutputVisualizer
         /// <param name="param">Not used</param>
         private void RefreshControllers(object param)
         {
+            // retrieve the latst output
             ProcessorListManager plm = ProcessorListManager.GetInstance();
 
             if (plm.saver != null)
             {
                 // Get the output that was saved before the quantization and compression steps.
-                this.lastKnownOutput = plm.saver.GetVisualizerOutput();
+                this.LastKnownOutput = plm.saver.GetVisualizerOutput();
 
                 OutputVisualizerCollectionUC.Clear();
                 BuildSectionsForVisibleChannels();
@@ -333,13 +340,13 @@ namespace Controller.OutputVisualizer
 
         private void BuildControllers(RootController rootController)
         {
+            VisualizationTreeViewController = ModelBasedCTVBuilder.BuildCheckableTree(GetRootController());
+
             foreach (AbstractCardController card in rootController.DataController.SequenceGroup.Windows)
             {
                 foreach (AbstractChannelController channel in card.Tabs.First().Channels)
                 {
-                    OutputVisualizerController ovc = new OutputVisualizerController();
-                    //to display the name of each sequence in the outputVisualizer control.
-                    ovc.NameOfCardAndChannel = card.Model.Name + "-" + channel.ToString();
+                    OutputVisualizerController ovc = new OutputVisualizerController(card.Model.Name, channel.ToString(), channel.Index());
                     ovc.alignTriggered += controller_AlignTriggered;
                     AllControllers.Add(ovc);
                 }
@@ -360,6 +367,19 @@ namespace Controller.OutputVisualizer
                 controller.MaxValue = args.MaxValue;
                 controller.ChangeAxis();
             }
+        }
+
+        /// <summary>
+        /// Shows the output export window initialized with the set of channels selected in this window
+        /// </summary>
+        /// <param name="parameter">not used</param>
+        private void ExportSelectedChannels(object parameter)
+        {
+            ExportWindowController controller = new ExportWindowController(this, visualizationTreeViewController);
+            Window window = WindowsHelper.CreateWindowToHostViewModel(controller, true, true);
+            window.Title = "Output Exporter";
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            window.ShowDialog();
         }
 
     }

@@ -43,5 +43,7 @@ namespace GeneratorUT
             output.ReplicateOutput(3);
             Assert.IsTrue(DoubleEquals(outputGenerator.Duration() * 1000.0 * 3, output.OutputDurationMillis));
         }
+
+
     }
 }

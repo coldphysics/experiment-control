@@ -8,18 +8,32 @@ namespace Controller
 {
     public class FileHelper
     {
-        public static string SaveFile(object modelToSave, string defaultExtension = ".xml.gz", string filter = "Sequence (.xml.gz)|*.xml.gz")
+        public static string PickFilePath(string defaultExtension = ".xml.gz", string filter = "Sequence (.xml.gz)|*.xml.gz")
         {
             var fileDialog = new SaveFileDialog { DefaultExt = defaultExtension, Filter = filter };
 
             bool? result = fileDialog.ShowDialog();
+
             if (result == true)
             {
-                SaveFile(fileDialog.FileName, modelToSave);
                 return fileDialog.FileName;
             }
-            return null;
 
+            return null;
+        }
+
+        public static string SaveFile(object modelToSave, string defaultExtension = ".xml.gz", string filter = "Sequence (.xml.gz)|*.xml.gz")
+        {
+            string filePath = PickFilePath(defaultExtension, filter);
+
+            if (filePath != null)
+            {
+                SaveFile(filePath, modelToSave);
+
+                return filePath;
+            }
+
+            return null;
         }
 
         public static void SaveFile(string filePath, object modelToSave)

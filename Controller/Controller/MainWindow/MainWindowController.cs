@@ -42,6 +42,7 @@ using System.Windows.Threading;
 using Controller.MainWindow.MeasurementRoutine;
 using Controller.OutputVisualizer;
 using Model.MeasurementRoutine;
+using Controller.Common;
 
 namespace Controller.MainWindow
 {

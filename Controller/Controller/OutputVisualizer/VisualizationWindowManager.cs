@@ -1,7 +1,6 @@
 ﻿using Buffer.Basic;
-using Controller.Control.StepBatchAddition;
+using Controller.Common;
 using Controller.MainWindow;
-using Controller.Root;
 using CustomElements.CheckableTreeView;
 using System;
 using System.Windows;
@@ -17,14 +16,14 @@ namespace Controller.OutputVisualizer
     {
         private static VisualizationWindowManager _singleton;
         private Window _visualizationWindow;
-        private readonly OutputVisualizationWindowController _outputVisualizationController;
         private bool isVisualizationWindowOpen = false;
+
+        public OutputVisualizationWindowController OutputVisualizationController { private set; get; }
 
 
         private VisualizationWindowManager(MainWindowController mainWindowController)
         {
-            CTVViewModel treeView = ModelBasedCTVBuilder.BuildCheckableTree(mainWindowController.GetRootController());
-            _outputVisualizationController = new OutputVisualizationWindowController(treeView, mainWindowController);
+            OutputVisualizationController = new OutputVisualizationWindowController(mainWindowController);
         }
 
         /// <summary>
@@ -65,7 +64,7 @@ namespace Controller.OutputVisualizer
             if (args.IsSuccessful)
             {
                 _visualizationWindow?.Dispatcher.Invoke(() =>
-                    _outputVisualizationController.HandleNewGeneratedOutputEvent());
+                    OutputVisualizationController.HandleNewGeneratedOutputEvent());
             }
         }
 
@@ -77,7 +76,7 @@ namespace Controller.OutputVisualizer
             if (_visualizationWindow == null || !isVisualizationWindowOpen)
             {
                 _visualizationWindow =
-                    WindowsHelper.CreateCustomWindowToHostViewModel(_outputVisualizationController, false);
+                    WindowsHelper.CreateCustomWindowToHostViewModel(OutputVisualizationController, false);
                 isVisualizationWindowOpen = true;
                 _visualizationWindow.Closed += new EventHandler((sender, args) => isVisualizationWindowOpen = false);
 
@@ -87,12 +86,13 @@ namespace Controller.OutputVisualizer
                 _visualizationWindow.Width = _visualizationWindow.MinWidth;
                 _visualizationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 _visualizationWindow.Title = "Output Visualizer";
-                //visulizationWindow.ShowDialog();
             }
 
-            _outputVisualizationController.HandleWindowOpeningEvent();
+            OutputVisualizationController.HandleWindowOpeningEvent();
             _visualizationWindow.Show();
             _visualizationWindow.Focus();
         }
+
+
     }
 }

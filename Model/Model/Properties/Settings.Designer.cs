@@ -58,5 +58,17 @@ namespace Model.Properties {
                 this["ShowEditPythonExternallyHint"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowStopOutputOnExportHint {
+            get {
+                return ((bool)(this["ShowStopOutputOnExportHint"]));
+            }
+            set {
+                this["ShowStopOutputOnExportHint"] = value;
+            }
+        }
     }
 }
