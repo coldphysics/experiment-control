@@ -23,8 +23,7 @@ namespace Controller.OutputVisualizer
 
         private VisualizationWindowManager(MainWindowController mainWindowController)
         {
-            CTVViewModel treeView = ModelBasedCTVBuilder.BuildCheckableTree(mainWindowController.GetRootController());
-            OutputVisualizationController = new OutputVisualizationWindowController(treeView, mainWindowController);
+            OutputVisualizationController = new OutputVisualizationWindowController(mainWindowController);
         }
 
         /// <summary>

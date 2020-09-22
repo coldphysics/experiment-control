@@ -4,6 +4,7 @@ using AbstractController.Data.Sequence;
 using Buffer.OutputProcessors;
 using Communication.Commands;
 using Communication.Interfaces.Generator;
+using Controller.Common;
 using Controller.Control.StepBatchAddition;
 using Controller.Data.Channels;
 using Controller.Data.Tabs;
@@ -106,10 +107,9 @@ namespace Controller.OutputVisualizer
         /// </summary>
         /// <param name="mainWindowController">The parent controller (gives access to the buffer)</param>
         /// <param name="treeViewController">The visualization tree view controller</param>
-        public OutputVisualizationWindowController(CTVViewModel treeViewController, MainWindowController mainWindowController)
+        public OutputVisualizationWindowController(MainWindowController mainWindowController)
             : base(mainWindowController)
         {
-            this.VisualizationTreeViewController = treeViewController;
             OutputVisualizerCollectionUC = new ObservableCollection<OutputVisualizerController>();
             AllControllers = new ObservableCollection<OutputVisualizerController>();
             UserControlCollectionCommand = new RelayCommand(RefreshControllers);
@@ -130,7 +130,7 @@ namespace Controller.OutputVisualizer
         /// Invoked whenever a new output is generated
         /// </summary>
         public void HandleNewGeneratedOutputEvent()
-        {
+        { 
             if (AutomaticRefresh)
             {
                 RefreshControllers(null);
@@ -142,6 +142,8 @@ namespace Controller.OutputVisualizer
         /// </summary>
         public void HandleWindowOpeningEvent()
         {
+            // refresh the checkable tree view (in case number of cards or names of channels change)
+            VisualizationTreeViewController = ModelBasedCTVBuilder.BuildCheckableTree(GetRootController());
             RefreshControllers(null);
         }
 
@@ -321,6 +323,7 @@ namespace Controller.OutputVisualizer
         /// <param name="param">Not used</param>
         private void RefreshControllers(object param)
         {
+            // retrieve the latst output
             ProcessorListManager plm = ProcessorListManager.GetInstance();
 
             if (plm.saver != null)
@@ -337,6 +340,8 @@ namespace Controller.OutputVisualizer
 
         private void BuildControllers(RootController rootController)
         {
+            VisualizationTreeViewController = ModelBasedCTVBuilder.BuildCheckableTree(GetRootController());
+
             foreach (AbstractCardController card in rootController.DataController.SequenceGroup.Windows)
             {
                 foreach (AbstractChannelController channel in card.Tabs.First().Channels)
