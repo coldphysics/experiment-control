@@ -199,13 +199,13 @@ To execute all unit tests in the solution follow these steps:
    2. Use the version as a tag name, e.g., `v1.4.0`.
    3. Name the release according to this convention [Software name][SPACE][version] (e.g., `CPECS v1.4.0`)
    4. In the description place the changelog and enhance it if necessary:
-      a. Copy the contents of the generated changelog
-      b. Drop the first title line after `# Changelog`
-      c. On the next line, replace HEAD with the current version, e.g., replace `[Full Changelog](https://github.com/coldphysics/experiment-control/compare/v1.4.1...HEAD)` with
+      * Copy the contents of the generated changelog
+      * Drop the first title line after `# Changelog`
+      * On the next line, replace HEAD with the current version, e.g., replace `[Full Changelog](https://github.com/coldphysics/experiment-control/compare/v1.4.1...HEAD)` with
       `[Full Changelog](https://github.com/coldphysics/experiment-control/compare/v1.4.1...v1.4.2)`
-      d. Remove all content that starts with a title with version of the previous releas, e.g., `## [v1.4.1](https://github.com/coldphysics/experiment-control/tree/v1.4.1) (2020-07-09)`
-      e. Review the remaining content making sure it makes sense.
-      f. add the following content before `# Changelog`:
+      * Remove all content that starts with a title with version of the previous releas, e.g., `## [v1.4.1](https://github.com/coldphysics/experiment-control/tree/v1.4.1) (2020-07-09)`
+      * Review the remaining content making sure it makes sense.
+      * add the following content before `# Changelog`:
       ```
       # Installer (requires membership in the [coldphysics organization](https://github.com/coldphysics))
       [All installers can be downloaded here](https://github.com/coldphysics/releases/archive/master.zip). 
