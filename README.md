@@ -187,15 +187,32 @@ To execute all unit tests in the solution follow these steps:
 3. Generate application installer
    1. While still on the `Publish` window, click on `Publish Wizard`
    2. Select a local path in which you would like the installer to be placed (the folder must be named `v[version]`, e.g., `v1.4.1`).
-  3. Finish the remaining steps of the wizard and click finish. The installer will be placed in the path you specified. 
+   3. Finish the remaining steps of the wizard and click finish. The installer will be placed in the path you specified. 
 4. Create a binary release by adding, committing and pushing the folder containing the installer (generated in step 3) to the [private release repository](https://github.com/coldphysics/releases).
 5. Add, commit and push latest changes of the codebase to Github (__ensure the installer is not pushed to Github!!__)
-6. Generate an apropriate changelog to describe the changes made since the last release. For example, you can use the tool [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator).
+6. Generate an apropriate changelog to describe the changes made since the last release. For example, you can use the tool [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator):
+   1. Install `github-changelog-generator`.
+   2. Run the following command: `github_changelog_generator -u coldphysics -p experiment-control`
+   3. The changelog is located in: `%HOMEPATH%\CHANGELOG.md`
 7. Create a code release in Github
    1. [Click here](https://github.com/coldphysics/experiment-control/releases/new) to start a new code release.
-   2. Name the release according to this convention [Software name][SPACE][version] (e.g., `CPECS v1.4.0`)
-   3. In the description place the changelog and enhance it if necessary.
-   4. Add a link to the folder containing the installer files in the private repository.
+   2. Use the version as a tag name, e.g., `v1.4.0`.
+   3. Name the release according to this convention [Software name][SPACE][version] (e.g., `CPECS v1.4.0`)
+   4. In the description place the changelog and enhance it if necessary:
+      * Copy the contents of the generated changelog
+      * Drop the first title line after `# Changelog`
+      * On the next line, replace HEAD with the current version, e.g., replace `[Full Changelog](https://github.com/coldphysics/experiment-control/compare/v1.4.1...HEAD)` with
+      `[Full Changelog](https://github.com/coldphysics/experiment-control/compare/v1.4.1...v1.4.2)`
+      * Remove all content that starts with a title with version of the previous releas, e.g., `## [v1.4.1](https://github.com/coldphysics/experiment-control/tree/v1.4.1) (2020-07-09)`
+      * Review the remaining content making sure it makes sense.
+      * add the following content before `# Changelog`:
+      ```
+      # Installer (requires membership in the [coldphysics organization](https://github.com/coldphysics))
+      [All installers can be downloaded here](https://github.com/coldphysics/releases/archive/master.zip). 
+      After download, decompress the zip file, and navigate to the folder entitled [version].
+      # Notice
+      [Optionally add some further information here]
+      ```
    5. Click on `Publish Release`.
 6. Done!
 
