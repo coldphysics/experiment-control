@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vmc="clr-namespace:Controller.Control;assembly=Controller"
     xmlns:vmcommon="clr-namespace:Controller.Common;assembly=Controller"
+    xmlns:vmcomparison="clr-namespace:Controller.Control.Compare;assembly=Controller"
     xmlns:vmexporter="clr-namespace:Controller.OutputVisualizer.Export;assembly=Controller"
     xmlns:vmfifodebug="clr-namespace:Controller.AdWin.Debug;assembly=Controller"
     xmlns:vmmain="clr-namespace:Controller.MainWindow.MeasurementRoutine;assembly=Controller"
@@ -15,6 +16,7 @@
     xmlns:vmvisualizer="clr-namespace:Controller.OutputVisualizer;assembly=Controller"
     xmlns:vwc="clr-namespace:View.Control;assembly=View"
     xmlns:vwcommon="clr-namespace:View.Common;assembly=View"
+    xmlns:vwcomparison="clr-namespace:View.Control.Compare;assembly=View"
     xmlns:vwexporter="clr-namespace:View.OutputVisualizer.Export;assembly=View"
     xmlns:vwfifodebug="clr-namespace:View.AdWin.Debug;assembly=View"
     xmlns:vwmain="clr-namespace:View.Main;assembly=View"
@@ -91,6 +93,18 @@
 
         <DataTemplate DataType="{x:Type vmexporter:ExportWindowController}">
             <vwexporter:ExportWindowView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmcomparison:VariableComparisonController}">
+            <vwcomparison:VariableComparison />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmcomparison:CompareDoubleItemController}">
+            <vwcomparison:CompareItem />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmcomparison:CompareStringItemController}">
+            <vwcomparison:CompareItem />
         </DataTemplate>
 
     </Application.Resources>

@@ -21,7 +21,6 @@ using Model.Data.SequenceGroups;
 using Model.Data.Steps;
 using Model.Root;
 using Model.Data.Sequences;
-using Controller.Variables.Compare;
 using Model.Settings;
 using Model.Settings.Settings;
 using System.Threading;
@@ -43,6 +42,8 @@ using Controller.MainWindow.MeasurementRoutine;
 using Controller.OutputVisualizer;
 using Model.MeasurementRoutine;
 using Controller.Common;
+using Controller.Control.Compare;
+using System.Linq;
 
 namespace Controller.MainWindow
 {
@@ -111,6 +112,8 @@ namespace Controller.MainWindow
         public static Window visualizationWindow;
         //look
         private static bool isVisualizationWindowOpen = false;
+
+        private Window variablesComparisonWindow;
 
 
 
@@ -1581,7 +1584,18 @@ namespace Controller.MainWindow
         {
             if (_variables.Variables.Count != 0)
             {
-                VariableComparison.ShowNewWindow(_variables, newPrimaryModel.Data.variablesModel);
+                if (variablesComparisonWindow != null && 
+                    Application.Current.Windows.Cast<Window>().Any(w => w.Name == variablesComparisonWindow.Name))
+                {
+                    variablesComparisonWindow.Close();
+                    variablesComparisonWindow = null;
+                }
+
+                VariableComparisonController controller = new VariableComparisonController(_variables,  newPrimaryModel.Data.variablesModel);
+                variablesComparisonWindow = WindowsHelper.CreateWindowToHostViewModel(controller, true, false);
+                variablesComparisonWindow.Name = "VariablesComparisonWindow";
+                variablesComparisonWindow.Title = "Variables Comparison";
+                variablesComparisonWindow.Show();
             }//end variable comparison
 
             CheckModelChanges(newPrimaryModel);

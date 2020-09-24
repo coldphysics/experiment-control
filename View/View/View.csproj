@@ -140,6 +140,12 @@
     <Compile Include="Common\CustomMessageBoxView.xaml.cs">
       <DependentUpon>CustomMessageBoxView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\Compare\CompareItem.xaml.cs">
+      <DependentUpon>CompareItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Compare\VariableComparison.xaml.cs">
+      <DependentUpon>VariableComparison.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\StepBatchAdderUC.xaml.cs">
       <DependentUpon>StepBatchAdderUC.xaml</DependentUpon>
     </Compile>
@@ -289,6 +295,14 @@
     <Page Include="Common\CustomMessageBoxView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\Compare\CompareItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\Compare\VariableComparison.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Control\StepBatchAdderUC.xaml">
       <SubType>Designer</SubType>

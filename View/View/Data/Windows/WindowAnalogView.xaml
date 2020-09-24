@@ -76,7 +76,8 @@
         <Grid >
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="2*"></RowDefinition>
+                <RowDefinition Height="115*"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" >
                 <Grid.ColumnDefinitions >
@@ -95,7 +96,7 @@
 
 
             <TabControl Grid.Row="1" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Path=Tabs}" HorizontalAlignment="Left"
-                    Name="TabItems" VerticalAlignment="Top">
+                    Name="TabItems" VerticalAlignment="Top" Grid.RowSpan="2">
                 <TabControl.ItemContainerStyle>
                     <Style TargetType="{x:Type TabItem}">
                         <Setter Property="DataContext" Value="{Binding RelativeSource={RelativeSource Self}}" />

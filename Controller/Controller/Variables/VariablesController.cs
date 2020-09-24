@@ -481,6 +481,7 @@ namespace Controller.Variables
                 if (var.VariableName == name)
                 {
                     PropertyChanged?.Invoke(var, new PropertyChangedEventArgs("VariableValue"));
+                    PropertyChanged?.Invoke(var, new PropertyChangedEventArgs("VariableCode"));
                     VariablesValueChanged?.Invoke(this, var);
                     _parentController.CopyToBuffer();
                 }

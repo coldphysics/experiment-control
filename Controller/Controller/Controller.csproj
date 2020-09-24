@@ -136,12 +136,11 @@
     <Compile Include="AdWin\Simulator\SimulatorController.cs" />
     <Compile Include="AdWin\Simulator\ViewModelBase.cs" />
     <Compile Include="Common\CustomMessageBoxController.cs" />
-    <Compile Include="Control\Compare\VariableComparison.xaml.cs">
-      <DependentUpon>VariableComparison.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Control\Compare\CompareItem.xaml.cs">
-      <DependentUpon>CompareItem.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Control\Compare\AbstractCompareItemController.cs" />
+    <Compile Include="Control\Compare\CompareDoubleItemController.cs" />
+    <Compile Include="Control\Compare\CompareStringItemController.cs" />
+    <Compile Include="Control\Compare\ICompareItemController.cs" />
+    <Compile Include="Control\Compare\VariableComparisonController.cs" />
     <Compile Include="Control\ShowableWindow.cs" />
     <Compile Include="Control\SimpleStringOkWindow.xaml.cs">
       <DependentUpon>SimpleStringOkWindow.xaml</DependentUpon>
@@ -225,14 +224,6 @@
     <Compile Include="WindowsHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Control\Compare\VariableComparison.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Control\Compare\CompareItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Control\SimpleStringOkWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
