@@ -223,7 +223,7 @@
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
-            <Button Command="{Binding Evaluate}">Evaluate</Button>
+            <Button Command="{Binding EvaluateCommand}">Evaluate</Button>
             <Button Grid.Column="1" Command="{Binding Iterate}">Iterate</Button>
             <Button Grid.Column="2" Command="{Binding Check}">Check Usage</Button>
         </Grid>

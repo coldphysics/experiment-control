@@ -155,9 +155,6 @@
     <Compile Include="Data\Channels\ChannelDigitalController.cs" />
     <Compile Include="Data\Channels\ChannelBasicController.cs" />
     <Compile Include="Data\Channels\ChannelSettingsController.cs" />
-    <Compile Include="Data\Channels\AnalogSettingsWindow.xaml.cs">
-      <DependentUpon>AnalogSettingsWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Data\DataController.cs" />
     <Compile Include="Cookbook\ControllerRecipe.cs" />
     <Compile Include="Data\Steps\SetMessageWindowController.cs" />
@@ -225,10 +222,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Control\SimpleStringOkWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Data\Channels\AnalogSettingsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

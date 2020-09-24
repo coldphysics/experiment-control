@@ -155,6 +155,9 @@
     <Compile Include="Control\WindowsTemplate.xaml.cs">
       <DependentUpon>WindowsTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\Channels\AnalogSettings.xaml.cs">
+      <DependentUpon>AnalogSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Data\Channels\DigitalHeader.xaml.cs">
       <DependentUpon>DigitalHeader.xaml</DependentUpon>
     </Compile>
@@ -319,6 +322,10 @@
     <Page Include="Data\Channels\AnalogHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\Channels\AnalogSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Data\Channels\DigitalHeader.xaml">
       <SubType>Designer</SubType>

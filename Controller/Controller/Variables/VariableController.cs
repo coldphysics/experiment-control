@@ -256,7 +256,7 @@ namespace Controller.Variables
                 //TODO this could be an error
                 if (this.TypeOfVariable != VariableType.VariableTypeDynamic)
                 {
-                    _parent.evaluate(null);
+                    _parent.Evaluate(null);
                 }
                 // re-enable the Buffer updateVariablesListFromParent
                 _parent.VariableUpdateDone(lockObject);
@@ -341,7 +341,7 @@ namespace Controller.Variables
             {
                 Object bufferUpdateLock = _parent.VariableUpdateStart();
                 _model.VariableCode = value;
-                _parent.evaluate(null);
+                _parent.Evaluate(null);
                 _parent.VariableUpdateDone(bufferUpdateLock);
             }
         }

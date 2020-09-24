@@ -80,7 +80,7 @@ namespace Controller.Variables
             AddStatic = new RelayCommand(addStatic);
             AddIterator = new RelayCommand(addIterator);
             AddDynamic = new RelayCommand(addDynamic);
-            Evaluate = new RelayCommand(evaluate);
+            EvaluateCommand = new RelayCommand(Evaluate);
             Iterate = new RelayCommand(iterate);
             Check = new RelayCommand(CheckAllVariablesUsage);
             StaticGroupSelect = new RelayCommand(DoStaticGroupSelect);
@@ -116,7 +116,7 @@ namespace Controller.Variables
 
         public ICommand Check { get; private set; }
 
-        public ICommand Evaluate { get; private set; }
+        public ICommand EvaluateCommand { get; private set; }
 
         public Dictionary<int, string> GroupNames
         {
@@ -492,7 +492,7 @@ namespace Controller.Variables
         /// evaluates the Variables
         /// </summary>
         /// <param name="parameter">null</param>
-        public void evaluate(object parameter)
+        public void Evaluate(object parameter)
         {
             // prevent inconsistencies and multiple updates on the buffer
             Object bufferUpdateLock = VariableUpdateStart();
@@ -540,7 +540,7 @@ namespace Controller.Variables
         /// <param name="e">unused</param>
         public void EvaluateVariablesFromBuffer(object sender, EventArgs e)
         {
-            evaluate(null);
+            Evaluate(null);
         }
 
         /// <summary>
@@ -663,7 +663,7 @@ namespace Controller.Variables
                 // RefreshVariableValuesInGUI(); not required -> done in evaluate
             }
 
-            evaluate(null);
+            Evaluate(null);
 
             // reenable buffer updates
             VariableUpdateDone(bufferUpdateLock);
@@ -892,7 +892,7 @@ namespace Controller.Variables
         public void ResetIteratorValuesFromBuffer(object sender, EventArgs e)
         {
             ResetIteratorValues();
-            evaluate(null);
+            Evaluate(null);
         }
 
         /// <summary>
@@ -1038,7 +1038,7 @@ namespace Controller.Variables
             this.LoseFocus(null, null);
 
             // ResetIteratorValues();
-            evaluate(null);
+            Evaluate(null);
             _iteratorsLocked = true;
             System.Console.WriteLine("Locked iterators");
             foreach (VariableController iterator in VariablesIterator)

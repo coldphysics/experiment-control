@@ -121,7 +121,7 @@ namespace Controller.Control.Compare
         {
             TakeNewValue();
             IsTakeNewSelected = true;
-            _variablesController.evaluate(null);
+            _variablesController.Evaluate(null);
             _variablesController.DoVariablesValueChangedByName(_newVariable.VariableName);
         }
 
@@ -129,7 +129,7 @@ namespace Controller.Control.Compare
         {
             TakeOldValue();
             IsTakeNewSelected = false;
-            _variablesController.evaluate(null);
+            _variablesController.Evaluate(null);
             _variablesController.DoVariablesValueChangedByName(_newVariable.VariableName);
         }
 

@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Buffer.OutputProcessors.CalibrationUnit;
 using Model.Settings;
-
+using System.Windows.Controls;
 
 namespace Controller.Data.Channels
 {
@@ -293,28 +293,25 @@ namespace Controller.Data.Channels
             CloseWindow(parameter);
         }
 
-        private void CloseWindow(object window)
+        private void CloseWindow(object uc)
         {
             currentModel = originalModel;
             OnPropertyChanged(null);//To notify the potential elements shown on the ChannelHeader section of the possible changes.
 
-            if (window != null)
+            if (uc != null)
             {
-                Window myWindow = (Window)window;
-                myWindow.Close();
+                Window w = Window.GetWindow((UserControl)uc);
+                w.Close();
             }
         }
 
         private void OpenCommand(object parameter)
         {
-
             uiModel = originalModel.ShallowCopy();
             currentModel = uiModel;
-            AnalogSettingsWindow settingsWindow = new AnalogSettingsWindow(this);
-            settingsWindow.Show();
-
-            //Start analog window
-
+            Window settingsWindow = WindowsHelper.CreateWindowToHostViewModel(this, true, true);
+            settingsWindow.Title = "Analog Settings";
+            settingsWindow.ShowDialog();
         }
 
 
