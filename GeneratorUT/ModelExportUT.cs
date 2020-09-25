@@ -4,6 +4,7 @@ using Buffer.OutputProcessors.Compression;
 using Buffer.OutputProcessors.Quantization;
 using Communication.Interfaces.Generator;
 using Controller;
+using Controller.Helper;
 using Controller.MainWindow;
 using Controller.MainWindow.MeasurementRoutine;
 using Controller.OutputVisualizer;

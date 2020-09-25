@@ -11,6 +11,7 @@ using Communication.Commands;
 using Communication.Events;
 using Controller.Data.Channels;
 using Controller.Data.WindowGroups;
+using Controller.Helper;
 using Controller.Variables;
 using Model.Data.Steps;
 using Model.Settings;

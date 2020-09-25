@@ -140,16 +140,15 @@
     <Compile Include="Control\Compare\CompareDoubleItemController.cs" />
     <Compile Include="Control\Compare\CompareStringItemController.cs" />
     <Compile Include="Control\Compare\ICompareItemController.cs" />
+    <Compile Include="Common\SimpleMessageController.cs" />
     <Compile Include="Control\Compare\VariableComparisonController.cs" />
     <Compile Include="Control\ShowableWindow.cs" />
-    <Compile Include="Control\SimpleStringOkWindow.xaml.cs">
-      <DependentUpon>SimpleStringOkWindow.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Control\SimpleStringOkDialogController.cs" />
     <Compile Include="Common\ModelBasedCTVBuilder.cs" />
     <Compile Include="Control\StepBatchAddition\StepBatchAdderController.cs" />
     <Compile Include="Control\SwitchWindowController.cs" />
     <Compile Include="Control\WindowList.cs" />
-    <Compile Include="CustomWindow.cs" />
+    <Compile Include="Common\CustomWindow.cs" />
     <Compile Include="Data\Channels\Converters.cs" />
     <Compile Include="Data\Channels\ChannelAnalogController.cs" />
     <Compile Include="Data\Channels\ChannelDigitalController.cs" />
@@ -162,7 +161,7 @@
     <Compile Include="Data\Steps\StepPythonSetScriptController.cs" />
     <Compile Include="Data\WindowGroups\WindowGroupController.cs" />
     <Compile Include="Data\Cookbook\WindowGroupControllerRecipe.cs" />
-    <Compile Include="FileHelper.cs" />
+    <Compile Include="Helper\FileHelper.cs" />
     <Compile Include="MainWindow\BooleanToVisibilityConverter.cs" />
     <Compile Include="MainWindow\ChildController.cs" />
     <Compile Include="MainWindow\IterationManagerController.cs" />
@@ -218,13 +217,7 @@
     <Compile Include="Settings\Settings\StringSettingController.cs" />
     <Compile Include="Variables\VariableController.cs" />
     <Compile Include="Variables\VariablesController.cs" />
-    <Compile Include="WindowsHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Control\SimpleStringOkWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <Compile Include="Helper\WindowsHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AbstractController\AbstractController\AbstractController.csproj">

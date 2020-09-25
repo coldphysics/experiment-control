@@ -13,6 +13,7 @@ using System.Runtime.Serialization;
 using Buffer.OutputProcessors.CalibrationUnit;
 using Model.Settings;
 using System.Windows.Controls;
+using Controller.Helper;
 
 namespace Controller.Data.Channels
 {
@@ -20,62 +21,6 @@ namespace Controller.Data.Channels
     {
         public const string DEFAULT_INPUT_UNIT = "V";
         // ******************** properties ********************
-        /*public double InitValue
-        {
-            get
-            {
-                if (IndexOfTab() == 0)
-                {
-                    return _model.InitValue;
-                }
-                var previousTab = (TabController)_parent.PreviousTab();
-                var predecessorChannel = (ChannelBasicController)previousTab.Channels[_model.Index()];
-                object lastStep = predecessorChannel.Steps.Last();
-                if (lastStep.GetType() == typeof(ChannelSettingsController))
-                {
-                    return ((ChannelSettingsController)lastStep).InitValue;
-                }
-                else
-                {
-                    return ((StepBasicController)lastStep).Value;
-                }
-            }
-            set
-            {
-                if (IndexOfTab() == 0)
-                {
-                    _model.InitValue = value;
-                    _parent.CopyToBuffer();
-                    if (null != this.PropertyChanged)
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs("InitValue"));
-                    }
-                }
-            }
-        }
-        public bool InitValueReadOnly
-        {
-            get
-            {
-                if (_parent.Index() == 0)
-                {
-                    return false;
-                }
-                return true;
-            }
-        }
-
-        public Brush InitValueBackgroundColor
-        {
-            get
-            {
-                if (_parent.Index() == 0)
-                {
-                    return Brushes.White;
-                }
-                return Brushes.LightGray;
-            }
-        }*/
 
         public double StartTime { get { return _parent.ActualStartTime(); } }
 

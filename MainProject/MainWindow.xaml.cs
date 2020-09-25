@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 using Controller;
+using Controller.Helper;
 using Controller.MainWindow;
 using Controller.Settings;
 using MainProject.Builders;

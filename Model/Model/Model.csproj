@@ -156,6 +156,7 @@
     <Compile Include="Settings\Settings\StringMultiOptionSetting.cs" />
     <Compile Include="Settings\Settings\StringSetting.cs" />
     <Compile Include="Settings\TimeSettingsInfo.cs" />
+    <Compile Include="Utilities\ModelChangeChecker.cs" />
     <Compile Include="V1\BaseTypes\ValueDoubleModel.cs">
       <SubType>Code</SubType>
     </Compile>

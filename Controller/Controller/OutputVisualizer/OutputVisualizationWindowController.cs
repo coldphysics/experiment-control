@@ -8,6 +8,7 @@ using Controller.Common;
 using Controller.Control.StepBatchAddition;
 using Controller.Data.Channels;
 using Controller.Data.Tabs;
+using Controller.Helper;
 using Controller.MainWindow;
 using Controller.OutputVisualizer.Export;
 using Controller.Root;

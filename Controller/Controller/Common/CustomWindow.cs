@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace Controller
+namespace Controller.Common
 {
     /// <summary>
     /// Custom Window that has no minimize button.

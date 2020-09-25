@@ -143,8 +143,14 @@
     <Compile Include="Control\Compare\CompareItem.xaml.cs">
       <DependentUpon>CompareItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\Compare\SimpleMessageCompareItem.xaml.cs">
+      <DependentUpon>SimpleMessageCompareItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\Compare\VariableComparison.xaml.cs">
       <DependentUpon>VariableComparison.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\SimpleStringOkDialog.xaml.cs">
+      <DependentUpon>SimpleStringOkDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Control\StepBatchAdderUC.xaml.cs">
       <DependentUpon>StepBatchAdderUC.xaml</DependentUpon>
@@ -303,7 +309,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Control\Compare\SimpleMessageCompareItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Control\Compare\VariableComparison.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\SimpleStringOkDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

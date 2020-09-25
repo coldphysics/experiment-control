@@ -7,6 +7,7 @@ using System.Linq;
 
 using Model.Variables;
 using Communication;
+using Controller.Common;
 
 namespace Controller.Control.Compare
 {
@@ -33,7 +34,8 @@ namespace Controller.Control.Compare
                 if (newVariable.VariableCode != oldVariable.VariableCode)
                 {
                     Items.Add(new CompareStringItemController(oldVariable.VariableCode, newVariable.VariableCode, newVariable, true, variablesController));
-                } else if (newVariable.VariableValue != oldVariable.VariableValue)
+                }
+                else if (newVariable.VariableValue != oldVariable.VariableValue)
                 {
                     if (newVariable.TypeOfVariable == VariableType.VariableTypeStatic)
                     {
@@ -48,6 +50,18 @@ namespace Controller.Control.Compare
                     }
                 }
 
+            }
+
+            if (Items.Count == 0)
+            {
+                if (inBoth.Count() == 0)
+                {
+                    Items.Add(new SimpleMessageController("No common variables are found in the old model and the new one!"));
+                }
+                else
+                {
+                    Items.Add(new SimpleMessageController("Either no variables are declared, or no differences are found!"));
+                }
             }
         }
     }

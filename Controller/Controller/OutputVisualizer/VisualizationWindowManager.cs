@@ -1,5 +1,6 @@
 ﻿using Buffer.Basic;
 using Controller.Common;
+using Controller.Helper;
 using Controller.MainWindow;
 using CustomElements.CheckableTreeView;
 using System;
@@ -76,7 +77,7 @@ namespace Controller.OutputVisualizer
             if (_visualizationWindow == null || !isVisualizationWindowOpen)
             {
                 _visualizationWindow =
-                    WindowsHelper.CreateCustomWindowToHostViewModel(OutputVisualizationController, false);
+                    WindowsHelper.CreateWindowToHostViewModel<CustomWindow>(OutputVisualizationController, false);
                 isVisualizationWindowOpen = true;
                 _visualizationWindow.Closed += new EventHandler((sender, args) => isVisualizationWindowOpen = false);
 

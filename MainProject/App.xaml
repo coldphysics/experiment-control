@@ -80,7 +80,6 @@
             <vwmain:PythonScriptsView />
         </DataTemplate>
 
-
         <DataTemplate DataType="{x:Type vmmain:MeasurementRoutineScriptController}">
             <vwmain:MeasurementRoutineScriptView />
         </DataTemplate>
@@ -109,8 +108,16 @@
             <vwcomparison:CompareItem />
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vmcommon:SimpleMessageController}">
+            <vwcomparison:SimpleMessageCompareItem />
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type vmchannels:ChannelSettingsController}">
             <vwchannels:AnalogSettings />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmc:SimpleStringOkDialogController}">
+            <vwc:SimpleStringOkDialog />
         </DataTemplate>
 
     </Application.Resources>
