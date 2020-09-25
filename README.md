@@ -20,6 +20,7 @@ This repository maintains a software used to control physical experiments relate
   * [Information for Developers](#information-for-developers)
     + [Mandatory Prerequisits](#mandatory-prerequisits)
     + [Recommended Plugins for Visual Studio](#recommended-plugins-for-visual-studio)
+    + [Recommendations](#recommendations)
     + [How To's](#how-tos-1)
       - [How to obtain the additional DLLs required for building the project?](#how-to-obtain-the-additional-dlls-required-for-building-the-project)
       - [How to build the project for the first time (e.g., using Visual Studio 2017)?](#how-to-build-the-project-for-the-first-time-eg-using-visual-studio-2017)
@@ -138,6 +139,23 @@ In this section, various information for developers are provided.
   3. [Markdown Editor](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.MarkdownEditor)
   4. If you want to get the `Documentation` project recognized by visual studio, you must install [Sandcastle Help File Builder and Tools](https://github.com/EWSoftware/SHFB). The latest release that still supports Visual Studio 2013 [can be obtained here](https://github.com/EWSoftware/SHFB/releases/tag/v2017.1.28.0).
 
+### Recommendations
+
+This section describes recommendations and hints regarding the programming of this application:
+
+#### MVVM
+
+- CPECS utilizes the [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) architectural design pattern.
+- In CPECS the _View Models_ are represented by the `Controller` project.
+- Controllers are not pure _View Models_ in the sense that they also implement part of the business logic
+- Binding between _View Models_ and _Views_ happens (mostly :)) via `DataTempaltes` in the `App.xaml` file of the `MainProject`.
+- New windows are created via the `Controller` project using the `Controller.Common.WindowsHelper` class:
+   - Only general purpose `Window` types should be used.
+   - New `Window` classes can be implemented for special needs, e.g., changing default behaviour or appearance of standard `Windows`.
+
+#### File Saving
+
+- A helper class for file saving and related dialogs should be used: `Controller.Common.FileHelper`.
 
 ### How To's
 
