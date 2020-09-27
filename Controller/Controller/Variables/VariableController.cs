@@ -12,6 +12,7 @@ using Model.Data.Channels;
 using Model.Data.Steps;
 using System.Windows;
 using PythonUtils.ScriptExecution;
+using Controller.Helper;
 
 namespace Controller.Variables
 {
@@ -43,6 +44,7 @@ namespace Controller.Variables
         public ICommand MoveUp { get; private set; }
         public ICommand MoveDown { get; private set; }
         public ICommand RemoveGroup { get; private set; }
+        public ICommand MouseDownInDynamicVariableCommand { get; private set; }
         // ******************** properties ********************
 
         /// <summary>
@@ -435,6 +437,7 @@ namespace Controller.Variables
             MoveUp = new RelayCommand(moveUp, CanMoveUpOrDown);
             MoveDown = new RelayCommand(moveDown, CanMoveUpOrDown);
             RemoveGroup = new RelayCommand(DoRemoveGroup);
+            MouseDownInDynamicVariableCommand = new RelayCommand(OnMouseDownInDynamicVariable);
         }
 
         /// <summary>
@@ -570,6 +573,12 @@ namespace Controller.Variables
                         break;
                 }
             }
+        }
+
+        private void OnMouseDownInDynamicVariable(object parameter)
+        {
+            ListBoxItem item = ViewsHelper.FindParentByType<ListBoxItem>((UserControl)parameter);
+            item.IsSelected = true;
         }
 
 

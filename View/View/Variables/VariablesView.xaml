@@ -208,6 +208,7 @@
                 ItemTemplate="{StaticResource VariableDynamicTemplate}"
                 ItemsSource="{Binding VariablesDynamic, UpdateSourceTrigger=PropertyChanged}"
                 PreviewKeyDown="VariablesDynamicsControl_PreviewKeyDown">
+
                 <!--  PreviewMouseLeftButtonDown="VariablesControl_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="VariablesControl_PreviewMouseLeftButtonUp">  -->
                 <ListBox.ItemContainerStyle>
                     <Style>

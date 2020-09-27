@@ -162,6 +162,8 @@
     <Compile Include="Data\Cookbook\WindowGroupControllerRecipe.cs" />
     <Compile Include="Data\Windows\DigitalWindowController.cs" />
     <Compile Include="Helper\FileHelper.cs" />
+    <Compile Include="Helper\ViewsHelper.cs" />
+    <Compile Include="Helper\WindowGenerator.cs" />
     <Compile Include="MainWindow\BooleanToVisibilityConverter.cs" />
     <Compile Include="MainWindow\ChildController.cs" />
     <Compile Include="MainWindow\IterationManagerController.cs" />
