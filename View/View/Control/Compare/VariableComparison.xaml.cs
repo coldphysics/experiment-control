@@ -1,11 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using Communication;
-using Controller.Control.Compare;
-using Controller.Variables;
-using Model.Variables;
+﻿using System.Windows.Controls;
 
 namespace View.Control.Compare
 {

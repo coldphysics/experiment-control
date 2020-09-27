@@ -179,9 +179,6 @@
     <Compile Include="Data\Steps\StepPythonView.xaml.cs">
       <DependentUpon>StepPythonView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helper\DragDropHelper.cs" />
-    <Compile Include="Helper\DraggedAdorner.cs" />
-    <Compile Include="Helper\InsertionAdorner.cs" />
     <Compile Include="Helper\Utilities.cs" />
     <Compile Include="Data\Channels\AnalogHeader.xaml.cs">
       <DependentUpon>AnalogHeader.xaml</DependentUpon>
