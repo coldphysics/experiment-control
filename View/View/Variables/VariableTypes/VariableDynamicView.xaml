@@ -14,7 +14,7 @@
 
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="PreviewMouseDown" SourceObject="{Binding ElementName=UC}">
-            <behaviors:InvokeCommandAction Command="{Binding MouseDownInDynamicVariableCommand}" CommandParameter="{Binding ElementName=UC}" />
+            <behaviors:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding ElementName=UC}" />
         </behaviors:EventTrigger>
     </behaviors:Interaction.Triggers>
     <Grid>

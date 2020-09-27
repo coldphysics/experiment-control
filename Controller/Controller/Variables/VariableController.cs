@@ -39,7 +39,7 @@ namespace Controller.Variables
         public ICommand MoveUp { get; private set; }
         public ICommand MoveDown { get; private set; }
         public ICommand RemoveGroup { get; private set; }
-        public ICommand MouseDownInDynamicVariableCommand { get; private set; }
+        public ICommand MouseDownCommand { get; private set; }
         // ******************** properties ********************
 
         /// <summary>
@@ -439,7 +439,7 @@ namespace Controller.Variables
             MoveUp = new RelayCommand(moveUp, CanMoveUpOrDown);
             MoveDown = new RelayCommand(moveDown, CanMoveUpOrDown);
             RemoveGroup = new RelayCommand(DoRemoveGroup);
-            MouseDownInDynamicVariableCommand = new RelayCommand(OnMouseDownInDynamicVariable);
+            MouseDownCommand = new RelayCommand(OnMouseDown);
         }
 
         /// <summary>
@@ -585,7 +585,7 @@ namespace Controller.Variables
             }
         }
 
-        private void OnMouseDownInDynamicVariable(object parameter)
+        private void OnMouseDown(object parameter)
         {
             ListBoxItem item = ViewsHelper.FindParentByType<ListBoxItem>((UserControl)parameter);
             item.IsSelected = true;
