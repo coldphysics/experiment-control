@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Windows.Input;
 using AbstractController.Data.Channels;
+using Communication.Commands;
 using Controller.Data.Steps;
 using Controller.Data.Tabs;
 using Model.Data.Channels;
@@ -11,8 +13,6 @@ namespace Controller.Data.Channels
     public abstract class ChannelBasicController : AbstractChannelController, INotifyPropertyChanged
     {
         // ******************** enums ********************
-        #region AnalogTypes enum
-
         public enum AnalogTypes
         {
             Constant,
@@ -22,10 +22,6 @@ namespace Controller.Data.Channels
             Python
         }
 
-        #endregion
-
-        #region DigitalTypes enum
-
         public enum DigitalTypes
         {
             Constant,
@@ -33,31 +29,28 @@ namespace Controller.Data.Channels
             Csv
         }
 
-        #endregion
-
-        #region LeftRightEnum enum
-
         public enum LeftRightEnum
         {
             Left,
             Right
         }
 
-        #endregion
 
-        // ******************** properties ********************
+        // ******************** Properties ********************
         public Root.RootController _rootController
         {
             get { return _parent._rootController; }
         }
 
+        public RelayCommand MouseDownCommand
+        {
+            private set;
+            get;
+        }
+
 
         // ******************** events ********************
-        #region INotifyPropertyChanged Members
-
         public event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion
 
 
         // ******************** variables ********************
@@ -69,6 +62,7 @@ namespace Controller.Data.Channels
             : base(model, parent)
         {
             _parent = parent;
+            MouseDownCommand = new RelayCommand(OnMoudeDown);
         }
 
         internal void ChangeStep(StepBasicController step, String type)
@@ -191,13 +185,10 @@ namespace Controller.Data.Channels
             Steps.Insert(1, controller);
         }
 
-
         public void CopyToBuffer()
         {
             ((TabController)Parent).CopyToBuffer();
         }
-
-
 
         public double StartTimeOf(StepBasicController step)
         {
@@ -210,7 +201,6 @@ namespace Controller.Data.Channels
             return startTime;
         }
 
-
         public void UpdateSteps(StepBasicController step)
         {
             var index = Steps.IndexOf(step);
@@ -221,6 +211,15 @@ namespace Controller.Data.Channels
             }
         }
 
+        private void OnMoudeDown(object parameter)
+        {
+            MouseButtonEventArgs e = (MouseButtonEventArgs)parameter;
+
+            if (e.ClickCount >= 2)
+            {
+                AddStep();
+            }
+        }
 
         public override string ToString()
         {

@@ -160,6 +160,7 @@
     <Compile Include="Data\Steps\StepPythonSetScriptController.cs" />
     <Compile Include="Data\WindowGroups\WindowGroupController.cs" />
     <Compile Include="Data\Cookbook\WindowGroupControllerRecipe.cs" />
+    <Compile Include="Data\Windows\DigitalWindowController.cs" />
     <Compile Include="Helper\FileHelper.cs" />
     <Compile Include="MainWindow\BooleanToVisibilityConverter.cs" />
     <Compile Include="MainWindow\ChildController.cs" />
@@ -193,7 +194,7 @@
     <Compile Include="Data\Steps\StepBasicController.cs" />
     <Compile Include="Data\Steps\StepRampController.cs" />
     <Compile Include="Data\Tabs\TabController.cs" />
-    <Compile Include="Data\Windows\WindowController.cs" />
+    <Compile Include="Data\Windows\AnalogWindowController.cs" />
     <Compile Include="Data\Windows\WindowBasicController.cs" />
     <Compile Include="BaseController.cs" />
     <Compile Include="Settings\ControllersBuilder.cs" />

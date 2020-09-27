@@ -1,25 +1,30 @@
-﻿<Window x:Class="View.Data.Windows.WindowDigitalView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Helper="clr-namespace:View.Helper"
-        xmlns:TabAddButton="clr-namespace:CustomElements.TabAddButton;assembly=CustomElements"
-        xmlns:TabCloseButton="clr-namespace:CustomElements.TabCloseButton;assembly=CustomElements"
-        xmlns:StepsView="clr-namespace:View.Data.Steps"
-        xmlns:StepsController="clr-namespace:Controller.Data.Steps;assembly=Controller"
-        xmlns:Control="clr-namespace:View.Control"
-        xmlns:ChannelsView="clr-namespace:View.Data.Channels"
-        xmlns:Channels="clr-namespace:Controller.Data.Channels;assembly=Controller"
-		xmlns:SequenceController="clr-namespace:Controller.Data.Tabs;assembly=Controller"
-        xmlns:EditableLabel="clr-namespace:CustomElements.EditableLabel;assembly=CustomElements" Title="{Binding Name}" Height="800"
-        Width="300" SizeToContent="Width"
-        ShowInTaskbar="False" AllowDrop="True">
+﻿<UserControl
+    x:Class="View.Data.Windows.WindowDigitalView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Channels="clr-namespace:Controller.Data.Channels;assembly=Controller"
+    xmlns:ChannelsView="clr-namespace:View.Data.Channels"
+    xmlns:Control="clr-namespace:View.Control"
+    xmlns:EditableLabel="clr-namespace:CustomElements.EditableLabel;assembly=CustomElements"
+    xmlns:Helper="clr-namespace:View.Helper"
+    xmlns:SequenceController="clr-namespace:Controller.Data.Tabs;assembly=Controller"
+    xmlns:StepsController="clr-namespace:Controller.Data.Steps;assembly=Controller"
+    xmlns:StepsView="clr-namespace:View.Data.Steps"
+    xmlns:TabAddButton="clr-namespace:CustomElements.TabAddButton;assembly=CustomElements"
+    xmlns:TabCloseButton="clr-namespace:CustomElements.TabCloseButton;assembly=CustomElements"
+    xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+    MinWidth="300"
+    MinHeight="800"
+    AllowDrop="True">
 
-    <Window.Resources>
+    <UserControl.Resources>
 
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/CustomElements;component/CustomDictionary.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
-            <SequenceController:IsEnabledToBrushConverter x:Key="IsEnabledConverter"/>
+            <SequenceController:IsEnabledToBrushConverter x:Key="IsEnabledConverter" />
             <DataTemplate x:Key="WindowsTemplate">
                 <Control:WindowsTemplate />
             </DataTemplate>
@@ -33,24 +38,27 @@
             <DataTemplate DataType="{x:Type Channels:ChannelSettingsController}">
                 <ChannelsView:DigitalHeader BorderBrush="DarkGray" />
             </DataTemplate>
-            <!--<DataTemplate DataType="{x:Type Analog:AnalogStepBinaryView}">
-            <Border BorderThickness="1" BorderBrush="DarkGray" Background="Lavender" Opacity="0.8">
-                <Analog1:stepAnalogBinaryUserControl/>
-            </Border>
-        </DataTemplate>-->
 
             <DataTemplate x:Key="ChannelTemplate">
-                <Border BorderThickness="0" x:Name="__BORDER" Height="60" MouseDown="AddItem">
+                <Border
+                    x:Name="__BORDER"
+                    Height="60"
+                    BorderThickness="0">
                     <ItemsControl ItemsSource="{Binding Path=Steps}">
-                        <!--This specifies that the items in the second level items control should be stacked horizontally-->
+                        <!--  This specifies that the items in the second level items control should be stacked horizontally  -->
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
-
-
                     </ItemsControl>
+
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger EventName="MouseDown" SourceObject="{Binding ElementName=__BORDER}">
+                            <behaviors:InvokeCommandAction Command="{Binding MouseDownCommand}" PassEventArgsToCommand="True" />
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
+
                 </Border>
                 <DataTemplate.Triggers>
                     <Trigger Property="ItemsControl.AlternationIndex" Value="0">
@@ -65,29 +73,49 @@
         </ResourceDictionary>
 
 
-    </Window.Resources>
+    </UserControl.Resources>
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="28"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="28" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" >
-                <Grid.ColumnDefinitions >
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
-                <ListBox Grid.Row="0" Grid.Column="0"  BorderBrush="Transparent" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding WindowsList, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{StaticResource WindowsTemplate}" Name="WindowsListBox" HorizontalContentAlignment="Stretch">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-            </ListBox>
-                <Button Command="{Binding OpenVisualizeWindowCommand}" Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Center">Visualize</Button>
+                <ListBox
+                    Name="WindowsListBox"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalContentAlignment="Stretch"
+                    BorderBrush="Transparent"
+                    IsSynchronizedWithCurrentItem="True"
+                    ItemTemplate="{StaticResource WindowsTemplate}"
+                    ItemsSource="{Binding WindowsList, UpdateSourceTrigger=PropertyChanged}">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
+                <Button
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding OpenVisualizeWindowCommand}">
+                    Visualize
+                </Button>
             </Grid>
-            <TabControl Grid.Row="1" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Path=Tabs}" HorizontalAlignment="Left"
-                    Name="TabItems" VerticalAlignment="Top">
+            <TabControl
+                Name="TabItems"
+                Grid.Row="1"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                IsSynchronizedWithCurrentItem="True"
+                ItemsSource="{Binding Path=Tabs}">
                 <TabControl.ItemContainerStyle>
                     <Style TargetType="{x:Type TabItem}">
                         <Setter Property="DataContext" Value="{Binding RelativeSource={RelativeSource Self}}" />
@@ -95,19 +123,42 @@
                 </TabControl.ItemContainerStyle>
                 <TabControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Background="{Binding IsEnabled, Converter={StaticResource IsEnabledConverter}}">
+                        <StackPanel Background="{Binding IsEnabled, Converter={StaticResource IsEnabledConverter}}" Orientation="Horizontal">
                             <!--<Label Style="{StaticResource EditableLabelStyle}" Height="25" Content="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=LostFocus}" Canvas.Left="16" Canvas.Top="6" MouseDoubleClick="Label_MouseDoubleClick_1" LostFocus="Label_LostFocus_1" />-->
                             <!--<EditableLabel:EditableLabel Height="25" Content="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=LostFocus}" Canvas.Left="16" Canvas.Top="6" />-->
                             <!--<EditableTextBlock:EditableTextBlock Text="moep"/>-->
-                            <CheckBox IsChecked="{Binding IsEnabled}" Margin="2,5,2,0" ToolTip="Indicates whether this sequence is enabled"/>
-                            <EditableLabel:EditableLabel Content="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=LostFocus}"/>
-                            <TextBlock Height="15" Text="{Binding Duration}"/>
-                            <TabAddButton:TabAddButton Name="Add" Height="15" Command="{Binding TabAdd}" />
-                            <Button Name="Left" Height="18" Width="18" Command="{Binding TabLeft}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" >
-                                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">&lt;</TextBlock>
+                            <CheckBox
+                                Margin="2,5,2,0"
+                                IsChecked="{Binding IsEnabled}"
+                                ToolTip="Indicates whether this sequence is enabled" />
+                            <EditableLabel:EditableLabel Content="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                            <TextBlock Height="15" Text="{Binding Duration}" />
+                            <TabAddButton:TabAddButton
+                                Name="Add"
+                                Height="15"
+                                Command="{Binding TabAdd}" />
+                            <Button
+                                Name="Left"
+                                Width="18"
+                                Height="18"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Command="{Binding TabLeft}">
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">&lt;</TextBlock>
                             </Button>
-                            <Button Name="Right" Height="18" Width="18" Command="{Binding TabRight}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" >
-                                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center">&gt;</TextBlock>
+                            <Button
+                                Name="Right"
+                                Width="18"
+                                Height="18"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Command="{Binding TabRight}">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    TextAlignment="Center">
+                                    &gt;
+                                </TextBlock>
                             </Button>
                             <TabCloseButton:TabCloseButton Height="15" Command="{Binding TabRemove}" />
                         </StackPanel>
@@ -117,12 +168,15 @@
 
                     <DataTemplate>
 
-                        <ItemsControl IsEnabled="{Binding IsEnabled}" ItemsSource="{Binding Path=Channels}" ItemTemplate="{StaticResource ChannelTemplate}"
-                                  AlternationCount="2">
-                            <!--This specifies that the items in the top level items control should be stacked vertically-->
+                        <ItemsControl
+                            AlternationCount="2"
+                            IsEnabled="{Binding IsEnabled}"
+                            ItemTemplate="{StaticResource ChannelTemplate}"
+                            ItemsSource="{Binding Path=Channels}">
+                            <!--  This specifies that the items in the top level items control should be stacked vertically  -->
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical" IsItemsHost="True"/>
+                                    <StackPanel IsItemsHost="True" Orientation="Vertical" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                         </ItemsControl>
@@ -132,4 +186,4 @@
             </TabControl>
         </Grid>
     </ScrollViewer>
-</Window>
+</UserControl>

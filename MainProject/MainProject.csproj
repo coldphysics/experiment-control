@@ -215,6 +215,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AbstractController\AbstractController\AbstractController.csproj">
+      <Project>{729d4737-0773-440f-b79e-5ce13c39e8a8}</Project>
+      <Name>AbstractController</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Buffer\Buffer\Buffer.csproj">
       <Project>{a4e6d34d-9407-40b7-a5e1-15c040584399}</Project>
       <Name>Buffer</Name>

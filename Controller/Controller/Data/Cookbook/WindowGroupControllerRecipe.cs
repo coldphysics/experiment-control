@@ -38,14 +38,26 @@ namespace Controller.Data.Cookbook
             dataController.SequenceGroup = windowGroupController;
         }
 
-        public WindowController CookWindow(CardBasicModel model, WindowGroupController windowGroupController)
+        public WindowBasicController CookWindow(CardBasicModel model, WindowGroupController windowGroupController)
         {
-            var windowController = new WindowController(model, windowGroupController);
+            WindowBasicController windowController;
+
+            if (model.Type == CardBasicModel.CardType.Analog)
+            {
+                windowController = new AnalogWindowController(model, windowGroupController);
+            }
+            else
+            {
+                windowController = new DigitalWindowController(model, windowGroupController);
+            }
+
             foreach (SequenceModel sequence in model.Sequences)
             {
                 CookTab(sequence, windowController);
             }
+
             windowGroupController.Windows.Add(windowController);
+
             return windowController;
         }
 

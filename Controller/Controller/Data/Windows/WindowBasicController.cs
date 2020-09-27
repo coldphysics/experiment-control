@@ -174,6 +174,5 @@ namespace Controller.Data.Windows
             return Model.Name;
         }
 
-
     }
 }

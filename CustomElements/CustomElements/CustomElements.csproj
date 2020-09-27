@@ -106,7 +106,7 @@
     </Compile>
     <Compile Include="NonFadingButton\NonFadingButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SizeSavedWindow\SizeSavedWindow.cs" />
+    <Compile Include="SizeSavedWindow\SizeSavedWindowManager.cs" />
     <Compile Include="SubmitTextBox\SubmitTextBox.cs" />
     <Compile Include="TabAddButton\TabAddButton.cs" />
     <Compile Include="TabCloseButton\TabCloseButton.cs" />

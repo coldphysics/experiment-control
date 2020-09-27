@@ -25,7 +25,7 @@ namespace View.Main
             DataContext = _controller;
             InitializeComponent();
 
-            SizeSavedWindow.addToSizeSavedWindows(this);
+            SizeSavedWindowManager.AddToSizeSavedWindows(this);
             ErrorWindow.MainWindow = this;
 
         }

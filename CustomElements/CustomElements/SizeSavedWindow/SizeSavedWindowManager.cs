@@ -7,27 +7,27 @@ using System.Xml;
 
 namespace CustomElements.SizeSavedWindow
 {
-    public class SizeSavedWindow
+    public class SizeSavedWindowManager
     {
+        static Dictionary<string, double[]> windows = new Dictionary<string, double[]>();
+
         // To keep a window at the same size and position, just add 
         // SizeSavedWindow.addToSizeSavedWindows(this);
         // right after initialieComponent
-        public static void addToSizeSavedWindows(Window window)
+        public static void AddToSizeSavedWindows(Window window)
         {
-            window_IsLoaded(window, null);
-            window.Closed += window_Closing;
+            Initialize(window);
+            window.Closed += Window_Closing;
         }
 
-        static void window_Closing(object sender, EventArgs e)
+        static void Window_Closing(object sender, EventArgs e)
         {             
             Window realSender = (Window)sender;
-            windowValuesChanged(realSender);
+            WindowValuesChanged(realSender);
         }
 
-        static void window_IsLoaded(object sender, RoutedEventArgs e)
+        private static void Initialize(Window window)
         {
-            Window window = (Window)sender;
-
             bool restoredSizes = false;
 
             if (File.Exists("sizes.xml"))
@@ -92,16 +92,10 @@ namespace CustomElements.SizeSavedWindow
             }
 
             windows.Add(window.Title, sizes);
-            windowValuesChanged(window);
+            WindowValuesChanged(window);
         }
 
-        static void window_LocationChanged(object sender, EventArgs e)
-        {
-            Window realSender = (Window)sender;
-            windowValuesChanged(realSender);
-        }
-
-        static void windowValuesChanged(Window realSender)
+        private static void WindowValuesChanged(Window realSender)
         {
             if (windows.ContainsKey(realSender.Title))
             {
@@ -119,12 +113,5 @@ namespace CustomElements.SizeSavedWindow
             }
         }
 
-        static Dictionary<string, double[]> windows = new Dictionary<string, double[]>();
-
-        static void window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Window realSender = (Window) sender;
-            windowValuesChanged(realSender);
-        }
     }
 }

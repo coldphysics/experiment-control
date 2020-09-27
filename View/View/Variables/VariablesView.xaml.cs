@@ -71,7 +71,7 @@ namespace View.Variables
             this._controller = controller;
             controller.LoseFocus += loseFocus;
             InitializeComponent();
-            SizeSavedWindow.addToSizeSavedWindows(this);
+            SizeSavedWindowManager.AddToSizeSavedWindows(this);
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

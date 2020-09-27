@@ -44,7 +44,7 @@ namespace Errors
                 SetWindowLong(hwnd, GWL_STYLE, (int)(value & WS_MINIMIZE));
 
             };
-            SizeSavedWindow.addToSizeSavedWindows(this);
+            SizeSavedWindowManager.AddToSizeSavedWindows(this);
             ErrorCollector errorClass = ErrorCollector.Instance;
             errorClass.SetParent(this);
             this.DataContext = errorClass;

@@ -79,7 +79,7 @@ namespace Controller.Helper
 
             if (persistSizeAndPosition)
             {
-                SizeSavedWindow.addToSizeSavedWindows(window);
+                SizeSavedWindowManager.AddToSizeSavedWindows(window);
             }
         }
 
