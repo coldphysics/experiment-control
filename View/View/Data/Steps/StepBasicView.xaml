@@ -41,6 +41,7 @@
             HorizontalAlignment="Stretch"
             Background="LightGray"
             IsReadOnly="True"
+            PreviewKe
             PreviewKeyDown="TextBox_PreviewKeyDown"
             Text="{Binding StartTime, Mode=OneWay}"
             TextAlignment="Center" />
