@@ -9,9 +9,6 @@
     d:DesignWidth="200"
     mc:Ignorable="d">
     <Grid ToolTip="{Binding UsagesAsString}">
-
-
-
         <SubmitTextBox:SubmitTextBox
             Name="VariableName"
             Background="{Binding VariableUsage, Mode=OneWay}"
@@ -45,6 +42,7 @@
                     <MenuItem
                         Name="MoveToGroup"
                         Header="Move to Group"
+                        IsEnabled="{Binding CanMoveVariableToGroup}"
                         ItemsSource="{Binding staticGroups, Mode=OneWay}" />
                 </ContextMenu>
             </SubmitTextBox:SubmitTextBox.ContextMenu>

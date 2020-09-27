@@ -672,6 +672,9 @@ namespace Controller.Variables
 
         public void moveDown(VariableController variableController)
         {
+            if (variableController.TypeOfVariable == VariableType.VariableTypeIterator && _iteratorsLocked)
+                return;
+
             if (variableController.TypeOfVariable == VariableType.VariableTypeIterator
                 || variableController.TypeOfVariable == VariableType.VariableTypeDynamic)
             {
@@ -723,6 +726,9 @@ namespace Controller.Variables
 
         public void moveUp(VariableController variableController)
         {
+            if (variableController.TypeOfVariable == VariableType.VariableTypeIterator && _iteratorsLocked)
+                return;
+
             if (variableController.TypeOfVariable == VariableType.VariableTypeIterator
                 || variableController.TypeOfVariable == VariableType.VariableTypeDynamic)
             {
@@ -1016,6 +1022,7 @@ namespace Controller.Variables
             variable.GroupIndex = groupKey;
             updateStatics();
         }
+
 
         /// <summary>
         /// Reads the related options

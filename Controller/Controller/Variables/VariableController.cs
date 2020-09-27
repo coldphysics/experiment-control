@@ -43,6 +43,17 @@ namespace Controller.Variables
         // ******************** properties ********************
 
         /// <summary>
+        /// Indicates whether the current variable can be moved to a group (only returns true for static variables)
+        /// </summary>
+        public bool CanMoveVariableToGroup
+        {
+            get
+            {
+                return TypeOfVariable == VariableType.VariableTypeStatic;
+            }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether this <see cref="VariableController"/> is used.
         /// </summary>
         /// <value>
@@ -264,7 +275,7 @@ namespace Controller.Variables
             get { return _model.VariableStartValue; }
             set
             {
-                _model.VariableStartValue = value;          
+                _model.VariableStartValue = value;
                 _parent.ResetIteratorValues();
                 _parent.countTotalNumberOfIterations();
             }
@@ -438,7 +449,13 @@ namespace Controller.Variables
         /// <returns><c>true</c> if the type of the variable is iterator or dynamic.</returns>
         private bool CanMoveUpOrDown(object parameter)
         {
-            return (TypeOfVariable != VariableType.VariableTypeStatic);
+            if (TypeOfVariable == VariableType.VariableTypeStatic)
+                return false;
+
+            if (TypeOfVariable == VariableType.VariableTypeIterator && _variableLocked)
+                return false;
+
+            return true;
         }
 
         /// <summary>
@@ -537,6 +554,8 @@ namespace Controller.Variables
 
             return false;
         }
+
+
 
         /// <summary>
         /// Renames the current variable in all its occurrences in python scripts.

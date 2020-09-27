@@ -12,11 +12,11 @@
     Width="750"
     Height="300"
     ShowInTaskbar="False">
+
     <Window.Resources>
         <ResourceDictionary Source="VariablesResources.xaml" />
-
-
     </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
