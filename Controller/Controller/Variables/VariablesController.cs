@@ -96,8 +96,6 @@ namespace Controller.Variables
 
         public delegate void VariablesValueChangedEventHandler(object sender, VariableController changedVar);
 
-        public event LoseFocusOnIterators LoseFocus;
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public event EventHandler RefreshWindows;
@@ -210,16 +208,12 @@ namespace Controller.Variables
                 }
 
                 return
-                    new ObservableCollection<VariableController>(from tempVarController in new
-                    ObservableCollection
-                        <VariableController>(
-                    returnCollection.Where(//filter out non-static variable controllers
-                        w =>
-                        w.TypeOfVariable.Equals(
-                            VariableType.
-                                VariableTypeStatic)))//order the result
-                                                                 orderby tempVarController.GroupName ascending, tempVarController.IsGroupHeader descending, tempVarController.VariableName ascending
-                                                                 select tempVarController);
+                    new ObservableCollection<VariableController>(
+                        from tempVarController in new ObservableCollection<VariableController>(
+                            returnCollection.Where(//filter out non-static variable controllers
+                                w => w.TypeOfVariable.Equals(VariableType.VariableTypeStatic)))//order the result
+                        orderby tempVarController.GroupName ascending, tempVarController.IsGroupHeader descending, tempVarController.VariableName ascending
+                        select tempVarController);
             }
         }
 
@@ -557,6 +551,7 @@ namespace Controller.Variables
                     return variable;
                 }
             }
+
             throw new Exception("Variable not found! Name: " + name);
             //return null;
         }
@@ -642,16 +637,12 @@ namespace Controller.Variables
                         //to be deleted
                         //  nextValue = VariableModelToBeReset.VariableValue + VariableModelToBeReset.VariableStepValue;
                         const double FLOATMARGIN = 1E-7;
+
                         if ((nextValue <= iterator.VariableEndValue + FLOATMARGIN && iterator.VariableStepValue > 0) ||
                             (nextValue >= iterator.VariableEndValue - FLOATMARGIN && iterator.VariableStepValue < 0))
                         {
                             lastVariableOverflowed = false;
                             iterator.VariableValue = nextValue;
-                            //  _outputHandler.Model.Data.variablesModel.VariablesList.ElementAt(0).VariableValue = nextValue;
-                            //to be deleted
-                            //     VariableModelToBeReset.VariableValue = nextValue;
-                            //   MessageBox.Show("inside iterate method"+iterator.VariableValue.ToString() + "\n");
-                            //  MessageBox.Show( "inside iterate method variableModel: " + _rootModel.Data.variablesModel.VariablesList.ElementAt(0).VariableValue.ToString());
                         }
                         else
                         {
@@ -866,27 +857,14 @@ namespace Controller.Variables
 
         public void ResetIteratorValues()
         {
-            // Ebaa 18.06.2018
             // prevent inconsistencies and multiple updates on the buffer
-            // Object bufferUpdateLock = VariableUpdateStart();
+
             foreach (VariableController iterator in VariablesIterator)
             {
                 iterator.VariableValue = iterator.VariableStartValue;
-
-                // //test 11.06
-                // VariableModel VariableModelToBeReset = _outputHandler.Model.Data.variablesModel.VariablesList.Find(x => x.VariableName == iterator._model.VariableName);
-
-                ////test 11.06
-                // if (VariableModelToBeReset != null)
-                //  {
-                //      VariableModelToBeReset.VariableValue = iterator.VariableStartValue;
-                //  }
-                ////// MessageBox.Show("Iterator:"+ iterator._model.VariableName+"\n Value:"+ iterator.VariableValue+ "\n Model Vlaue:"+iterator._model.VariableValue);
             }
+
             RefreshVariableValuesInGUI(false, true, true);
-            // Ebaa 18.06.2018
-            // reenable buffer updates
-            // VariableUpdateDone(bufferUpdateLock);
         }
 
         public void ResetIteratorValuesFromBuffer(object sender, EventArgs e)
@@ -933,17 +911,11 @@ namespace Controller.Variables
 
         public void updateDynamics()
         {
-            VariablesDynamic = new ObservableCollection<VariableController>(from varCtrl in
-                                                                        new
-                                                                        ObservableCollection
-                                                                            <VariableController>(
-                                                                        Variables.Where(
-                                                                            w =>
-                                                                            w.TypeOfVariable.Equals(
-                                                                                VariableType.
-                                                                                    VariableTypeDynamic)))
-                                                                            orderby varCtrl.getModelIndex ascending
-                                                                            select varCtrl);
+            VariablesDynamic = new ObservableCollection<VariableController>(
+                from varCtrl in new ObservableCollection<VariableController>(
+                    Variables.Where(w => w.TypeOfVariable.Equals(VariableType.VariableTypeDynamic)))
+                orderby varCtrl.getModelIndex ascending
+                select varCtrl);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesDynamic"));
         }
 
@@ -975,17 +947,11 @@ namespace Controller.Variables
 
         public void updatIterators()
         {
-            this.VariablesIterator = new ObservableCollection<VariableController>(from varCtrl in
-                                                                        new
-                                                                        ObservableCollection
-                                                                            <VariableController>(
-                                                                        Variables.Where(
-                                                                            w =>
-                                                                            w.TypeOfVariable.Equals(
-                                                                                VariableType.
-                                                                                    VariableTypeIterator)))
-                                                                                  orderby varCtrl.getModelIndex ascending
-                                                                                  select varCtrl);
+            this.VariablesIterator = new ObservableCollection<VariableController>(
+                from varCtrl in new ObservableCollection<VariableController>(
+                    Variables.Where(w => w.TypeOfVariable.Equals(VariableType.VariableTypeIterator)))
+                orderby varCtrl.getModelIndex ascending
+                select varCtrl);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesIterator"));
         }
 
@@ -995,12 +961,6 @@ namespace Controller.Variables
         /// <param name="lockObject">lock/unlock object</param>
         public bool VariableUpdateDone(Object lockObject)
         {
-            //if (_variableUpdateLockObject == lockObject)
-            //{
-            //    _variableUpdateLockObject = null;
-            //    _parentController.EnableCopyToBufferAndCopyChanges();
-            //}
-
             return _parentController.BulkUpdateEnd(lockObject);
         }
 
@@ -1009,14 +969,6 @@ namespace Controller.Variables
         /// </summary>
         public Object VariableUpdateStart()
         {
-            //var lockObject = new object();
-            //if (_variableUpdateLockObject == null)//Only who has the first lock wins!!
-            //{
-            //    _variableUpdateLockObject = lockObject;
-            //}
-            //_parentController.DisableCopyToBuffer();
-            //return lockObject;
-
             return _parentController.BulkUpdateStart();
         }
 
@@ -1035,12 +987,10 @@ namespace Controller.Variables
         /// </summary>
         private void LockIterators(object sender, EventArgs e)
         {
-            this.LoseFocus(null, null);
-
-            // ResetIteratorValues();
             Evaluate(null);
             _iteratorsLocked = true;
-            System.Console.WriteLine("Locked iterators");
+            Console.WriteLine("Locked iterators");
+
             foreach (VariableController iterator in VariablesIterator)
             {
                 iterator.VariableLocked = true;

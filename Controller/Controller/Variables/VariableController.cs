@@ -32,11 +32,6 @@ namespace Controller.Variables
         /// </summary>
         private List<string> usages = new List<string>();
 
-
-        public delegate void LoseFocusOnIterators(object sender, EventArgs e);
-        public event LoseFocusOnIterators LoseFocus;
-
-
         public ICommand DeleteVariable { get; private set; }
         public ICommand SwitchToStatic { get; private set; }
         public ICommand SwitchToIterator { get; private set; }
@@ -162,10 +157,6 @@ namespace Controller.Variables
                 _model.groupIndex = value;
                 OnPropertyChanged("GroupIndex");
             }
-        }
-        public void DoLoseFocus()
-        {
-            this.LoseFocus?.Invoke(null, null);
         }
 
         public SolidColorBrush VariableUsage

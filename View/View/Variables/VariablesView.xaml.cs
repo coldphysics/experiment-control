@@ -69,7 +69,6 @@ namespace View.Variables
         {
             this.DataContext = controller;
             this._controller = controller;
-            controller.LoseFocus += loseFocus;
             InitializeComponent();
             SizeSavedWindowManager.AddToSizeSavedWindows(this);
         }
@@ -78,17 +77,6 @@ namespace View.Variables
         {
             e.Cancel = true;
             this.Hide();
-        }
-
-        private void loseFocus(object sender, EventArgs e)
-        {
-            foreach (VariableController staticView in VariablesIteratorsControl.Items)
-            {
-                //System.Console.Write("Item!\n");
-                staticView.DoLoseFocus();
-            }
-            //System.Console.Write("LoseFocus!\n");
-            //Keyboard.ClearFocus();
         }
 
         #region GetDataFromListBox(ListBox,Point)
