@@ -77,7 +77,7 @@ namespace Controller.OutputVisualizer
             if (_visualizationWindow == null || !isVisualizationWindowOpen)
             {
                 _visualizationWindow =
-                    WindowsHelper.CreateWindowToHostViewModel<CustomWindow>(OutputVisualizationController, false);
+                    WindowsHelper.CreateWindowToHostViewModel(OutputVisualizationController, false, false, false, true);
                 isVisualizationWindowOpen = true;
                 _visualizationWindow.Closed += new EventHandler((sender, args) => isVisualizationWindowOpen = false);
 

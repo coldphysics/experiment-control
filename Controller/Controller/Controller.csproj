@@ -148,7 +148,6 @@
     <Compile Include="Control\StepBatchAddition\StepBatchAdderController.cs" />
     <Compile Include="Control\SwitchWindowController.cs" />
     <Compile Include="Control\WindowList.cs" />
-    <Compile Include="Common\CustomWindow.cs" />
     <Compile Include="Data\Channels\Converters.cs" />
     <Compile Include="Data\Channels\ChannelAnalogController.cs" />
     <Compile Include="Data\Channels\ChannelDigitalController.cs" />
