@@ -83,6 +83,7 @@ namespace Controller.Data.Steps
             MoveLeft = new RelayCommand(DoMoveLeft);
             MoveRight = new RelayCommand(DoMoveRight);
             SetMessage = new RelayCommand(DoSetMessage);
+            KeyDownPressedCommand = new RelayCommand(OnPreviewKeyDown);
 
         }
 
@@ -393,7 +394,7 @@ namespace Controller.Data.Steps
         /// <value>
         /// The move left command.
         /// </value>
-        public ICommand MoveLeft { get; set; }
+        public ICommand MoveLeft { get; private set; }
 
         /// <summary>
         /// Gets or sets the command that is triggered when the move right button is clicked
@@ -401,7 +402,7 @@ namespace Controller.Data.Steps
         /// <value>
         /// The move right command.
         /// </value>
-        public ICommand MoveRight { get; set; }
+        public ICommand MoveRight { get; private set; }
     
         /// <summary>
         /// Gets or sets the command that is triggered when the remove item button is clicked
@@ -409,7 +410,7 @@ namespace Controller.Data.Steps
         /// <value>
         /// The remove item command.
         /// </value>
-        public ICommand RemoveItem { get; set; }
+        public ICommand RemoveItem { get; private set; }
 
         /// <summary>
         /// Gets or sets the command that is triggered when the set message button is clicked
@@ -417,7 +418,7 @@ namespace Controller.Data.Steps
         /// <value>
         /// The set message command.
         /// </value>
-        public ICommand SetMessage { get; set; }
+        public ICommand SetMessage { get; private set; }
 
         /// <summary>
         /// Gets or sets the command that is triggered when the duration of the step is associated to a variable
@@ -425,7 +426,7 @@ namespace Controller.Data.Steps
         /// <value>
         /// The variable input value command.
         /// </value>
-        public ICommand VariableInputDuration { get; set; }
+        public ICommand VariableInputDuration { get; private set; }
 
         /// <summary>
         /// Gets or sets the command that is triggered when the value of the step is associated to a variable
@@ -433,7 +434,7 @@ namespace Controller.Data.Steps
         /// <value>
         /// The variable input value command.
         /// </value>
-        public ICommand VariableInputValue { get; set; }
+        public ICommand VariableInputValue { get; private set; }
 
         /// <summary>
         /// Gets or sets the command that is triggered when the user sets the duration manually
@@ -441,7 +442,7 @@ namespace Controller.Data.Steps
         /// <value>
         /// The duration of the user input command.
         /// </value>
-        public ICommand UserInputDuration { get; set; }
+        public ICommand UserInputDuration { get; private set; }
 
         /// <summary>
         /// Gets or sets the command that is triggered when the user sets the value manually
@@ -449,7 +450,12 @@ namespace Controller.Data.Steps
         /// <value>
         /// The user input value command.
         /// </value>
-        public ICommand UserInputValue { get; set; }
+        public ICommand UserInputValue { get; private set; }
+
+        /// <summary>
+        /// This command is triggered is triggered when the user presses a keyboard button while the control is in focus
+        /// </summary>
+        public ICommand KeyDownPressedCommand { private set; get; }
 
         /// <summary>
         /// Gets the color of the set message button.
