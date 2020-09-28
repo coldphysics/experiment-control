@@ -6,7 +6,6 @@
     xmlns:ChannelsView="clr-namespace:View.Data.Channels"
     xmlns:Control="clr-namespace:View.Control"
     xmlns:EditableLabel="clr-namespace:CustomElements.EditableLabel;assembly=CustomElements"
-    xmlns:Helper="clr-namespace:View.Helper"
     xmlns:SequenceController="clr-namespace:Controller.Data.Tabs;assembly=Controller"
     xmlns:StepsController="clr-namespace:Controller.Data.Steps;assembly=Controller"
     xmlns:StepsView="clr-namespace:View.Data.Steps"

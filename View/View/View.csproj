@@ -182,7 +182,6 @@
     <Compile Include="Data\Steps\StepPythonView.xaml.cs">
       <DependentUpon>StepPythonView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helper\Utilities.cs" />
     <Compile Include="Data\Channels\AnalogHeader.xaml.cs">
       <DependentUpon>AnalogHeader.xaml</DependentUpon>
     </Compile>
@@ -204,7 +203,6 @@
     <Compile Include="Data\Windows\WindowDigitalView.xaml.cs">
       <DependentUpon>WindowDigitalView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helper\WindowGenerator.cs" />
     <Compile Include="Main\IterationManagerView.xaml.cs">
       <DependentUpon>IterationManagerView.xaml</DependentUpon>
     </Compile>

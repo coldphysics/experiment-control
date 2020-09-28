@@ -5,7 +5,7 @@ using Controller.Data.Cookbook;
 using Controller.MainWindow;
 using Model.Data.Cards;
 using Model.Root;
-using View.Helper;
+using Controller.Helper;
 
 namespace MainProject.Builders
 {
