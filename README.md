@@ -152,6 +152,8 @@ This section describes recommendations and hints regarding the programming of th
 - New windows are created via the `Controller` project using the `Controller.Common.WindowsHelper` class:
    - Only general purpose `Window` types should be used.
    - New `Window` classes can be implemented for special needs, e.g., changing default behaviour or appearance of standard `Windows`.
+- Use the `Microsoft.Xaml.Behaviors` package in order to trigger commands based on events. This is essential to allow removing the need of code-behind
+- Another option to remove the need to use code-behind is to yous styles and triggers within XAML code.
 
 #### File Saving
 
