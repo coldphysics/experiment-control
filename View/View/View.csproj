@@ -267,7 +267,6 @@
     <Compile Include="Settings\Settings\StringSettingView.xaml.cs">
       <DependentUpon>StringSettingView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\MouseDownOnVariableCommandParamConverter.cs" />
     <Compile Include="Variables\TaskListDataTemplateSelector.cs" />
     <Compile Include="Variables\VariablesView.xaml.cs">
       <DependentUpon>VariablesView.xaml</DependentUpon>

@@ -55,10 +55,6 @@
         <VariableTypes:VariableGroupHeaderView />
     </DataTemplate>
 
-
-
     <variables:TaskListDataTemplateSelector x:Key="myDataTemplateSelector" />
-
-    <variables:MouseDownOnVariableCommandParamConverter x:Key="parameterConverter" />
 
 </ResourceDictionary>
