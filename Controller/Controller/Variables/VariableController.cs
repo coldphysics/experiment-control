@@ -19,7 +19,7 @@ namespace Controller.Variables
     /// <summary>
     /// A controller for a single variable
     /// </summary>
-    public class VariableController : BaseController
+    public abstract class VariableController : BaseController
     {
         // ******************** variables ********************
         private VariablesController _parent;

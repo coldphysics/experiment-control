@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:CustomElements="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:l="clr-namespace:Controller.Data.Channels;assembly=Controller"
+    xmlns:l="clr-namespace:View.Data.Channels"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="163"
     MinWidth="130"

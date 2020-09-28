@@ -17,7 +17,7 @@ using Controller.Helper;
 
 namespace Controller.Data.Channels
 {
-    public class ChannelSettingsController : INotifyPropertyChanged, IDataErrorInfo
+    public abstract class ChannelSettingsController : INotifyPropertyChanged, IDataErrorInfo
     {
         public const string DEFAULT_INPUT_UNIT = "V";
         // ******************** properties ********************

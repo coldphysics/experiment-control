@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Controller.Data.Channels
+namespace View.Data.Channels
 {
     /// <summary>
     /// Converts a boolean value to a colored solid brush to indicate whether calibration is used.

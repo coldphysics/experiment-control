@@ -17,28 +17,7 @@ using PythonUtils;
 
 namespace Controller.Data.Tabs
 {
-    public class IsEnabledToBrushConverter : IValueConverter
-    {
-        #region IValueConverter Members
 
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if ((bool)value)
-            {
-                {
-                    return new SolidColorBrush(Colors.LightGreen);
-                }
-            }
-            return new SolidColorBrush(Colors.LightPink);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-    }
     public class TabController : AbstractSequenceController, INotifyPropertyChanged
     {
         // ******************** properties ********************

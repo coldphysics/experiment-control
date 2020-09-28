@@ -7,6 +7,7 @@ using Controller.Data.Steps;
 using Controller.Data.Tabs;
 using Model.Data.Channels;
 using Model.Data.Steps;
+using static Model.Data.Cards.CardBasicModel;
 
 namespace Controller.Data.Channels
 {
@@ -86,7 +87,15 @@ namespace Controller.Data.Channels
                 if (Enum.TryParse(type, out rampStore))
                 {
                     stepModelToAdd = new StepRampModel(Model, rampStore);
-                    stepControllerToAdd = new StepRampController((StepRampModel)stepModelToAdd, this);
+
+                    if (stepModelToAdd.Card().Type == CardType.Analog)
+                    {
+                        stepControllerToAdd = new AnalogStepRampController((StepRampModel)stepModelToAdd, this);
+                    }
+                    else
+                    {
+                        stepControllerToAdd = new DigitalStepRampController((StepRampModel)stepModelToAdd, this);
+                    }
                 }
                 else
                 {
@@ -95,7 +104,15 @@ namespace Controller.Data.Channels
                     if (Enum.TryParse(type, out fileStore))
                     {
                         stepModelToAdd = new StepFileModel(Model, fileStore);
-                        stepControllerToAdd = new StepFileController((StepFileModel)stepModelToAdd, this);
+
+                        if (stepModelToAdd.Card().Type == CardType.Analog)
+                        {
+                            stepControllerToAdd = new AnalogStepFileController((StepFileModel)stepModelToAdd, this);
+                        }
+                        else
+                        {
+                            stepControllerToAdd = new DigitalStepFileController((StepFileModel)stepModelToAdd, this);
+                        }
                     }
                 }
             }
@@ -141,13 +158,19 @@ namespace Controller.Data.Channels
             int index = Steps.IndexOf(step);
             var newStepModel = new StepRampModel(Model, StepRampModel.StoreType.Constant);
             Model.StepAdd(newStepModel);
-
             Model.Steps.Move(Model.Steps.IndexOf(newStepModel), index - 1);
+            StepRampController newStepController;
 
-            var newStepController = new StepRampController(newStepModel, this);
+            if (Model.Card().Type == CardType.Analog)
+            {
+                newStepController = new AnalogStepRampController(newStepModel, this);
+            }
+            else
+            {
+                newStepController = new DigitalStepRampController(newStepModel, this);
+            }
+
             Steps.Add(newStepController);
-
-
             Steps.Move(Steps.IndexOf(newStepController), index);
             CopyToBuffer();
         }
@@ -171,7 +194,17 @@ namespace Controller.Data.Channels
         {
             var newStepModel = new StepRampModel(Model, StepRampModel.StoreType.Constant);
             Model.StepAdd(newStepModel);
-            var newStepController = new StepRampController(newStepModel, this);
+            StepRampController newStepController;
+
+            if (Model.Card().Type == CardType.Analog)
+            {
+                newStepController = new AnalogStepRampController(newStepModel, this);
+            }
+            else
+            {
+                newStepController = new DigitalStepRampController(newStepModel, this);
+            }
+
             Steps.Add(newStepController);
         }
 
@@ -181,7 +214,17 @@ namespace Controller.Data.Channels
             model.Duration = new Model.BaseTypes.ValueDoubleModel() { Value = duration };
             model.Value = new Model.BaseTypes.ValueDoubleModel() { Value = value };
             Model.Steps.Insert(0, model);
-            StepRampController controller = new StepRampController(model, this);
+            StepRampController controller;
+
+            if (model.Card().Type == CardType.Analog)
+            {
+                controller = new AnalogStepRampController(model, this);
+            }
+            else
+            {
+                controller = new DigitalStepRampController(model, this);
+            }
+
             Steps.Insert(1, controller);
         }
 

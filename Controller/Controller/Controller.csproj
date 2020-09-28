@@ -148,13 +148,18 @@
     <Compile Include="Control\StepBatchAddition\StepBatchAdderController.cs" />
     <Compile Include="Control\SwitchWindowController.cs" />
     <Compile Include="Control\WindowList.cs" />
-    <Compile Include="Data\Channels\Converters.cs" />
+    <Compile Include="Data\Channels\AnalogChannelSettingsController.cs" />
     <Compile Include="Data\Channels\ChannelAnalogController.cs" />
     <Compile Include="Data\Channels\ChannelDigitalController.cs" />
     <Compile Include="Data\Channels\ChannelBasicController.cs" />
     <Compile Include="Data\Channels\ChannelSettingsController.cs" />
+    <Compile Include="Data\Channels\DigitalChannelSettingsController.cs" />
     <Compile Include="Data\DataController.cs" />
     <Compile Include="Cookbook\ControllerRecipe.cs" />
+    <Compile Include="Data\Steps\AnalogStepFileController.cs" />
+    <Compile Include="Data\Steps\AnalogStepRampController.cs" />
+    <Compile Include="Data\Steps\DigitalStepFileController.cs" />
+    <Compile Include="Data\Steps\DigitalStepRampController.cs" />
     <Compile Include="Data\Steps\SetMessageWindowController.cs" />
     <Compile Include="Data\Steps\StepPythonController.cs" />
     <Compile Include="Data\Steps\StepPythonSetScriptController.cs" />
@@ -199,7 +204,6 @@
     <Compile Include="Data\Windows\WindowBasicController.cs" />
     <Compile Include="BaseController.cs" />
     <Compile Include="Settings\ControllersBuilder.cs" />
-    <Compile Include="Settings\CurrentProfileToBoolConverter.cs" />
     <Compile Include="MainWindow\MainWindowController.cs" />
     <Compile Include="Settings\ProfileController.cs" />
     <Compile Include="Settings\ProfileManagerController.cs" />
@@ -216,9 +220,13 @@
     <Compile Include="Settings\Settings\SampleRateSettingController.cs" />
     <Compile Include="Settings\Settings\StringMultiOptionSettingController.cs" />
     <Compile Include="Settings\Settings\StringSettingController.cs" />
+    <Compile Include="Variables\GroupHeaderController.cs" />
     <Compile Include="Variables\VariableController.cs" />
+    <Compile Include="Variables\VariableDynamicController.cs" />
+    <Compile Include="Variables\VariableIteratorController.cs" />
     <Compile Include="Variables\VariablesController.cs" />
     <Compile Include="Helper\WindowsHelper.cs" />
+    <Compile Include="Variables\VariableStaticController.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AbstractController\AbstractController\AbstractController.csproj">

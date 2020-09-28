@@ -8,7 +8,7 @@ namespace Controller.Data.Steps
     /// A controller for the steps that use a single value to determine the output
     /// </summary>
     /// <seealso cref="Controller.Data.Steps.StepBasicController" />
-    public class StepRampController : StepBasicController
+    public abstract class StepRampController : StepBasicController
     {
         // ******************** properties ********************        
         /// <summary>

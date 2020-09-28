@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 
-namespace Controller.Settings
+namespace View.Settings
 {
     /// <summary>
     /// A converter that is used to detect whether a specific profile is equal to the active profile and turns this fact into a boolean value
@@ -10,8 +10,6 @@ namespace Controller.Settings
     /// <seealso cref="System.Windows.Data.IMultiValueConverter" />
     public class CurrentProfileToBoolConverter : IMultiValueConverter
     {
-
-        #region IMultiValueConverter Members
 
         /// <summary>
         /// Converts source values to a value for the binding target. The data binding engine calls this method when it propagates the values from source bindings to the binding target.
@@ -25,15 +23,13 @@ namespace Controller.Settings
         /// </returns>
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (values[0] is ProfileController && values[1] is ProfileController)
+            if (values[0] != null && values[1] != null)
             {
-                ProfileController currentProfile = (ProfileController)values[0];
-                ProfileController activeProfile = (values[1] as ProfileController);
-
-                return (currentProfile == activeProfile);
+                if (values[0].GetType() == values[1].GetType())
+                    return (values[0] == values[1]);
             }
-            else
-                return false;
+
+            return false;
         }
 
         /// <summary>
@@ -51,7 +47,5 @@ namespace Controller.Settings
         {
             throw new NotSupportedException();
         }
-
-        #endregion
     }
 }

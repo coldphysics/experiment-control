@@ -80,7 +80,6 @@
                 Grid.Column="0"
                 HorizontalContentAlignment="Stretch"
                 IsSynchronizedWithCurrentItem="True"
-                ItemTemplateSelector="{StaticResource myDataTemplateSelector}"
                 ItemsSource="{Binding Source={StaticResource collectionViewSource}, UpdateSourceTrigger=PropertyChanged}">
                 <ListBox.GroupStyle>
                     <GroupStyle ContainerStyle="{StaticResource ListBoxStyle}" />
@@ -155,7 +154,6 @@
                 Grid.Column="1"
                 HorizontalContentAlignment="Stretch"
                 IsSynchronizedWithCurrentItem="True"
-                ItemTemplate="{StaticResource VariableIteratorTemplate}"
                 ItemsSource="{Binding VariablesIterator, UpdateSourceTrigger=PropertyChanged}"
                 SelectedItem="{Binding SelectedIterator, Mode=OneWayToSource}">
 
@@ -204,7 +202,6 @@
                 Grid.Column="2"
                 HorizontalContentAlignment="Stretch"
                 IsSynchronizedWithCurrentItem="True"
-                ItemTemplate="{StaticResource VariableDynamicTemplate}"
                 ItemsSource="{Binding VariablesDynamic, UpdateSourceTrigger=PropertyChanged}"
                 SelectedItem="{Binding SelectedDynamic, Mode=OneWayToSource}">
 

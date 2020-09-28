@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="View.AdWin.Debug.FifoDebugView"
+    x:Class="View.AdWin.Debugging.FifoDebugView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>

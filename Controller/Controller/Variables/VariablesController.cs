@@ -202,7 +202,7 @@ namespace Controller.Variables
                 foreach (KeyValuePair<int, string> group in GroupNames)//Add group headers as variable controllelrs
                 {
                     VariableModel vM = new VariableModel();
-                    VariableController vC = new VariableController(vM, this);
+                    VariableController vC = new GroupHeaderController(vM, this);
                     vM.TypeOfVariable = VariableType.VariableTypeStatic;
                     vM.groupIndex = group.Key;
                     vC.IsGroupHeader = true;
@@ -254,7 +254,7 @@ namespace Controller.Variables
         {
             VariableModel variableModel = _variablesModel.addVariable();
 
-            VariableController variable = new VariableController(variableModel, this);
+            VariableController variable = new VariableDynamicController(variableModel, this);
             variable.TypeOfVariable = VariableType.VariableTypeDynamic;
             Variables.Add(variable);
             //UpdateSpecificVarialbesCollection(VariableType.VariableTypeDynamic);
@@ -269,7 +269,7 @@ namespace Controller.Variables
         {
             VariableModel variableModel = _variablesModel.addVariable();
 
-            VariableController variable = new VariableController(variableModel, this);
+            VariableController variable = new VariableIteratorController(variableModel, this);
             variable.TypeOfVariable = VariableType.VariableTypeIterator;
             Variables.Add(variable);
             //UpdateSpecificVarialbesCollection(VariableType.VariableTypeIterator);
@@ -285,7 +285,7 @@ namespace Controller.Variables
         public void addStatic(object parameter)
         {
             VariableModel variableModel = _variablesModel.addVariable();
-            VariableController variable = new VariableController(variableModel, this);
+            VariableController variable = new VariableStaticController(variableModel, this);
             variable.TypeOfVariable = VariableType.VariableTypeStatic;
             Variables.Add(variable);
 
@@ -918,7 +918,18 @@ namespace Controller.Variables
 
             foreach (VariableModel variable in variablesModel.VariablesList)
             {
-                Variables.Add(new VariableController(variable, this));
+                switch (variable.TypeOfVariable)
+                {
+                    case VariableType.VariableTypeDynamic:
+                        Variables.Add(new VariableDynamicController(variable, this));
+                        break;
+                    case VariableType.VariableTypeIterator:
+                        Variables.Add(new VariableIteratorController(variable, this));
+                        break;
+                    case VariableType.VariableTypeStatic:
+                        Variables.Add(new VariableStaticController(variable, this));
+                        break;
+                }
             }
 
             UpdateVariablesList();

@@ -49,16 +49,14 @@
                         <MenuItem.ItemsSource>
                             <CompositeCollection>
                                 <CollectionContainer Collection="{Binding Source={StaticResource RegularViewWindows}}" />
-
                                 <Separator />
                                 <!--  Look  -->
                                 <MenuItem Command="{Binding OpenVisualizeWindowCommand}" Header="Output _Visualizer" />
-
                                 <MenuItem Header="_AdWin-Specific">
                                     <MenuItem Command="{Binding ShowSimulatorCommand}" Header="AdWin _Simulator" />
                                     <MenuItem Command="{Binding ShowFifoDebugWindowCommand}" Header="AdWin FIFOs _Debugger" />
                                 </MenuItem>
-                                <MenuItem Command="{Binding ShowSwitchWindowCommand}" Header="_Switch Window" />
+                                <MenuItem Command="{Binding ShowSwitchWindowCommand}" Header="Show Model _Switches" />
                                 <MenuItem Command="{Binding ShowOptionsManagerCommand}" Header="_Options" />
                             </CompositeCollection>
                         </MenuItem.ItemsSource>
@@ -79,7 +77,9 @@
                 </Menu>
                 <Grid Margin="5">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="41*" />
+                        <ColumnDefinition Width="15*" />
+                        <ColumnDefinition Width="63*" />
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -97,9 +97,10 @@
                     <ContentControl
                         Grid.Row="0"
                         Grid.Column="0"
+                        Grid.ColumnSpan="3"
                         Content="{Binding CurrentModeController}" />
 
-                    <Grid Grid.Row="0" Grid.Column="1">
+                    <Grid Grid.Row="0" Grid.Column="3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
                             <ColumnDefinition Width="*" />
@@ -212,7 +213,7 @@
                         Name="IterateAndSaveButton"
                         Grid.Row="2"
                         Grid.Column="0"
-                        Grid.ColumnSpan="2 "
+                        Grid.ColumnSpan="3"
                         Margin="2,5,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
@@ -223,9 +224,8 @@
 
                     <ContentControl
                         Grid.Row="3"
-                        Grid.RowSpan="2"
                         Grid.Column="0"
-                        Grid.ColumnSpan="3"
+                        Grid.ColumnSpan="4"
                         Content="{Binding IterationManagerController}"
                         Visibility="{Binding IsIterateAndSaveChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </Grid>

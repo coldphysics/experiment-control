@@ -2,13 +2,9 @@
     x:Class="View.Data.Windows.WindowDigitalView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Channels="clr-namespace:Controller.Data.Channels;assembly=Controller"
-    xmlns:ChannelsView="clr-namespace:View.Data.Channels"
     xmlns:Control="clr-namespace:View.Control"
     xmlns:EditableLabel="clr-namespace:CustomElements.EditableLabel;assembly=CustomElements"
-    xmlns:SequenceController="clr-namespace:Controller.Data.Tabs;assembly=Controller"
-    xmlns:StepsController="clr-namespace:Controller.Data.Steps;assembly=Controller"
-    xmlns:StepsView="clr-namespace:View.Data.Steps"
+    xmlns:SequenceView="clr-namespace:View.Data.Tabs"
     xmlns:TabAddButton="clr-namespace:CustomElements.TabAddButton;assembly=CustomElements"
     xmlns:TabCloseButton="clr-namespace:CustomElements.TabCloseButton;assembly=CustomElements"
     xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
@@ -23,19 +19,10 @@
                 <ResourceDictionary Source="pack://application:,,,/CustomElements;component/CustomDictionary.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
-            <SequenceController:IsEnabledToBrushConverter x:Key="IsEnabledConverter" />
+            <SequenceView:IsEnabledToBrushConverter x:Key="IsEnabledConverter" />
+
             <DataTemplate x:Key="WindowsTemplate">
                 <Control:WindowsTemplate />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type StepsController:StepRampController}">
-                <StepsView:StepDigitalRampView BorderBrush="DarkGray" />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type StepsController:StepFileController}">
-                <StepsView:StepDigitalFileView BorderBrush="DarkGray" />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type Channels:ChannelSettingsController}">
-                <ChannelsView:DigitalHeader BorderBrush="DarkGray" />
             </DataTemplate>
 
             <DataTemplate x:Key="ChannelTemplate">
