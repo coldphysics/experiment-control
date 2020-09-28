@@ -157,6 +157,10 @@ This section describes recommendations and hints regarding the programming of th
 
 - A helper class for file saving and related dialogs should be used: `Controller.Common.FileHelper`.
 
+#### Unit Testing
+
+- Try to always create unit tests for new features created
+
 ### How To's
 
 If not mentioned otherwise, the following howtos assume the usage of Microsoft Visual Studio as an IDE.
