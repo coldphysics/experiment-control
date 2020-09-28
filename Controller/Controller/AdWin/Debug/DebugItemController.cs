@@ -14,10 +14,7 @@ namespace Controller.AdWin.Debug
             set
             {
                 _totalFifoSize = value;
-                if (null != this.PropertyChanged)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("TotalFifoSize"));
-                }
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TotalFifoSize"));
             }
         }
         private int _totalFifoSize;

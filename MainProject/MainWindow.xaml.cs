@@ -1,6 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
-using Controller;
+using System.Windows.Media.Imaging;
+using Controller.Helper;
 using Controller.MainWindow;
 using Controller.Settings;
 using MainProject.Builders;
@@ -22,8 +25,6 @@ namespace MainProject
 
         public MainWindow()
         {
-            InitializeComponent();
-
             if (Debugger.IsAttached)
                 Settings.Default.Reset();
 
@@ -76,29 +77,39 @@ namespace MainProject
                     ProfilesManager.GetInstance().GetValuesFromSnapshot(pcontroller.SettingsSnapshot);
                     ProfilesManager.GetInstance().SaveAllProfiles();
 
-                    MasterBuilder builder = new MasterBuilder();
-                    builder.Build();
-                    MainWindowController controller = builder.GetMainController();
-                    View.Main.MainWindow mainWindow = new View.Main.MainWindow(controller);
-                    mainWindow.Show();
-
-                    InitializeComponent();
-
-                    this.Close();
+                    StartApplication();
                 }
             }
             else
             {
-                MasterBuilder builder = new MasterBuilder();
-                builder.Build();
-                MainWindowController controller = builder.GetMainController();
-                View.Main.MainWindow mainWindow = new View.Main.MainWindow(controller);
-                mainWindow.Show();
-
-                InitializeComponent();
-
-                this.Close();
+                StartApplication();
             }
+        }
+
+        private void StartApplication()
+        {
+            MasterBuilder builder = new MasterBuilder();
+            builder.Build();
+            MainWindowController controller = builder.GetMainController();
+            controller.OnCreatingWindow();
+            Window mainWindow = WindowsHelper.CreateWindowToHostViewModel(controller, true, false, true, false);
+
+            if (controller.Icon != null && File.Exists(controller.Icon))
+            {
+                mainWindow.Icon = new BitmapImage(new Uri(controller.Icon, UriKind.Relative));
+            }
+
+            mainWindow.Width = 850;
+            mainWindow.Height = 750;
+            mainWindow.Title = "Experiment Control";
+            mainWindow.Closing += (sender, args) => controller.ShutdownApplication(args);
+            Errors.ErrorWindow.MainWindow = mainWindow;
+
+            mainWindow.Show();
+
+            InitializeComponent();
+
+            this.Close();
         }
     }
 }

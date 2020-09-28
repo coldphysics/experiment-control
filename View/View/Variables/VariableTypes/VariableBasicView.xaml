@@ -1,29 +1,54 @@
-﻿<UserControl x:Class="View.Variables.VariableTypes.VariableBasicView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:SubmitTextBox="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements" mc:Ignorable="d" 
-             d:DesignHeight="28" d:DesignWidth="200">
-	<Grid ToolTip="{Binding UsagesAsString}">
+﻿<UserControl
+    x:Class="View.Variables.VariableTypes.VariableBasicView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:SubmitTextBox="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="28"
+    d:DesignWidth="200"
+    mc:Ignorable="d">
+    <Grid ToolTip="{Binding UsagesAsString}">
+        <SubmitTextBox:SubmitTextBox
+            Name="VariableName"
+            Background="{Binding VariableUsage, Mode=OneWay}"
+            Text="{Binding VariableName, Mode=TwoWay}">
+            <SubmitTextBox:SubmitTextBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Name="Static"
+                        Command="{Binding SwitchToStatic}"
+                        Header="Static" />
+                    <MenuItem
+                        Name="Iterator"
+                        Command="{Binding SwitchToIterator}"
+                        Header="Iterator" />
+                    <MenuItem
+                        Name="Dynamic"
+                        Command="{Binding SwitchToDynamic}"
+                        Header="Dynamic" />
+                    <MenuItem
+                        Name="DeleteVariable"
+                        Command="{Binding DeleteVariable}"
+                        Header="Delete This Variable" />
+                    <MenuItem
+                        Name="MoveUp"
+                        Command="{Binding MoveUp}"
+                        Header="Move Up" />
+                    <MenuItem
+                        Name="MoveDown"
+                        Command="{Binding MoveDown}"
+                        Header="Move Down" />
+                    <MenuItem
+                        Name="MoveToGroup"
+                        Header="Move to Group"
+                        IsEnabled="{Binding CanMoveVariableToGroup}"
+                        ItemsSource="{Binding staticGroups, Mode=OneWay}" />
+                </ContextMenu>
+            </SubmitTextBox:SubmitTextBox.ContextMenu>
+        </SubmitTextBox:SubmitTextBox>
 
 
 
-        <SubmitTextBox:SubmitTextBox Name="VariableName" Text="{Binding VariableName, Mode=TwoWay}" Background="{Binding VariableUsage, Mode=OneWay}">
-			<SubmitTextBox:SubmitTextBox.ContextMenu>
-				<ContextMenu>
-					<MenuItem Name="Static" Header="Static" Command="{Binding SwitchToStatic}"></MenuItem>
-					<MenuItem Name="Iterator" Header="Iterator" Command="{Binding SwitchToIterator}"></MenuItem>
-					<MenuItem Name="Dynamic" Header="Dynamic" Command="{Binding SwitchToDynamic}"></MenuItem>
-					<MenuItem Name="DeleteVariable" Header="Delete This Variable" Command="{Binding DeleteVariable}"></MenuItem>
-					<MenuItem Name="MoveUp" Header="Move Up" Command="{Binding MoveUp}"></MenuItem>
-					<MenuItem Name="MoveDown" Header="Move Down" Command="{Binding MoveDown}"></MenuItem>
-					<MenuItem Name="MoveToGroup" Header="Move to Group"  ItemsSource="{Binding staticGroups, Mode=OneWay}"></MenuItem>
-				</ContextMenu>
-			</SubmitTextBox:SubmitTextBox.ContextMenu>
-		</SubmitTextBox:SubmitTextBox>
-
-
-
-	</Grid>
+    </Grid>
 </UserControl>

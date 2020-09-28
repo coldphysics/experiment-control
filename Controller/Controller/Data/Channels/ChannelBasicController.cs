@@ -1,18 +1,19 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Windows.Input;
 using AbstractController.Data.Channels;
+using Communication.Commands;
 using Controller.Data.Steps;
 using Controller.Data.Tabs;
 using Model.Data.Channels;
 using Model.Data.Steps;
+using static Model.Data.Cards.CardBasicModel;
 
 namespace Controller.Data.Channels
 {
     public abstract class ChannelBasicController : AbstractChannelController, INotifyPropertyChanged
     {
         // ******************** enums ********************
-        #region AnalogTypes enum
-
         public enum AnalogTypes
         {
             Constant,
@@ -22,10 +23,6 @@ namespace Controller.Data.Channels
             Python
         }
 
-        #endregion
-
-        #region DigitalTypes enum
-
         public enum DigitalTypes
         {
             Constant,
@@ -33,31 +30,28 @@ namespace Controller.Data.Channels
             Csv
         }
 
-        #endregion
-
-        #region LeftRightEnum enum
-
         public enum LeftRightEnum
         {
             Left,
             Right
         }
 
-        #endregion
 
-        // ******************** properties ********************
+        // ******************** Properties ********************
         public Root.RootController _rootController
         {
             get { return _parent._rootController; }
         }
 
+        public RelayCommand MouseDownCommand
+        {
+            private set;
+            get;
+        }
+
 
         // ******************** events ********************
-        #region INotifyPropertyChanged Members
-
         public event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion
 
 
         // ******************** variables ********************
@@ -69,6 +63,7 @@ namespace Controller.Data.Channels
             : base(model, parent)
         {
             _parent = parent;
+            MouseDownCommand = new RelayCommand(OnMoudeDown);
         }
 
         internal void ChangeStep(StepBasicController step, String type)
@@ -92,7 +87,15 @@ namespace Controller.Data.Channels
                 if (Enum.TryParse(type, out rampStore))
                 {
                     stepModelToAdd = new StepRampModel(Model, rampStore);
-                    stepControllerToAdd = new StepRampController((StepRampModel)stepModelToAdd, this);
+
+                    if (stepModelToAdd.Card().Type == CardType.Analog)
+                    {
+                        stepControllerToAdd = new AnalogStepRampController((StepRampModel)stepModelToAdd, this);
+                    }
+                    else
+                    {
+                        stepControllerToAdd = new DigitalStepRampController((StepRampModel)stepModelToAdd, this);
+                    }
                 }
                 else
                 {
@@ -101,7 +104,15 @@ namespace Controller.Data.Channels
                     if (Enum.TryParse(type, out fileStore))
                     {
                         stepModelToAdd = new StepFileModel(Model, fileStore);
-                        stepControllerToAdd = new StepFileController((StepFileModel)stepModelToAdd, this);
+
+                        if (stepModelToAdd.Card().Type == CardType.Analog)
+                        {
+                            stepControllerToAdd = new AnalogStepFileController((StepFileModel)stepModelToAdd, this);
+                        }
+                        else
+                        {
+                            stepControllerToAdd = new DigitalStepFileController((StepFileModel)stepModelToAdd, this);
+                        }
                     }
                 }
             }
@@ -147,13 +158,19 @@ namespace Controller.Data.Channels
             int index = Steps.IndexOf(step);
             var newStepModel = new StepRampModel(Model, StepRampModel.StoreType.Constant);
             Model.StepAdd(newStepModel);
-
             Model.Steps.Move(Model.Steps.IndexOf(newStepModel), index - 1);
+            StepRampController newStepController;
 
-            var newStepController = new StepRampController(newStepModel, this);
+            if (Model.Card().Type == CardType.Analog)
+            {
+                newStepController = new AnalogStepRampController(newStepModel, this);
+            }
+            else
+            {
+                newStepController = new DigitalStepRampController(newStepModel, this);
+            }
+
             Steps.Add(newStepController);
-
-
             Steps.Move(Steps.IndexOf(newStepController), index);
             CopyToBuffer();
         }
@@ -177,7 +194,17 @@ namespace Controller.Data.Channels
         {
             var newStepModel = new StepRampModel(Model, StepRampModel.StoreType.Constant);
             Model.StepAdd(newStepModel);
-            var newStepController = new StepRampController(newStepModel, this);
+            StepRampController newStepController;
+
+            if (Model.Card().Type == CardType.Analog)
+            {
+                newStepController = new AnalogStepRampController(newStepModel, this);
+            }
+            else
+            {
+                newStepController = new DigitalStepRampController(newStepModel, this);
+            }
+
             Steps.Add(newStepController);
         }
 
@@ -187,17 +214,24 @@ namespace Controller.Data.Channels
             model.Duration = new Model.BaseTypes.ValueDoubleModel() { Value = duration };
             model.Value = new Model.BaseTypes.ValueDoubleModel() { Value = value };
             Model.Steps.Insert(0, model);
-            StepRampController controller = new StepRampController(model, this);
+            StepRampController controller;
+
+            if (model.Card().Type == CardType.Analog)
+            {
+                controller = new AnalogStepRampController(model, this);
+            }
+            else
+            {
+                controller = new DigitalStepRampController(model, this);
+            }
+
             Steps.Insert(1, controller);
         }
-
 
         public void CopyToBuffer()
         {
             ((TabController)Parent).CopyToBuffer();
         }
-
-
 
         public double StartTimeOf(StepBasicController step)
         {
@@ -210,7 +244,6 @@ namespace Controller.Data.Channels
             return startTime;
         }
 
-
         public void UpdateSteps(StepBasicController step)
         {
             var index = Steps.IndexOf(step);
@@ -221,6 +254,15 @@ namespace Controller.Data.Channels
             }
         }
 
+        private void OnMoudeDown(object parameter)
+        {
+            MouseButtonEventArgs e = (MouseButtonEventArgs)parameter;
+
+            if (e.ClickCount >= 2)
+            {
+                AddStep();
+            }
+        }
 
         public override string ToString()
         {

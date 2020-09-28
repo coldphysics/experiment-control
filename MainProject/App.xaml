@@ -2,26 +2,40 @@
     x:Class="MainProject.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vmadwinsim="clr-namespace:Controller.AdWin.Simulator;assembly=Controller"
     xmlns:vmc="clr-namespace:Controller.Control;assembly=Controller"
+    xmlns:vmcards="clr-namespace:Controller.Data.Windows;assembly=Controller"
+    xmlns:vmchannels="clr-namespace:Controller.Data.Channels;assembly=Controller"
     xmlns:vmcommon="clr-namespace:Controller.Common;assembly=Controller"
+    xmlns:vmcomparison="clr-namespace:Controller.Control.Compare;assembly=Controller"
     xmlns:vmexporter="clr-namespace:Controller.OutputVisualizer.Export;assembly=Controller"
     xmlns:vmfifodebug="clr-namespace:Controller.AdWin.Debug;assembly=Controller"
-    xmlns:vmmain="clr-namespace:Controller.MainWindow.MeasurementRoutine;assembly=Controller"
+    xmlns:vmmain="clr-namespace:Controller.MainWindow;assembly=Controller"
+    xmlns:vmmainmr="clr-namespace:Controller.MainWindow.MeasurementRoutine;assembly=Controller"
     xmlns:vmoptions="clr-namespace:Controller.Options;assembly=Controller"
     xmlns:vms="clr-namespace:Controller.Data.Steps;assembly=Controller"
     xmlns:vmsba="clr-namespace:Controller.Control.StepBatchAddition;assembly=Controller"
     xmlns:vmsettings="clr-namespace:Controller.Settings;assembly=Controller"
+    xmlns:vmsettingssettings="clr-namespace:Controller.Settings.Settings;assembly=Controller"
     xmlns:vmsimulator="clr-namespace:Controller.AdWin.Simulator;assembly=Controller"
+    xmlns:vmvariables="clr-namespace:Controller.Variables;assembly=Controller"
     xmlns:vmvisualizer="clr-namespace:Controller.OutputVisualizer;assembly=Controller"
+    xmlns:vwadwinsim="clr-namespace:View.AdWin.Simulator;assembly=View"
     xmlns:vwc="clr-namespace:View.Control;assembly=View"
+    xmlns:vwcards="clr-namespace:View.Data.Windows;assembly=View"
+    xmlns:vwchannels="clr-namespace:View.Data.Channels;assembly=View"
     xmlns:vwcommon="clr-namespace:View.Common;assembly=View"
+    xmlns:vwcomparison="clr-namespace:View.Control.Compare;assembly=View"
     xmlns:vwexporter="clr-namespace:View.OutputVisualizer.Export;assembly=View"
-    xmlns:vwfifodebug="clr-namespace:View.AdWin.Debug;assembly=View"
+    xmlns:vwfifodebug="clr-namespace:View.AdWin.Debugging;assembly=View"
     xmlns:vwmain="clr-namespace:View.Main;assembly=View"
     xmlns:vwoptions="clr-namespace:View.Options;assembly=View"
     xmlns:vws="clr-namespace:View.Data.Steps;assembly=View"
     xmlns:vwsettings="clr-namespace:View.Settings;assembly=View"
+    xmlns:vwsettingssettings="clr-namespace:View.Settings.Settings;assembly=View"
     xmlns:vwsimulator="clr-namespace:View.AdWin.Simulator;assembly=View"
+    xmlns:vwvariables="clr-namespace:View.Variables;assembly=View"
+    xmlns:vwvariabletypes="clr-namespace:View.Variables.VariableTypes;assembly=View"
     xmlns:vwvisualizer="clr-namespace:View.OutputVisualizer;assembly=View"
     StartupUri="MainWindow.xaml">
     <Application.Resources>
@@ -72,17 +86,28 @@
             <vwvisualizer:OutputVisualizer />
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type vmmain:PythonScriptsController}">
+        <DataTemplate DataType="{x:Type vmmainmr:PythonScriptsController}">
             <vwmain:PythonScriptsView />
         </DataTemplate>
 
-
-        <DataTemplate DataType="{x:Type vmmain:MeasurementRoutineScriptController}">
+        <DataTemplate DataType="{x:Type vmmainmr:MeasurementRoutineScriptController}">
             <vwmain:MeasurementRoutineScriptView />
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type vmmain:MeasurementRoutineSampleScriptController}">
+        <DataTemplate DataType="{x:Type vmmainmr:MeasurementRoutineSampleScriptController}">
             <vwmain:MeasurementRoutineSampleScriptView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmmain:IterationManagerController}">
+            <vwmain:IterationManagerView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmmainmr:MeasurementRoutineManagerController}">
+            <vwmain:MeasurementRoutineManagerView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmmain:MainWindowController}">
+            <vwmain:MainWindow />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vmcommon:CustomMessageBoxController}">
@@ -92,6 +117,123 @@
         <DataTemplate DataType="{x:Type vmexporter:ExportWindowController}">
             <vwexporter:ExportWindowView />
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmcomparison:VariableComparisonController}">
+            <vwcomparison:VariableComparison />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmcomparison:CompareDoubleItemController}">
+            <vwcomparison:CompareItem />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmcomparison:CompareStringItemController}">
+            <vwcomparison:CompareItem />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmcommon:SimpleMessageController}">
+            <vwcomparison:SimpleMessageCompareItem />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmchannels:ChannelSettingsController}">
+            <vwchannels:AnalogSettings />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmc:SimpleStringOkDialogController}">
+            <vwc:SimpleStringOkDialog />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmcards:AnalogWindowController}">
+            <vwcards:WindowAnalogView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmcards:DigitalWindowController}">
+            <vwcards:WindowDigitalView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmvariables:VariablesController}">
+            <vwvariables:VariablesView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmvariables:GroupHeaderController}">
+            <vwvariabletypes:VariableGroupHeaderView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmvariables:VariableStaticController}">
+            <vwvariabletypes:VariableStaticView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmvariables:VariableDynamicController}">
+            <vwvariabletypes:VariableDynamicView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmvariables:VariableIteratorController}">
+            <vwvariabletypes:VariableIteratorView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmadwinsim:ChannelOutputController}">
+            <vwadwinsim:ChannelOutputView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmsettingssettings:StringSettingController}">
+            <vwsettingssettings:StringSettingView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmsettingssettings:IntegerSettingController}">
+            <vwsettingssettings:IntegerSettingView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmsettingssettings:DecimalSettingController}">
+            <vwsettingssettings:DecimalSettingView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmsettingssettings:BooleanSettingController}">
+            <vwsettingssettings:BooleanSettingView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmsettingssettings:StringMultiOptionSettingController}">
+            <vwsettingssettings:StringMultiOptionSettingView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmsettingssettings:FileSettingController}">
+            <vwsettingssettings:FileFolderSettingView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmsettingssettings:FolderSettingController}">
+            <vwsettingssettings:FileFolderSettingView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmsettingssettings:DatabaseConnectionSettingController}">
+            <vwsettingssettings:DatabaseConnectionSettingView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vms:AnalogStepRampController}">
+            <vws:StepAnalogRampView BorderBrush="DarkGray" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vms:DigitalStepRampController}">
+            <vws:StepDigitalRampView BorderBrush="DarkGray" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vms:AnalogStepFileController}">
+            <vws:StepAnalogFileView BorderBrush="DarkGray" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vms:DigitalStepFileController}">
+            <vws:StepDigitalFileView BorderBrush="DarkGray" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmchannels:AnalogChannelSettingsController}">
+            <vwchannels:AnalogHeader BorderBrush="DarkGray" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmchannels:DigitalChannelSettingsController}">
+            <vwchannels:DigitalHeader BorderBrush="DarkGray" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vms:StepPythonController}">
+            <vws:StepPythonView BorderBrush="DarkGray" />
+        </DataTemplate>
+
 
     </Application.Resources>
 </Application>

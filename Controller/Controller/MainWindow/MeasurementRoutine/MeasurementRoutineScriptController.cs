@@ -8,6 +8,7 @@ using Communication.Commands;
 using Model.MeasurementRoutine.GlobalVariables;
 using System.Linq;
 using Controller.Common;
+using Controller.Helper;
 
 namespace Controller.MainWindow.MeasurementRoutine
 {

@@ -1,4 +1,5 @@
 ﻿using Communication.Commands;
+using Controller.Helper;
 using Controller.OutputVisualizer.Export;
 using LiveCharts;
 using LiveCharts.Configurations;

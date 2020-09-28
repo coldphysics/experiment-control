@@ -2,6 +2,7 @@
 using System.Windows;
 using Communication.Commands;
 using Controller.Data.Channels;
+using Controller.Helper;
 using Model.Data.Steps;
 
 namespace Controller.Data.Steps

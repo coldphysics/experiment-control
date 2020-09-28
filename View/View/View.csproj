@@ -96,6 +96,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\MainProject\packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\MainProject\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.19\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -128,7 +131,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdWin\Debug\FifoDebugView.xaml.cs">
+    <Compile Include="AdWin\Debugging\FifoDebugView.xaml.cs">
       <DependentUpon>FifoDebugView.xaml</DependentUpon>
     </Compile>
     <Compile Include="AdWin\Simulator\ChannelOutputView.xaml.cs">
@@ -140,6 +143,18 @@
     <Compile Include="Common\CustomMessageBoxView.xaml.cs">
       <DependentUpon>CustomMessageBoxView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\Compare\CompareItem.xaml.cs">
+      <DependentUpon>CompareItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Compare\SimpleMessageCompareItem.xaml.cs">
+      <DependentUpon>SimpleMessageCompareItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\Compare\VariableComparison.xaml.cs">
+      <DependentUpon>VariableComparison.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\SimpleStringOkDialog.xaml.cs">
+      <DependentUpon>SimpleStringOkDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\StepBatchAdderUC.xaml.cs">
       <DependentUpon>StepBatchAdderUC.xaml</DependentUpon>
     </Compile>
@@ -149,6 +164,10 @@
     <Compile Include="Control\WindowsTemplate.xaml.cs">
       <DependentUpon>WindowsTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\Channels\AnalogSettings.xaml.cs">
+      <DependentUpon>AnalogSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Channels\Converters.cs" />
     <Compile Include="Data\Channels\DigitalHeader.xaml.cs">
       <DependentUpon>DigitalHeader.xaml</DependentUpon>
     </Compile>
@@ -164,10 +183,6 @@
     <Compile Include="Data\Steps\StepPythonView.xaml.cs">
       <DependentUpon>StepPythonView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helper\DragDropHelper.cs" />
-    <Compile Include="Helper\DraggedAdorner.cs" />
-    <Compile Include="Helper\InsertionAdorner.cs" />
-    <Compile Include="Helper\Utilities.cs" />
     <Compile Include="Data\Channels\AnalogHeader.xaml.cs">
       <DependentUpon>AnalogHeader.xaml</DependentUpon>
     </Compile>
@@ -183,12 +198,14 @@
     <Compile Include="Data\Steps\StepDigitalRamp.xaml.cs">
       <DependentUpon>StepDigitalRamp.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\Tabs\IsEnabledToBrushConverter.cs" />
     <Compile Include="Data\Windows\WindowAnalogView.xaml.cs">
       <DependentUpon>WindowAnalogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data\Windows\WindowDigitalView.xaml.cs">
       <DependentUpon>WindowDigitalView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Main\BooleanToVisibilityConverter.cs" />
     <Compile Include="Main\IterationManagerView.xaml.cs">
       <DependentUpon>IterationManagerView.xaml</DependentUpon>
     </Compile>
@@ -222,6 +239,7 @@
     <Compile Include="OutputVisualizer\OutputVisualizer.xaml.cs">
       <DependentUpon>OutputVisualizer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings\CurrentProfileToBoolConverter.cs" />
     <Compile Include="Settings\ProfileManagerView.xaml.cs">
       <DependentUpon>ProfileManagerView.xaml</DependentUpon>
     </Compile>
@@ -270,7 +288,7 @@
     <Compile Include="Variables\VariableTypes\VariableStaticView.xaml.cs">
       <DependentUpon>VariableStaticView.xaml</DependentUpon>
     </Compile>
-    <Page Include="AdWin\Debug\FifoDebugView.xaml">
+    <Page Include="AdWin\Debugging\FifoDebugView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -290,6 +308,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Control\Compare\CompareItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\Compare\SimpleMessageCompareItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\Compare\VariableComparison.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\SimpleStringOkDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Control\StepBatchAdderUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -305,6 +339,10 @@
     <Page Include="Data\Channels\AnalogHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Data\Channels\AnalogSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Data\Channels\DigitalHeader.xaml">
       <SubType>Designer</SubType>
@@ -472,7 +510,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper\WindowGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -499,33 +536,13 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AbstractController\AbstractController\AbstractController.csproj">
-      <Project>{729d4737-0773-440f-b79e-5ce13c39e8a8}</Project>
-      <Name>AbstractController</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Buffer\Buffer\Buffer.csproj">
-      <Project>{a4e6d34d-9407-40b7-a5e1-15c040584399}</Project>
-      <Name>Buffer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Communication\Communication\Communication.csproj">
       <Project>{d7b1494d-a547-420f-8e79-a8746552686c}</Project>
       <Name>Communication</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Controller\Controller\Controller.csproj">
-      <Project>{41eb105c-05d3-4629-8ce4-c4718d2e278c}</Project>
-      <Name>Controller</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\CustomElements\CustomElements\CustomElements.csproj">
       <Project>{727c9f78-694c-4c30-99dc-0c81d84b49a8}</Project>
       <Name>CustomElements</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Errors\Errors\Errors.csproj">
-      <Project>{60ae18b6-af6c-413a-b2e3-a7e04f4796f3}</Project>
-      <Name>Errors</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\HardwareAdWin\HardwareAdWin\HardwareAdWin.csproj">
-      <Project>{c6af2f23-8196-45ad-8d1c-7b3d67370636}</Project>
-      <Name>HardwareAdWin</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Model\Model\Model.csproj">
       <Project>{8E3379F7-41FB-4A3B-B3EC-74451D7E9E6C}</Project>

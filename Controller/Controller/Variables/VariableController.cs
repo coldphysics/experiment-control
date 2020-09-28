@@ -12,13 +12,14 @@ using Model.Data.Channels;
 using Model.Data.Steps;
 using System.Windows;
 using PythonUtils.ScriptExecution;
+using Controller.Helper;
 
 namespace Controller.Variables
 {
     /// <summary>
     /// A controller for a single variable
     /// </summary>
-    public class VariableController : BaseController
+    public abstract class VariableController : BaseController
     {
         // ******************** variables ********************
         private VariablesController _parent;
@@ -31,11 +32,6 @@ namespace Controller.Variables
         /// </summary>
         private List<string> usages = new List<string>();
 
-
-        public delegate void LoseFocusOnIterators(object sender, EventArgs e);
-        public event LoseFocusOnIterators LoseFocus;
-
-
         public ICommand DeleteVariable { get; private set; }
         public ICommand SwitchToStatic { get; private set; }
         public ICommand SwitchToIterator { get; private set; }
@@ -43,7 +39,19 @@ namespace Controller.Variables
         public ICommand MoveUp { get; private set; }
         public ICommand MoveDown { get; private set; }
         public ICommand RemoveGroup { get; private set; }
+        public ICommand MouseDownCommand { get; private set; }
         // ******************** properties ********************
+
+        /// <summary>
+        /// Indicates whether the current variable can be moved to a group (only returns true for static variables)
+        /// </summary>
+        public bool CanMoveVariableToGroup
+        {
+            get
+            {
+                return TypeOfVariable == VariableType.VariableTypeStatic;
+            }
+        }
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="VariableController"/> is used.
@@ -161,10 +169,6 @@ namespace Controller.Variables
                 OnPropertyChanged("GroupIndex");
             }
         }
-        public void DoLoseFocus()
-        {
-            this.LoseFocus?.Invoke(null, null);
-        }
 
         public SolidColorBrush VariableUsage
         {
@@ -256,7 +260,7 @@ namespace Controller.Variables
                 //TODO this could be an error
                 if (this.TypeOfVariable != VariableType.VariableTypeDynamic)
                 {
-                    _parent.evaluate(null);
+                    _parent.Evaluate(null);
                 }
                 // re-enable the Buffer updateVariablesListFromParent
                 _parent.VariableUpdateDone(lockObject);
@@ -271,7 +275,7 @@ namespace Controller.Variables
             get { return _model.VariableStartValue; }
             set
             {
-                _model.VariableStartValue = value;          
+                _model.VariableStartValue = value;
                 _parent.ResetIteratorValues();
                 _parent.countTotalNumberOfIterations();
             }
@@ -341,7 +345,7 @@ namespace Controller.Variables
             {
                 Object bufferUpdateLock = _parent.VariableUpdateStart();
                 _model.VariableCode = value;
-                _parent.evaluate(null);
+                _parent.Evaluate(null);
                 _parent.VariableUpdateDone(bufferUpdateLock);
             }
         }
@@ -435,6 +439,7 @@ namespace Controller.Variables
             MoveUp = new RelayCommand(moveUp, CanMoveUpOrDown);
             MoveDown = new RelayCommand(moveDown, CanMoveUpOrDown);
             RemoveGroup = new RelayCommand(DoRemoveGroup);
+            MouseDownCommand = new RelayCommand(OnMouseDown);
         }
 
         /// <summary>
@@ -444,7 +449,13 @@ namespace Controller.Variables
         /// <returns><c>true</c> if the type of the variable is iterator or dynamic.</returns>
         private bool CanMoveUpOrDown(object parameter)
         {
-            return (TypeOfVariable != VariableType.VariableTypeStatic);
+            if (TypeOfVariable == VariableType.VariableTypeStatic)
+                return false;
+
+            if (TypeOfVariable == VariableType.VariableTypeIterator && _variableLocked)
+                return false;
+
+            return true;
         }
 
         /// <summary>
@@ -544,6 +555,8 @@ namespace Controller.Variables
             return false;
         }
 
+
+
         /// <summary>
         /// Renames the current variable in all its occurrences in python scripts.
         /// </summary>
@@ -570,6 +583,12 @@ namespace Controller.Variables
                         break;
                 }
             }
+        }
+
+        private void OnMouseDown(object parameter)
+        {
+            ListBoxItem item = ViewsHelper.FindParentByType<ListBoxItem>((UserControl)parameter);
+            item.IsSelected = true;
         }
 
 

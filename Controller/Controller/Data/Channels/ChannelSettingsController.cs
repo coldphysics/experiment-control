@@ -12,70 +12,15 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Buffer.OutputProcessors.CalibrationUnit;
 using Model.Settings;
-
+using System.Windows.Controls;
+using Controller.Helper;
 
 namespace Controller.Data.Channels
 {
-    public class ChannelSettingsController : INotifyPropertyChanged, IDataErrorInfo
+    public abstract class ChannelSettingsController : INotifyPropertyChanged, IDataErrorInfo
     {
         public const string DEFAULT_INPUT_UNIT = "V";
         // ******************** properties ********************
-        /*public double InitValue
-        {
-            get
-            {
-                if (IndexOfTab() == 0)
-                {
-                    return _model.InitValue;
-                }
-                var previousTab = (TabController)_parent.PreviousTab();
-                var predecessorChannel = (ChannelBasicController)previousTab.Channels[_model.Index()];
-                object lastStep = predecessorChannel.Steps.Last();
-                if (lastStep.GetType() == typeof(ChannelSettingsController))
-                {
-                    return ((ChannelSettingsController)lastStep).InitValue;
-                }
-                else
-                {
-                    return ((StepBasicController)lastStep).Value;
-                }
-            }
-            set
-            {
-                if (IndexOfTab() == 0)
-                {
-                    _model.InitValue = value;
-                    _parent.CopyToBuffer();
-                    if (null != this.PropertyChanged)
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs("InitValue"));
-                    }
-                }
-            }
-        }
-        public bool InitValueReadOnly
-        {
-            get
-            {
-                if (_parent.Index() == 0)
-                {
-                    return false;
-                }
-                return true;
-            }
-        }
-
-        public Brush InitValueBackgroundColor
-        {
-            get
-            {
-                if (_parent.Index() == 0)
-                {
-                    return Brushes.White;
-                }
-                return Brushes.LightGray;
-            }
-        }*/
 
         public double StartTime { get { return _parent.ActualStartTime(); } }
 
@@ -293,28 +238,25 @@ namespace Controller.Data.Channels
             CloseWindow(parameter);
         }
 
-        private void CloseWindow(object window)
+        private void CloseWindow(object uc)
         {
             currentModel = originalModel;
             OnPropertyChanged(null);//To notify the potential elements shown on the ChannelHeader section of the possible changes.
 
-            if (window != null)
+            if (uc != null)
             {
-                Window myWindow = (Window)window;
-                myWindow.Close();
+                Window w = Window.GetWindow((UserControl)uc);
+                w.Close();
             }
         }
 
         private void OpenCommand(object parameter)
         {
-
             uiModel = originalModel.ShallowCopy();
             currentModel = uiModel;
-            AnalogSettingsWindow settingsWindow = new AnalogSettingsWindow(this);
-            settingsWindow.Show();
-
-            //Start analog window
-
+            Window settingsWindow = WindowsHelper.CreateWindowToHostViewModel(this, true, true);
+            settingsWindow.Title = "Analog Settings";
+            settingsWindow.ShowDialog();
         }
 
 

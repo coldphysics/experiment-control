@@ -4,6 +4,7 @@ using AbstractController.Data.Sequence;
 using Communication.Commands;
 using Communication.Interfaces.Generator;
 using Controller.Common;
+using Controller.Helper;
 using Controller.MainWindow;
 using Controller.OutputVisualizer.Export.Abstract;
 using CustomElements.CheckableTreeView;

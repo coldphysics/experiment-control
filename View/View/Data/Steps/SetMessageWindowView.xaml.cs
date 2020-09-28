@@ -2,7 +2,6 @@
 
 namespace View.Data.Steps
 {
-
     public partial class SetMessageWindowView : UserControl
     {
         public SetMessageWindowView()

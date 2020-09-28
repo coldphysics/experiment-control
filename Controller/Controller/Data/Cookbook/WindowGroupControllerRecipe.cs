@@ -38,27 +38,50 @@ namespace Controller.Data.Cookbook
             dataController.SequenceGroup = windowGroupController;
         }
 
-        public WindowController CookWindow(CardBasicModel model, WindowGroupController windowGroupController)
+        public WindowBasicController CookWindow(CardBasicModel model, WindowGroupController windowGroupController)
         {
-            var windowController = new WindowController(model, windowGroupController);
+            WindowBasicController windowController;
+
+            if (model.Type == CardBasicModel.CardType.Analog)
+            {
+                windowController = new AnalogWindowController(model, windowGroupController);
+            }
+            else
+            {
+                windowController = new DigitalWindowController(model, windowGroupController);
+            }
+
             foreach (SequenceModel sequence in model.Sequences)
             {
                 CookTab(sequence, windowController);
             }
+
             windowGroupController.Windows.Add(windowController);
+
             return windowController;
         }
 
         public TabController CookTab(SequenceModel sequence, WindowBasicController windowController)
         {
             var tab = new TabController(sequence, windowController);
-            //CHANGED Ghareeb 23.02.2017 no obvious use
-            //int chanNum = sequence.Card().startIndex;
             int chanNum = 0;
+
             foreach (ChannelModel channel in sequence.Channels)
             {
-                var channelController = new ChannelAnalogController(channel, tab);
-                var channelSettings = new ChannelSettingsController(channel.Setting, tab, chanNum);
+                ChannelBasicController channelController;
+                ChannelSettingsController channelSettings;
+
+                if (channel.Card().Type == CardBasicModel.CardType.Analog)
+                {
+                    channelController = new ChannelAnalogController(channel, tab);
+                    channelSettings = new AnalogChannelSettingsController(channel.Setting, tab, chanNum);
+                }
+                else
+                {
+                    channelController = new ChannelDigitalController(channel, tab);
+                    channelSettings = new DigitalChannelSettingsController(channel.Setting, tab, chanNum);
+                }
+
                 chanNum++;
 
                 //RECO A channel's header is a step! That is not logical!
@@ -71,12 +94,26 @@ namespace Controller.Data.Cookbook
                 {
                     if (step is StepFileModel)
                     {
-                        stepController = new StepFileController((StepFileModel) step, channelController);
+                        if (channel.Card().Type == CardBasicModel.CardType.Analog)
+                        {
+                            stepController = new AnalogStepFileController((StepFileModel)step, channelController);
+                        }
+                        else
+                        {
+                            stepController = new DigitalStepFileController((StepFileModel)step, channelController);
+                        }
                         
                     }
                     else if(step is StepRampModel)
                     {
-                        stepController = new StepRampController((StepRampModel) step, channelController);
+                        if (channel.Card().Type == CardBasicModel.CardType.Analog)
+                        {
+                            stepController = new AnalogStepRampController((StepRampModel) step, channelController);
+                        }
+                        else
+                        {
+                            stepController = new DigitalStepRampController((StepRampModel)step, channelController);
+                        }
                     }
                     else if (step is StepPythonModel)
                     {
@@ -89,5 +126,6 @@ namespace Controller.Data.Cookbook
             windowController.Tabs.Add(tab);
             return tab;
         }
+
     }
 }

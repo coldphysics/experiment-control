@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace View.Common
 {
-    /// <summary>
-    /// Interaction logic for CustomMessageBoxView.xaml
-    /// </summary>
     public partial class CustomMessageBoxView : UserControl
     {
         public CustomMessageBoxView()

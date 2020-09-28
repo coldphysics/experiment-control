@@ -3,6 +3,7 @@ using Model.Root;
 using System.Windows.Input;
 using Communication.Commands;
 using System.Windows;
+using Controller.Helper;
 
 namespace Controller.MainWindow.MeasurementRoutine
 {
@@ -16,7 +17,6 @@ namespace Controller.MainWindow.MeasurementRoutine
             get;
             set;
         }
-
 
         public string FilePath
         {
@@ -81,7 +81,7 @@ namespace Controller.MainWindow.MeasurementRoutine
         public void LoadPythonScripts(object parameter)
         {
             PythonScriptsController pyhtonScriptsController = new PythonScriptsController(this.RoutineModel);
-            Window pyhtonScriptsWindow = WindowsHelper.CreateCustomWindowToHostViewModel(pyhtonScriptsController, false);
+            Window pyhtonScriptsWindow = WindowsHelper.CreateWindowToHostViewModel(pyhtonScriptsController, false, false, false, true);
 
             pyhtonScriptsWindow.MinHeight = 360;
             pyhtonScriptsWindow.MinWidth = 550;

@@ -1,0 +1,38 @@
+﻿<UserControl
+    x:Class="View.AdWin.Debugging.FifoDebugView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <DataTemplate x:Key="BarsTemplate">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Content="{Binding Path=ChannelName}" />
+                <ProgressBar
+                    Grid.Column="1"
+                    Height="20"
+                    HorizontalAlignment="Stretch"
+                    Value="{Binding Path=CurrentFifoLoadPercent}" />
+                <Label Grid.Column="2" Content="{Binding Path=CurrentFifoLoad}" />
+                <Label Grid.Column="3" Content="/" />
+                <Label Grid.Column="4" Content="{Binding Path=TotalFifoSize}" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid HorizontalAlignment="Stretch">
+        <ListBox
+            Name="BarsListBox"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            IsSynchronizedWithCurrentItem="True"
+            ItemTemplate="{StaticResource BarsTemplate}"
+            ItemsSource="{Binding Path=Bars}" />
+    </Grid>
+</UserControl>

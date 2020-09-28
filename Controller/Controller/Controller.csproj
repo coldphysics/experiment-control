@@ -136,38 +136,39 @@
     <Compile Include="AdWin\Simulator\SimulatorController.cs" />
     <Compile Include="AdWin\Simulator\ViewModelBase.cs" />
     <Compile Include="Common\CustomMessageBoxController.cs" />
-    <Compile Include="Control\Compare\VariableComparison.xaml.cs">
-      <DependentUpon>VariableComparison.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Control\Compare\CompareItem.xaml.cs">
-      <DependentUpon>CompareItem.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Control\Compare\AbstractCompareItemController.cs" />
+    <Compile Include="Control\Compare\CompareDoubleItemController.cs" />
+    <Compile Include="Control\Compare\CompareStringItemController.cs" />
+    <Compile Include="Control\Compare\ICompareItemController.cs" />
+    <Compile Include="Common\SimpleMessageController.cs" />
+    <Compile Include="Control\Compare\VariableComparisonController.cs" />
     <Compile Include="Control\ShowableWindow.cs" />
-    <Compile Include="Control\SimpleStringOkWindow.xaml.cs">
-      <DependentUpon>SimpleStringOkWindow.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Control\SimpleStringOkDialogController.cs" />
     <Compile Include="Common\ModelBasedCTVBuilder.cs" />
     <Compile Include="Control\StepBatchAddition\StepBatchAdderController.cs" />
     <Compile Include="Control\SwitchWindowController.cs" />
     <Compile Include="Control\WindowList.cs" />
-    <Compile Include="CustomWindow.cs" />
-    <Compile Include="Data\Channels\Converters.cs" />
+    <Compile Include="Data\Channels\AnalogChannelSettingsController.cs" />
     <Compile Include="Data\Channels\ChannelAnalogController.cs" />
     <Compile Include="Data\Channels\ChannelDigitalController.cs" />
     <Compile Include="Data\Channels\ChannelBasicController.cs" />
     <Compile Include="Data\Channels\ChannelSettingsController.cs" />
-    <Compile Include="Data\Channels\AnalogSettingsWindow.xaml.cs">
-      <DependentUpon>AnalogSettingsWindow.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Data\Channels\DigitalChannelSettingsController.cs" />
     <Compile Include="Data\DataController.cs" />
     <Compile Include="Cookbook\ControllerRecipe.cs" />
+    <Compile Include="Data\Steps\AnalogStepFileController.cs" />
+    <Compile Include="Data\Steps\AnalogStepRampController.cs" />
+    <Compile Include="Data\Steps\DigitalStepFileController.cs" />
+    <Compile Include="Data\Steps\DigitalStepRampController.cs" />
     <Compile Include="Data\Steps\SetMessageWindowController.cs" />
     <Compile Include="Data\Steps\StepPythonController.cs" />
     <Compile Include="Data\Steps\StepPythonSetScriptController.cs" />
     <Compile Include="Data\WindowGroups\WindowGroupController.cs" />
     <Compile Include="Data\Cookbook\WindowGroupControllerRecipe.cs" />
-    <Compile Include="FileHelper.cs" />
-    <Compile Include="MainWindow\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Data\Windows\DigitalWindowController.cs" />
+    <Compile Include="Helper\FileHelper.cs" />
+    <Compile Include="Helper\ViewsHelper.cs" />
+    <Compile Include="Helper\WindowGenerator.cs" />
     <Compile Include="MainWindow\ChildController.cs" />
     <Compile Include="MainWindow\IterationManagerController.cs" />
     <Compile Include="MainWindow\MeasurementRoutine\MeasurementRoutineLoader.cs" />
@@ -199,11 +200,10 @@
     <Compile Include="Data\Steps\StepBasicController.cs" />
     <Compile Include="Data\Steps\StepRampController.cs" />
     <Compile Include="Data\Tabs\TabController.cs" />
-    <Compile Include="Data\Windows\WindowController.cs" />
+    <Compile Include="Data\Windows\AnalogWindowController.cs" />
     <Compile Include="Data\Windows\WindowBasicController.cs" />
     <Compile Include="BaseController.cs" />
     <Compile Include="Settings\ControllersBuilder.cs" />
-    <Compile Include="Settings\CurrentProfileToBoolConverter.cs" />
     <Compile Include="MainWindow\MainWindowController.cs" />
     <Compile Include="Settings\ProfileController.cs" />
     <Compile Include="Settings\ProfileManagerController.cs" />
@@ -220,27 +220,13 @@
     <Compile Include="Settings\Settings\SampleRateSettingController.cs" />
     <Compile Include="Settings\Settings\StringMultiOptionSettingController.cs" />
     <Compile Include="Settings\Settings\StringSettingController.cs" />
+    <Compile Include="Variables\GroupHeaderController.cs" />
     <Compile Include="Variables\VariableController.cs" />
+    <Compile Include="Variables\VariableDynamicController.cs" />
+    <Compile Include="Variables\VariableIteratorController.cs" />
     <Compile Include="Variables\VariablesController.cs" />
-    <Compile Include="WindowsHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Control\Compare\VariableComparison.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Control\Compare\CompareItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Control\SimpleStringOkWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Data\Channels\AnalogSettingsWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <Compile Include="Helper\WindowsHelper.cs" />
+    <Compile Include="Variables\VariableStaticController.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AbstractController\AbstractController\AbstractController.csproj">

@@ -140,7 +140,6 @@ namespace Controller.Data.Windows
 
         }
 
-
         private void OpenVisualizeWindow(object parameter)
         {
             if (!DoubleBuffer.ModelIsWrong)
@@ -157,7 +156,6 @@ namespace Controller.Data.Windows
 
         }
 
-
         private void TabCreate()
         {
             SequenceModel newSequenceModel = Model.SequenceAdd();
@@ -173,7 +171,6 @@ namespace Controller.Data.Windows
         {
             return Model.Name;
         }
-
 
     }
 }

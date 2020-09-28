@@ -5,7 +5,7 @@ using Controller.Data.Cookbook;
 using Controller.MainWindow;
 using Model.Data.Cards;
 using Model.Root;
-using View.Helper;
+using Controller.Helper;
 
 namespace MainProject.Builders
 {
@@ -37,17 +37,7 @@ namespace MainProject.Builders
             //Connects Events to iterate and evaluate the variables between buffer and variables. Iterate performs iterate and then evaluate.
             outputHandler.IterateVariables += variablesController.IterateVariablesFromBuffer;
             outputHandler.ResetIteratorValues += variablesController.ResetIteratorValuesFromBuffer;
-
-           
-
-                        
-            //starts the Variables Window
-            var variablesWindow = new View.Variables.VariablesView(variablesController);
-            //variablesWindow.Show();
-
-            //Errors.ErrorWindow errorWindow = new Errors.ErrorWindow();
-            //errorWindow.Show();
-
+      
             //Initializes the controlWindow and creates it (and with it all other Windows)
             this.mainController = new MainWindowController(rootModel, doubleBuffer, outputHandler, controllerWrapper, windowGenerator, variablesController);
             doubleBuffer.OnGeneratorStateChange += mainController.OnGeneratorStateChange;

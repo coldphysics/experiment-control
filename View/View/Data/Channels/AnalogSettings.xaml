@@ -1,0 +1,176 @@
+﻿<UserControl
+    x:Class="View.Data.Channels.AnalogSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:submitTextBox="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements"
+    x:Name="UC"
+    Width="500"
+    Height="400"
+    MinWidth="400"
+    MinHeight="300">
+    <UserControl.Resources>
+        <Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
+
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <!--<TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">Initial value</TextBlock>
+		<submitTextBox:SubmitTextBox VerticalContentAlignment="Center" HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch" Padding="0" Text="{Binding InitValue}" Grid.Row="0" Grid.Column="1" TabIndex="0"/>-->
+
+        <TextBlock
+            Grid.Column="0"
+            Margin="0,5,10,4"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center">
+            Minimal Output (V)
+        </TextBlock>
+        <TextBox
+            Grid.Column="1"
+            Padding="0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            VerticalContentAlignment="Center"
+            Style="{StaticResource textBoxInError}"
+            TabIndex="1"
+            Text="{Binding Min, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="0,4,10,5"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center">
+            Maximal Output (V)
+        </TextBlock>
+        <submitTextBox:SubmitTextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            Padding="0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            VerticalContentAlignment="Center"
+            Style="{StaticResource textBoxInError}"
+            TabIndex="2"
+            Text="{Binding Max, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+
+
+        <CheckBox
+            Name="UseCalibrationCB"
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsChecked="{Binding UseCalibration}"
+            TabIndex="6">
+            Use Calibration Script
+        </CheckBox>
+        <Border
+            Grid.Row="3"
+            Grid.ColumnSpan="2"
+            Margin="0,5"
+            Padding="0"
+            BorderBrush="Black"
+            BorderThickness="1">
+            <Grid IsEnabled="{Binding ElementName=UseCalibrationCB, Path=IsChecked}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="175" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Orientation="Vertical">
+                    <TextBlock
+                        Margin="0,0,10,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top">
+                        Calibration Script
+                    </TextBlock>
+                    <TextBlock Margin="10,10,5,10" TextWrapping="Wrap"><Run Text="A python script that is applied to the input values. Within the script you can use:" /><LineBreak /><Run Text="Variable &quot;cal&quot; as the result." /><LineBreak /><Run Text="Variable &quot;uncal&quot; as the input." /><LineBreak /><Run Text="The enabled/disabled state of sequences as boolean variables (seq_0, seq_1, ..)" />
+                        <LineBreak /><Run Text="All static, iterator, and dynamic variables." /><LineBreak /><Run Text="Example:" /><LineBreak /><Run Text="cal = uncal * 0.1 + 3.14" /></TextBlock>
+                </StackPanel>
+
+                <TextBox
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    AcceptsReturn="True"
+                    HorizontalScrollBarVisibility="Visible"
+                    Style="{StaticResource textBoxInError}"
+                    TabIndex="7"
+                    Text="{Binding CalibrationScript, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center">
+                    Input Unit
+                </TextBlock>
+                <submitTextBox:SubmitTextBox
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Padding="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    VerticalContentAlignment="Center"
+                    Style="{StaticResource textBoxInError}"
+                    Text="{Binding InputUnit, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
+
+            </Grid>
+        </Border>
+
+        <Button
+            Grid.Row="4"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Width="60"
+            Margin="0,0,0,0"
+            HorizontalAlignment="Right"
+            Command="{Binding CloseWindowCommand, Mode=OneWay}"
+            CommandParameter="{Binding ElementName=UC}"
+            IsCancel="True"
+            TabIndex="8">
+            Cancel
+        </Button>
+        <Button
+            Grid.Row="4"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Width="60"
+            Margin="0,0,65,0"
+            HorizontalAlignment="Right"
+            Command="{Binding SaveCommand, Mode=OneWay}"
+            CommandParameter="{Binding ElementName=UC}"
+            TabIndex="8">
+            Save
+        </Button>
+    </Grid>
+</UserControl>

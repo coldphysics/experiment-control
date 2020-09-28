@@ -15,7 +15,7 @@ namespace Controller.Data.Steps
     /// Controller for the steps that get their values from a file.
     /// </summary>
     /// <seealso cref="Controller.Data.Steps.StepBasicController" />
-    public class StepFileController : StepBasicController
+    public abstract class StepFileController : StepBasicController
     {
         // ******************** properties ********************        
         /// <summary>
