@@ -203,6 +203,7 @@
     <Compile Include="Data\Windows\WindowDigitalView.xaml.cs">
       <DependentUpon>WindowDigitalView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Main\BooleanToVisibilityConverter.cs" />
     <Compile Include="Main\IterationManagerView.xaml.cs">
       <DependentUpon>IterationManagerView.xaml</DependentUpon>
     </Compile>

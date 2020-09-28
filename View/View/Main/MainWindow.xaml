@@ -1,84 +1,80 @@
-﻿<Window x:Class="View.Main.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		xmlns:vm="clr-namespace:Controller.Settings;assembly=Controller"
-		xmlns:Control="clr-namespace:View.Control"
-		xmlns:local="clr-namespace:Controller.MainWindow;assembly=Controller"
-		xmlns:mr="clr-namespace:Controller.MainWindow.MeasurementRoutine;assembly=Controller"
-		xmlns:view="clr-namespace:View.Main"
-		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		mc:Ignorable="d"
-		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-		
-	 	d:DataContext="{d:DesignInstance local:MainWindowController, IsDesignTimeCreatable=True}"
-		Icon="{Binding Icon}"
-        Title="Experiment Control" Height="750" Width="800"  MinWidth="400" MinHeight="300" SizeToContent="WidthAndHeight" Closing="ShutdownApplication" Loaded="Window_Loaded">
-    <Window.Resources>
+﻿<UserControl
+    x:Class="View.Main.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:view="clr-namespace:View.Main"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    Name="UC"
+    MinWidth="400"
+    MinHeight="300"
+    mc:Ignorable="d">
 
-        <DataTemplate DataType="{x:Type local:IterationManagerController}">
-            <view:IterationManagerView  />
-        </DataTemplate>
+    <behaviors:Interaction.Triggers>
+        <behaviors:EventTrigger EventName="Loaded" SourceObject="{Binding ElementName=UC}">
+            <behaviors:InvokeCommandAction Command="{Binding WindowLoadedCommand}" PassEventArgsToCommand="True" />
+        </behaviors:EventTrigger>
+    </behaviors:Interaction.Triggers>
 
-        <DataTemplate DataType="{x:Type mr:MeasurementRoutineManagerController}">
-            <view:MeasurementRoutineManagerView  />
-        </DataTemplate>
-
-
-        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <CollectionViewSource  Source="{Binding Path=WindowList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged }" x:Key="RegularViewWindows" />
-
-    </Window.Resources>
+    <UserControl.Resources>
+        <view:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <CollectionViewSource x:Key="RegularViewWindows" Source="{Binding Path=WindowList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <xctk:BusyIndicator Grid.Row="0" IsBusy="{Binding IsUIBlocked}" BusyContent="{Binding UIBlockedMessage}">
-            <DockPanel >
-                <Menu DockPanel.Dock="Top" Background="{DynamicResource {x:Static SystemColors.MenuBarBrushKey}}">
+        <xctk:BusyIndicator
+            Grid.Row="0"
+            BusyContent="{Binding UIBlockedMessage}"
+            IsBusy="{Binding IsUIBlocked}">
+            <DockPanel>
+                <Menu Background="{DynamicResource {x:Static SystemColors.MenuBarBrushKey}}" DockPanel.Dock="Top">
                     <MenuItem Header="_Model">
-                        <MenuItem Header="_New" Command="{Binding NewCommand}"/>
-                        <MenuItem Header="_Save" Command="{Binding SaveCommand}"/>
+                        <MenuItem Command="{Binding NewCommand}" Header="_New" />
+                        <MenuItem Command="{Binding SaveCommand}" Header="_Save" />
                         <!--<MenuItem Header="Browse Primary Model" Command="{Binding LoadCommand}"/>-->
-                        <Separator/>
-                        <MenuItem Header="Step _Batch-Add" Command="{Binding ShowStepBatchAdderCommand}" />
-                        <MenuItem Header="_Clear 0-Duration Time Steps" Command="{Binding ClearAllDurationZeroStepsCommand}"/>
+                        <Separator />
+                        <MenuItem Command="{Binding ShowStepBatchAdderCommand}" Header="Step _Batch-Add" />
+                        <MenuItem Command="{Binding ClearAllDurationZeroStepsCommand}" Header="_Clear 0-Duration Time Steps" />
                     </MenuItem>
                     <MenuItem Header="_Profile">
-                        <MenuItem Header="_Manage Profiles" Command="{Binding ShowProfilesManagerCommand}"/>
+                        <MenuItem Command="{Binding ShowProfilesManagerCommand}" Header="_Manage Profiles" />
                     </MenuItem>
-                    <MenuItem Header="_View" >
+                    <MenuItem Header="_View">
                         <MenuItem.ItemsSource>
-                            <CompositeCollection >
-                                <CollectionContainer  Collection="{Binding Source={StaticResource RegularViewWindows}}" />
+                            <CompositeCollection>
+                                <CollectionContainer Collection="{Binding Source={StaticResource RegularViewWindows}}" />
 
-                                <Separator/>
-                                <!--Look -->
-                                <MenuItem Header="Output _Visualizer" Command="{Binding OpenVisualizeWindowCommand}"/>
+                                <Separator />
+                                <!--  Look  -->
+                                <MenuItem Command="{Binding OpenVisualizeWindowCommand}" Header="Output _Visualizer" />
 
                                 <MenuItem Header="_AdWin-Specific">
-                                    <MenuItem Header="AdWin _Simulator" Command="{Binding ShowSimulatorCommand}"/>
-                                    <MenuItem Header="AdWin FIFOs _Debugger" Command="{Binding ShowFifoDebugWindowCommand}"/>
+                                    <MenuItem Command="{Binding ShowSimulatorCommand}" Header="AdWin _Simulator" />
+                                    <MenuItem Command="{Binding ShowFifoDebugWindowCommand}" Header="AdWin FIFOs _Debugger" />
                                 </MenuItem>
-                                <MenuItem Header="_Switch Window" Command="{Binding ShowSwitchWindowCommand}"/>
-                                <MenuItem Header="_Options" Command="{Binding ShowOptionsManagerCommand}"/>
+                                <MenuItem Command="{Binding ShowSwitchWindowCommand}" Header="_Switch Window" />
+                                <MenuItem Command="{Binding ShowOptionsManagerCommand}" Header="_Options" />
                             </CompositeCollection>
                         </MenuItem.ItemsSource>
                         <MenuItem.ItemContainerStyle>
                             <Style TargetType="{x:Type MenuItem}">
-                                <Setter Property="Command"	Value="{Binding SelectWindow}"/>
+                                <Setter Property="Command" Value="{Binding SelectWindow}" />
                             </Style>
                         </MenuItem.ItemContainerStyle>
                         <MenuItem.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
+                                <TextBlock Text="{Binding Name}" />
                             </DataTemplate>
                         </MenuItem.ItemTemplate>
                     </MenuItem>
                     <MenuItem Header="_Help">
-                        <MenuItem Header="_About" Command="{Binding ShowAboutBoxCommand}"/>
+                        <MenuItem Command="{Binding ShowAboutBoxCommand}" Header="_About" />
                     </MenuItem>
                 </Menu>
                 <Grid Margin="5">
@@ -87,7 +83,7 @@
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto" />
                         <RowDefinition Height="30" />
                         <RowDefinition Height="30" />
                         <RowDefinition Height="*" />
@@ -98,79 +94,181 @@
 					<RadioButton Content="Measurement Routine" Command="{Binding SimpleSequenceSelectedCommand}" CommandParameter="Routine"  Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" />
 					-->
 
-                    <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding CurrentModeController}"/>
+                    <ContentControl
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Content="{Binding CurrentModeController}" />
 
                     <Grid Grid.Row="0" Grid.Column="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Duration of Cycle (s):" Margin="0,0,2,0" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"
-               VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Text="{Binding Duration, Mode=OneWay}"
-                   VerticalAlignment="Center" Margin="2,0,0,0"/>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,2,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Text="Duration of Cycle (s):" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="2,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Text="{Binding Duration, Mode=OneWay}" />
 
 
 
-                        <TextBlock Text="Time of Clicking 'Start':" Margin="0,0,2,0" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"
-               VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Grid.Row="1" Margin="2,0,0,0" HorizontalAlignment="Left" Text="{Binding StartTime, Mode=OneWay}"
-                   VerticalAlignment="Center" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="0,0,2,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Text="Time of Clicking 'Start':" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="2,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Text="{Binding StartTime, Mode=OneWay}" />
 
 
-                        <TextBlock Text="End Time of Current Scan:" Margin="0,0,2,0" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right"
-               VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Grid.Row="2" Margin="2,0,0,0" HorizontalAlignment="Left" Text="{Binding EndTime, Mode=OneWay}"
-                   VerticalAlignment="Center" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="0,0,2,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Text="End Time of Current Scan:" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="2,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Text="{Binding EndTime, Mode=OneWay}" />
 
-                        <TextBlock Text="Duration of Scan (h:m):" Margin="0,0,2,0" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
-               VerticalAlignment="Center" IsEnabled="{Binding IsIterateAndSaveChecked}"/>
-                        <TextBlock Grid.Column="1" Grid.Row="3" Margin="2,0,0,0" HorizontalAlignment="Left" Text="{Binding DurationTotal, Mode=OneWay}"
-                   VerticalAlignment="Center" IsEnabled="{Binding IsIterateAndSaveChecked}"/>
+                        <TextBlock
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Margin="0,0,2,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            IsEnabled="{Binding IsIterateAndSaveChecked}"
+                            Text="Duration of Scan (h:m):" />
+                        <TextBlock
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="2,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            IsEnabled="{Binding IsIterateAndSaveChecked}"
+                            Text="{Binding DurationTotal, Mode=OneWay}" />
 
-                        <TextBlock  Margin="0,0,2,0" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" 
-               VerticalAlignment="Top">
-						<Bold>Global Counter:</Bold>
+                        <TextBlock
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Margin="0,0,2,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top">
+                            <Bold>Global Counter:</Bold>
                         </TextBlock>
-                        <TextBlock  Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left"  Name="globalCount" Text="{Binding GlobalCounter, Mode=OneWay}"
-                   VerticalAlignment="Top"/>
+                        <TextBlock
+                            Name="globalCount"
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Text="{Binding GlobalCounter, Mode=OneWay}" />
 
                     </Grid>
 
 
-                    <CheckBox Content="Control LeCroy"  Margin="2,5,0,0" Grid.Row="1" HorizontalAlignment="Left" Grid.Column="0" Grid.ColumnSpan="2" IsEnabled="{Binding IsControlLecroyPossible}"
-                    	x:Name="ControlLecroyCheckBox"  VerticalAlignment="Top"  IsChecked="{Binding ControlLecroy}"  />
+                    <CheckBox
+                        x:Name="ControlLecroyCheckBox"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Margin="2,5,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Control LeCroy"
+                        IsChecked="{Binding ControlLecroy}"
+                        IsEnabled="{Binding IsControlLecroyPossible}" />
 
-                    <CheckBox Content="Increment Iterators" Margin="2,5,0,0" Grid.Row="2"  Grid.Column="0" Grid.ColumnSpan="2 " HorizontalAlignment="Left"  
-                  Name="IterateAndSaveButton" VerticalAlignment="Top" Command="{Binding IterateAndSaveCommand}" IsChecked="{Binding IsIterateAndSaveChecked, Mode=OneWay}" IsEnabled="{Binding IncrementIteratorsIsEnabled, Mode=TwoWay}"/>
+                    <CheckBox
+                        Name="IterateAndSaveButton"
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2 "
+                        Margin="2,5,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Command="{Binding IterateAndSaveCommand}"
+                        Content="Increment Iterators"
+                        IsChecked="{Binding IsIterateAndSaveChecked, Mode=OneWay}"
+                        IsEnabled="{Binding IncrementIteratorsIsEnabled, Mode=TwoWay}" />
 
-                    <ContentControl Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="3" Content="{Binding IterationManagerController}" Visibility="{Binding IsIterateAndSaveChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <ContentControl
+                        Grid.Row="3"
+                        Grid.RowSpan="2"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3"
+                        Content="{Binding IterationManagerController}"
+                        Visibility="{Binding IsIterateAndSaveChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </Grid>
             </DockPanel>
         </xctk:BusyIndicator>
-        <StatusBar Grid.Row="1" Height="25" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Margin="0,0,0,0" Name="statusBar"
-                   VerticalAlignment="Top">
+        <StatusBar
+            Name="statusBar"
+            Grid.Row="1"
+            Height="25"
+            Margin="0,0,0,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Stretch">
             <StatusBarItem>
                 <TextBlock>Generator:</TextBlock>
             </StatusBarItem>
-            <ProgressBar Name="GeneratorProgressBar" Foreground="{Binding GeneratorStateColor}" Value="100" HorizontalAlignment="Left" Height="10" VerticalAlignment="Top" Width="10"/>
+            <ProgressBar
+                Name="GeneratorProgressBar"
+                Width="10"
+                Height="10"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Foreground="{Binding GeneratorStateColor}"
+                Value="100" />
             <StatusBarItem>
-                <TextBlock Width="120" Text="{Binding GeneratorState}" Name="GeneratorStateTextBlock"></TextBlock>
+                <TextBlock
+                    Name="GeneratorStateTextBlock"
+                    Width="120"
+                    Text="{Binding GeneratorState}" />
             </StatusBarItem>
             <StatusBarItem>
                 <TextBlock>Output:</TextBlock>
             </StatusBarItem>
-            <ProgressBar Name="OutputProgressBar" Foreground="{Binding OutputCycleColor}" Value="100" HorizontalAlignment="Left" Height="10" VerticalAlignment="Top" Width="10"/>
+            <ProgressBar
+                Name="OutputProgressBar"
+                Width="10"
+                Height="10"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Foreground="{Binding OutputCycleColor}"
+                Value="100" />
             <StatusBarItem>
-                <TextBlock Text="{Binding OutputCycleState}" Name="OutputStateTextBlock"></TextBlock>
+                <TextBlock Name="OutputStateTextBlock" Text="{Binding OutputCycleState}" />
             </StatusBarItem>
             <!--            <StatusBarItem HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
                 <TextBlock Name="bufferStatus" Height="19" HorizontalAlignment="Stretch" Text="{Binding bufferStatus}"></TextBlock>
@@ -181,4 +279,4 @@
         </StatusBarItem>-->
         </StatusBar>
     </Grid>
-</Window>
+</UserControl>

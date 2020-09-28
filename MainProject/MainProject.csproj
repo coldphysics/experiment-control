@@ -231,6 +231,10 @@
       <Project>{41eb105c-05d3-4629-8ce4-c4718d2e278c}</Project>
       <Name>Controller</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Errors\Errors\Errors.csproj">
+      <Project>{60ae18b6-af6c-413a-b2e3-a7e04f4796f3}</Project>
+      <Name>Errors</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Generator\Generator\Generator.csproj">
       <Project>{618f796e-6ed6-4f5d-8ba9-08929dd46038}</Project>
       <Name>Generator</Name>

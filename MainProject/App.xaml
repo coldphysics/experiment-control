@@ -9,7 +9,8 @@
     xmlns:vmcomparison="clr-namespace:Controller.Control.Compare;assembly=Controller"
     xmlns:vmexporter="clr-namespace:Controller.OutputVisualizer.Export;assembly=Controller"
     xmlns:vmfifodebug="clr-namespace:Controller.AdWin.Debug;assembly=Controller"
-    xmlns:vmmain="clr-namespace:Controller.MainWindow.MeasurementRoutine;assembly=Controller"
+    xmlns:vmmain="clr-namespace:Controller.MainWindow;assembly=Controller"
+    xmlns:vmmainmr="clr-namespace:Controller.MainWindow.MeasurementRoutine;assembly=Controller"
     xmlns:vmoptions="clr-namespace:Controller.Options;assembly=Controller"
     xmlns:vms="clr-namespace:Controller.Data.Steps;assembly=Controller"
     xmlns:vmsba="clr-namespace:Controller.Control.StepBatchAddition;assembly=Controller"
@@ -80,16 +81,28 @@
             <vwvisualizer:OutputVisualizer />
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type vmmain:PythonScriptsController}">
+        <DataTemplate DataType="{x:Type vmmainmr:PythonScriptsController}">
             <vwmain:PythonScriptsView />
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type vmmain:MeasurementRoutineScriptController}">
+        <DataTemplate DataType="{x:Type vmmainmr:MeasurementRoutineScriptController}">
             <vwmain:MeasurementRoutineScriptView />
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type vmmain:MeasurementRoutineSampleScriptController}">
+        <DataTemplate DataType="{x:Type vmmainmr:MeasurementRoutineSampleScriptController}">
             <vwmain:MeasurementRoutineSampleScriptView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmmain:IterationManagerController}">
+            <vwmain:IterationManagerView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmmainmr:MeasurementRoutineManagerController}">
+            <vwmain:MeasurementRoutineManagerView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmmain:MainWindowController}">
+            <vwmain:MainWindow />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vmcommon:CustomMessageBoxController}">
@@ -135,6 +148,8 @@
         <DataTemplate DataType="{x:Type vmvariables:VariablesController}">
             <vwvariables:VariablesView />
         </DataTemplate>
+
+
 
     </Application.Resources>
 </Application>

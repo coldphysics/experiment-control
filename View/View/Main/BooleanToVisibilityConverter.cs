@@ -2,11 +2,10 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace Controller.MainWindow
+namespace View.Main
 {
     public class BooleanToVisibilityConverter:IValueConverter
     {
-        #region IValueConverter Members
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -21,6 +20,5 @@ namespace Controller.MainWindow
             throw new NotImplementedException();
         }
 
-        #endregion
     }
 }

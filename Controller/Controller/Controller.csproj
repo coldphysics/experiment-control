@@ -164,7 +164,6 @@
     <Compile Include="Helper\FileHelper.cs" />
     <Compile Include="Helper\ViewsHelper.cs" />
     <Compile Include="Helper\WindowGenerator.cs" />
-    <Compile Include="MainWindow\BooleanToVisibilityConverter.cs" />
     <Compile Include="MainWindow\ChildController.cs" />
     <Compile Include="MainWindow\IterationManagerController.cs" />
     <Compile Include="MainWindow\MeasurementRoutine\MeasurementRoutineLoader.cs" />

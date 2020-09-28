@@ -747,12 +747,11 @@ namespace Controller.MainWindow
             //Ebaa 
             OpenVisualizeWindowCommand = new RelayCommand(OpenVisualizeWindow);
             ShowStepBatchAdderCommand = new RelayCommand(ShowStepBatchAdder);
-
             ShowAboutBoxCommand = new RelayCommand(ShowAboutBox);
             NewCommand = new RelayCommand(CreateNewModelWithPromot, CanCreateNewModel);
             ShowOptionsManagerCommand = new RelayCommand(param => ShowOptionsManager());
             ShowProfilesManagerCommand = new RelayCommand(param => ShowProfilesManager());
-            //SimpleSequenceSelectedCommand = new RelayCommand(RunModeChangedHandler);
+            WindowLoadedCommand = new RelayCommand(Window_Loaded);
 
         }
 
@@ -823,6 +822,10 @@ namespace Controller.MainWindow
         /// The command to be executed to show the profiles manager
         /// </value>
         public ICommand ShowProfilesManagerCommand { get; private set; }
+        /// <summary>
+        /// This command is triggered when the window finishes loading
+        /// </summary>
+        public ICommand WindowLoadedCommand { get; private set; }
         #endregion
 
         #region Events
@@ -839,22 +842,9 @@ namespace Controller.MainWindow
         #region Event Handling
         public void OnCreatingWindow()
         {
+            VisualizationWindowManager.Initialize(this);
             _buffer.FinishedModelGeneration += VisualizationWindowManager.GetInstance().HandleNewGeneratedOutputEvent;
         }
-
-        //private void RunModeChangedHandler(object parameter)
-        //{
-        //    if (((string)parameter) == "Simple")
-        //    {
-        //        CurrentModeController = SimpleSequenceController;
-        //    }
-        //    else
-        //    {
-        //        CurrentModeController = MeasurementRoutineController;
-        //    }
-
-        //    OnPropertyChanged("CurrentModeController");
-        //}
 
         private void ControlWindowController_RefreshWindows(object sender, EventArgs arg)
         {
@@ -1237,17 +1227,6 @@ namespace Controller.MainWindow
             CreateNewWindowsForNewModel(_model);
         }
 
-        //private void LoadFile(object parameter)
-        //{
-        //    var fileDialog = new OpenFileDialog { DefaultExt = ".xml.gz", Filter = "Sequence (.xml.gz)|*.xml.gz" };
-        //    bool? result = fileDialog.ShowDialog();
-        //    if (result == true)
-        //    {
-        //        string fileName = fileDialog.FileName;
-
-        //        LoadFileByFileName(fileName, true);
-        //    }
-        //}
 
         private void SaveFile(object parameter)
         {
@@ -1327,7 +1306,7 @@ namespace Controller.MainWindow
         /// </summary>
         /// <param name="parameter">Not used</param>
 
-        public void OpenVisualizeWindow(object parameter)
+        private void OpenVisualizeWindow(object parameter)
         {
             if (!DoubleBuffer.ModelIsWrong)
             {
@@ -1341,6 +1320,48 @@ namespace Controller.MainWindow
                 errorBox = MessageBox.Show(error);
             }
 
+        }
+
+
+        public void ShutdownApplication(object parameter)
+        {
+            CancelEventArgs e = (CancelEventArgs)parameter;
+
+            if (OutputHandler.OutputLoopState != OutputHandler.OutputLoopStates.Sleeping)
+            {
+                MessageBoxResult result =
+                    MessageBox.Show(
+                        "The hardware Output is still in progress. Do you really want to Close this application?",
+                        "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.No)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                if (result == MessageBoxResult.Yes)
+                {
+                    HardwareAdWin.HardwareAdWin.ControlAdwinProcess.StopAdwin();
+                    Application.Current.Shutdown();
+                }
+            }
+            Application.Current.Shutdown();
+
+        }
+
+        private void Window_Loaded(object parameter)
+        {
+            // show info when in debugging mode
+            if (Global.GetHardwareType() == HW_TYPES.AdWin_Simulator || Global.GetHardwareType() == HW_TYPES.NO_OUTPUT || !Global.CanAccessDatabase())
+            {
+                string output = "According to the selected profile:";
+
+                if (Global.GetHardwareType() == HW_TYPES.AdWin_Simulator || Global.GetHardwareType() == HW_TYPES.NO_OUTPUT)
+                    output += "\n * No hardware output will take place!";
+                if (!Global.CanAccessDatabase())
+                    output += "\n * No data will be written into the database!";
+
+                MessageBox.Show(output, "Debug Mode", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
 
@@ -1525,7 +1546,7 @@ namespace Controller.MainWindow
                 window.Closing -= PreventWindowFromClosing;
                 window.Closing += PreventWindowFromClosing;
             }
-            
+
 
             _windowList = new WindowList(newWindows);
 
@@ -1597,14 +1618,14 @@ namespace Controller.MainWindow
         {
             if (_variables.Variables.Count != 0)
             {
-                if (variablesComparisonWindow != null && 
+                if (variablesComparisonWindow != null &&
                     Application.Current.Windows.Cast<Window>().Any(w => w.Name == variablesComparisonWindow.Name))
                 {
                     variablesComparisonWindow.Close();
                     variablesComparisonWindow = null;
                 }
 
-                VariableComparisonController controller = new VariableComparisonController(_variables,  newPrimaryModel.Data.variablesModel);
+                VariableComparisonController controller = new VariableComparisonController(_variables, newPrimaryModel.Data.variablesModel);
                 variablesComparisonWindow = WindowsHelper.CreateWindowToHostViewModel(controller, true, false);
                 variablesComparisonWindow.Name = "VariablesComparisonWindow";
                 variablesComparisonWindow.Title = "Variables Comparison";
