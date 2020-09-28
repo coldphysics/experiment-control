@@ -70,6 +70,7 @@
                 </Button>
             </Grid>
         </DataTemplate>
+        
         <DataTemplate x:Key="errorItemHeaderTemplateUp">
             <Grid Background="Gray">
                 <Grid.ColumnDefinitions>
@@ -97,14 +98,13 @@
                                         errorItemHeaderTemplate="{StaticResource errorItemHeaderTemplate}" 
                                         errorItemHeaderTemplateUp="{StaticResource errorItemHeaderTemplateUp}" />
     </Window.Resources>
+    
     <Grid Name="ErrorRoot">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
-		
-		
-		<ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+        
+        <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ItemsControl Name="ErrorListBox" HorizontalAlignment="Stretch"  Grid.Row="0" Grid.Column="0" ItemTemplateSelector="{StaticResource templateSelector}" ItemsSource="{Binding Path=SortedList}" VerticalContentAlignment="Stretch">
 
             </ItemsControl>

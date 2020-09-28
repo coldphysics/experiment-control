@@ -50,6 +50,9 @@ namespace Errors.Error
         private bool _showVariables = true;
         private bool _showPython = true;
 
+        private static readonly int PORT_FOR_NETWORK_STATUS_MESSAGES = 7205;
+        private static readonly int PORT_FOR_NETWORK_ERROR_MESSAGES = 7200;
+
         // ******************** events ********************
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -352,7 +355,7 @@ namespace Errors.Error
         /// </summary>
         private void AwaitNetworkErrors()
         {
-            AwaitNetworkMessages(7200, (dataFromClient) =>
+            AwaitNetworkMessages(PORT_FOR_NETWORK_ERROR_MESSAGES, (dataFromClient) =>
             {
                 if (dataFromClient.Length > 5)
                 {
@@ -368,7 +371,7 @@ namespace Errors.Error
 
         private void AwaitNetworkStatusReports()
         {
-            AwaitNetworkMessages(7205, (dataFromClient) =>
+            AwaitNetworkMessages(PORT_FOR_NETWORK_STATUS_MESSAGES, (dataFromClient) =>
             {
                 if (dataFromClient.Length > 6)
                 {
@@ -469,119 +472,5 @@ namespace Errors.Error
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Status"));
         }
 
-        /// <summary>
-        /// sets a List of strings as errors
-        /// </summary>
-        /// <param name="errorMsg">string List error message</param>
-        /// <param name="errorCard">ErrorCards enum</param>
-        /// <param name="stayOnDelete">true if error should stay even if setError or reset is called on this errorType</param>
-        /// <param name="errorType">ErrorTypes enum</param>
-        /*public void SetError(List<string> errorMsg, ErrorWindow errorCard, bool stayOnDelete, ErrorTypes errorType)
-        {
-            ErrorItem error;
-            lock (_lockObj)
-            {
-                if (Errors != null)
-                {
-                    for (int i = 0; i < Errors.Count; i++)
-                    {
-                        if (Errors[i].ErrorWindow == errorCard && !Errors[i].StayOnDelete && Errors[i].ErrorType == errorType)
-                        {
-                            Errors.Remove(Errors[i]);
-                            i = -1;
-                        }
-                    }
-                }
-            }
-            if (errorMsg != null)
-            {
-                for (int i = 0; i < errorMsg.Count(); i++)
-                {
-                    error = new ErrorItem();
-                    error.DataTime = DateTime.Now.ToString("ddd, dd.MM.yyyy HH:mm:ss UTCK");
-                    error.ErrorMessage = errorMsg[i];
-                    error.ErrorWindow = errorCard;
-                    error.StayOnDelete = stayOnDelete;
-                    error.ErrorType = errorType;
-                    lock (_lockObj)
-                    {
-                        Errors.Add(error);
-                    }
-                }
-            }
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-            }
-            //this._parent.blink();
-        }*/
-
-        /// <summary>
-        /// Deletes all Errors of the specified Window and Type, even the StayOnDeleteErrors
-        /// </summary>
-        /// <param name="errorWindow">Window the errors belong to</param>
-        /// <param name="errorType">Type of the errors to delete</param>
-        /*public void ResetEvenStayOnDelete(ErrorWindow errorWindow, ErrorTypes errorType)
-        {
-            lock (_lockObj)
-            {
-                for (int i = 0; i < Errors.Count; i++)
-                {
-                    if (Errors[i].ErrorWindow == errorWindow && Errors[i].ErrorType == errorType)
-                    {
-                        Errors.Remove(Errors[i]);
-                        i = -1;
-                    }
-                }
-            }
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-            }
-        }*/
-
-        /// <summary>
-        /// Sets an error (and deletes all other errors of this window and type)
-        /// </summary>
-        /// <param name="errorMsg">string List error message</param>
-        /// <param name="errorWindow">ErrorWindow enum</param>
-        /// <param name="stayOnDelete">true if error should stay even if setError or reset is called on this errorType</param>
-        /// <param name="errorType">ErrorTypes enum</param>
-        /*public void SetSingleError(string errorMsg, ErrorWindow errorWindow, bool stayOnDelete, ErrorTypes errorType)
-        {
-            ErrorItem error;
-            lock (_lockObj)
-            {
-                if (Errors != null)
-                {
-                    for (int i = 0; i < Errors.Count; i++)
-                    {
-                        if (Errors[i].ErrorWindow == errorWindow && !Errors[i].StayOnDelete && Errors[i].ErrorType == errorType)
-                        {
-                            Errors.Remove(Errors[i]);
-                            i = -1;
-                        }
-                    }
-                }
-            }
-            if (errorMsg != null)
-            {
-                    error = new ErrorItem();
-                    error.DataTime = DateTime.Now.ToString("ddd, dd.MM.yyyy HH:mm:ss UTCK");
-                    error.ErrorMessage = errorMsg;
-                    error.ErrorWindow = errorWindow;
-                    error.StayOnDelete = stayOnDelete;
-                    error.ErrorType = errorType;
-                    lock (_lockObj)
-                    {
-                        Errors.Add(error);
-                    }
-            }
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-            }
-            //this._parent.blink();
-        }*/
     }
 }
