@@ -509,7 +509,7 @@ namespace Controller.Variables
             // prevent inconsistencies and multiple updates on the buffer
             Object bufferUpdateLock = VariableUpdateStart();
             ErrorCollector errorCollector = ErrorCollector.Instance;
-            errorCollector.RemoveErrorsOfWindowAndType(ErrorWindow.Variables, ErrorTypes.DynamicCompileError);
+            errorCollector.RemoveErrorsOfWindowAndType(ErrorCategory.Variables, ErrorTypes.DynamicCompileError);
 
             HighPerformancePythonScriptExecutorBuilder builder = new HighPerformancePythonScriptExecutorBuilder();
             builder.SetOutputVariableName("val");
@@ -531,11 +531,11 @@ namespace Controller.Variables
                 }
                 catch (FormatException e)
                 {
-                    errorCollector.AddError(string.Format("Python val = expression does not return a Int32, Int64 or Double! Details: {0}\nAt dynamic variable: {1}", e.Message, dynamicVariable.VariableName), ErrorWindow.Variables, false, ErrorTypes.DynamicCompileError);
+                    errorCollector.AddError(string.Format("Python val = expression does not return a Int32, Int64 or Double! Details: {0}\nAt dynamic variable: {1}", e.Message, dynamicVariable.VariableName), ErrorCategory.Variables, false, ErrorTypes.DynamicCompileError);
                 }
                 catch (Exception e)
                 {
-                    errorCollector.AddError(e.Message + "\nAt dynamic variable: " + dynamicVariable.VariableName, ErrorWindow.Variables, false, ErrorTypes.DynamicCompileError);
+                    errorCollector.AddError(e.Message + "\nAt dynamic variable: " + dynamicVariable.VariableName, ErrorCategory.Variables, false, ErrorTypes.DynamicCompileError);
                 }
             }
 

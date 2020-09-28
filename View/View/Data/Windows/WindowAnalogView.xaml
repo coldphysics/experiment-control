@@ -2,9 +2,9 @@
     x:Class="View.Data.Windows.WindowAnalogView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:SequenceView="clr-namespace:View.Data.Tabs"
     xmlns:Control="clr-namespace:View.Control"
     xmlns:EditableLabel="clr-namespace:CustomElements.EditableLabel;assembly=CustomElements"
+    xmlns:SequenceView="clr-namespace:View.Data.Tabs"
     xmlns:TabAddButton="clr-namespace:CustomElements.TabAddButton;assembly=CustomElements"
     xmlns:TabCloseButton="clr-namespace:CustomElements.TabCloseButton;assembly=CustomElements"
     xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
@@ -23,7 +23,7 @@
                 <Control:WindowsTemplate />
             </DataTemplate>
 
-           
+
             <DataTemplate x:Key="ChannelTemplate">
 
                 <Border

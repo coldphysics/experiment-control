@@ -84,7 +84,7 @@ namespace Model.V1.Data.Steps
                 if (Valid != null)
                     Valid(this, new EventArgs());
                 flag = false;
-                errorCollector.AddError("FileName == \"\" at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.MainHardware, false, ErrorTypes.FileNameEmpty);
+                errorCollector.AddError("FileName == \"\" at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.MainHardware, false, ErrorTypes.FileNameEmpty);
             }
 
             if (!File.Exists(FileName))
@@ -92,7 +92,7 @@ namespace Model.V1.Data.Steps
                 if (Valid != null)
                     Valid(this, new EventArgs());
                 flag = false;
-                errorCollector.AddError("FileName not found at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.MainHardware, false, ErrorTypes.FileNotFound);
+                errorCollector.AddError("FileName not found at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.MainHardware, false, ErrorTypes.FileNotFound);
             }
 
             if (MessageState == true)//The step is critical (Notice that this does not change the value of th flag)
@@ -101,14 +101,14 @@ namespace Model.V1.Data.Steps
                 {
                     errorCollector.AddError(
                         "Critical state at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " +
-                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.Messages, false,
+                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.Messages, false,
                         ErrorTypes.Other);
                 }
                 else//A message is specified, so we include it in the resulting message
                 {
                     errorCollector.AddError(
                         "Critical state (" + MessageString + ") at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " +
-                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.Messages, false,
+                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.Messages, false,
                         ErrorTypes.Other);
                 }
             }

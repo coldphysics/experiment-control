@@ -97,7 +97,7 @@ namespace Controller.Root
         public void CopyToBuffer()
         {
             ErrorCollector errorCollector = ErrorCollector.Instance;
-            errorCollector.RemoveErrorsOfWindow(ErrorWindow.MainHardware);
+            errorCollector.RemoveErrorsOfWindow(ErrorCategory.MainHardware);
 
             if (Model.Verify())
             {

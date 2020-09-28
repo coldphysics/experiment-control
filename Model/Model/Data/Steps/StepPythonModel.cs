@@ -60,7 +60,7 @@ namespace Model.Data.Steps
 
             if (Script == null || Script.Trim().Length == 0)
             {
-                errorCollector.AddError("Pyhton script is not specified at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.MainHardware, false, ErrorTypes.DynamicCompileError);
+                errorCollector.AddError("Pyhton script is not specified at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.MainHardware, false, ErrorTypes.DynamicCompileError);
                 flag = false;
             }
 

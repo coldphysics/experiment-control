@@ -94,7 +94,6 @@
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Enums\AdWinStateEnum.cs" />
     <Compile Include="Enums\VariableTypeEnum.cs" />
-    <Compile Include="Events\BufferPayload.cs" />
     <Compile Include="Events\EventPayload.cs" />
     <Compile Include="Interfaces\Buffer\IOutputHandler.cs" />
     <Compile Include="Interfaces\Controller\IController.cs" />

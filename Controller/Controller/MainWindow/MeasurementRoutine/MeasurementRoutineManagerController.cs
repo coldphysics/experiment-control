@@ -13,6 +13,7 @@ using Model.Settings;
 using System.Linq;
 using System.Threading.Tasks;
 using Controller.Helper;
+using Errors.Error;
 
 namespace Controller.MainWindow.MeasurementRoutine
 {
@@ -682,7 +683,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                 {
                     //We have an error in the script!
                     string errorMessage = string.Format("The measurement routine script is trying to set the next model to the index {0} which does not exist! The primary model is loaded instead.", newIndex + 1);
-                    Errors.Error.ErrorCollector.Instance.AddError(errorMessage, Errors.Error.ErrorWindow.MainHardware, true, Errors.Error.ErrorTypes.DynamicCompileError);
+                    ErrorCollector.Instance.AddError(errorMessage, ErrorCategory.MainHardware, true, ErrorTypes.DynamicCompileError);
                     newRoutineModel = PrimaryModel;
                 }
             }

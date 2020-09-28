@@ -1,5 +1,6 @@
 ﻿using CustomElements.SizeSavedWindow;
 using Errors.Error;
+using Errors.Error.ErrorItems;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -92,18 +93,18 @@ namespace Errors
             ErrorCollector errorClass = ErrorCollector.Instance;
 
             // FIXME it might happen that get a DisconnectedItem here (see http://go4answers.webhost4life.com/Question/thread-brought-attention-response-442346.aspx)
-            if (realSender.DataContext.GetType() != typeof (ErrorItem))
+            if (realSender.DataContext.GetType() != typeof (AbstractErrorItem))
             {
                 Console.WriteLine("error: wrong class");
                 return;
             }
-            if (((ErrorItem) realSender.DataContext).isHeader)
+            if (realSender.DataContext is ErrorHeader)
             {
-                errorClass.RemoveErrorsOfWindowEvenStayOnDelete(((ErrorItem) realSender.DataContext).ErrorWindow);
+                errorClass.RemoveErrorsOfWindowEvenStayOnDelete(((ErrorHeader) realSender.DataContext).ErrorCategory);
             }
             else
             {
-                errorClass.RemoveSingleError(((ErrorItem) realSender.DataContext));
+                errorClass.RemoveSingleError(((ConcreteErrorItem) realSender.DataContext));
             }
         }
 
@@ -112,12 +113,12 @@ namespace Errors
             Button realSender = (Button)sender;
             ErrorCollector errorClass = ErrorCollector.Instance;
             // FIXME it might happen that get a DisconnectedItem here (see http://go4answers.webhost4life.com/Question/thread-brought-attention-response-442346.aspx)
-            if (realSender.DataContext.GetType() != typeof(ErrorItem))
+            if (realSender.DataContext.GetType() != typeof(AbstractErrorItem))
             {
                 Console.WriteLine("error: wrong class");
                 return;
             }
-            errorClass.RemoveErrorsOfWindow(((ErrorItem)realSender.DataContext).ErrorWindow);
+            errorClass.RemoveErrorsOfWindow(((AbstractErrorItem)realSender.DataContext).ErrorCategory);
         }
 
         private void OpenCategoryClick(object sender, RoutedEventArgs e)
@@ -125,32 +126,32 @@ namespace Errors
             Button realSender = (Button)sender;
             ErrorCollector errorClass = ErrorCollector.Instance;
             // FIXME it might happen that get a DisconnectedItem here (see http://go4answers.webhost4life.com/Question/thread-brought-attention-response-442346.aspx)
-            if (realSender.DataContext.GetType() != typeof(ErrorItem))
+            if (realSender.DataContext.GetType() != typeof(AbstractErrorItem))
             {
                 Console.WriteLine("error: wrong class");
                 return;
             }
-            if (((ErrorItem)realSender.DataContext).ErrorWindow == Error.ErrorWindow.Pulseblaster)
+            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Pulseblaster)
             {
                 errorClass.ShowPulseblaster = true;
                 return;
             }
-            if (((ErrorItem)realSender.DataContext).ErrorWindow == Error.ErrorWindow.Basic)
+            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Basic)
             {
                 errorClass.ShowBasic = true;
                 return;
             }
-            if (((ErrorItem)realSender.DataContext).ErrorWindow == Error.ErrorWindow.Variables)
+            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Variables)
             {
                 errorClass.ShowVariables = true;
                 return;
             }
-            if (((ErrorItem)realSender.DataContext).ErrorWindow == Error.ErrorWindow.MainHardware)
+            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.MainHardware)
             {
                 errorClass.ShowMainHardware = true;
                 return;
             }
-            if (((ErrorItem)realSender.DataContext).ErrorWindow == Error.ErrorWindow.Python)
+            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Python)
             {
                 errorClass.ShowPython = true;
                 return;
@@ -163,32 +164,32 @@ namespace Errors
             //System.Console.Write("real sender: {0}\n", (((ErrorItem)realSender.DataContext)).errorWindow);
             ErrorCollector errorClass = ErrorCollector.Instance;
             // FIXME it might happen that get a DisconnectedItem here (see http://go4answers.webhost4life.com/Question/thread-brought-attention-response-442346.aspx)
-            if (realSender.DataContext.GetType() != typeof(ErrorItem))
+            if (realSender.DataContext.GetType() != typeof(AbstractErrorItem))
             {
                 Console.WriteLine("error: wrong class");
                 return;
             }
-            if (((ErrorItem)realSender.DataContext).ErrorWindow == Error.ErrorWindow.Pulseblaster)
+            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Pulseblaster)
             {
                 errorClass.ShowPulseblaster = false;
                 return;
             }
-            if (((ErrorItem)realSender.DataContext).ErrorWindow == Error.ErrorWindow.Basic)
+            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Basic)
             {
                 errorClass.ShowBasic = false;
                 return;
             }
-            if (((ErrorItem)realSender.DataContext).ErrorWindow == Error.ErrorWindow.Variables)
+            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Variables)
             {
                 errorClass.ShowVariables = false;
                 return;
             }
-            if (((ErrorItem)realSender.DataContext).ErrorWindow == Error.ErrorWindow.MainHardware)
+            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.MainHardware)
             {
                 errorClass.ShowMainHardware = false;
                 return;
             }
-            if (((ErrorItem)realSender.DataContext).ErrorWindow == Error.ErrorWindow.Python)
+            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Python)
             {
                 errorClass.ShowPython = false;
                 return;
@@ -208,9 +209,9 @@ namespace Errors
         {
             ErrorCollector errorClass = ErrorCollector.Instance;
             //System.Console.Write("typeof item : {0}\n", container.GetType());
-            if (((ErrorItem)item).isHeader)
+            if (item is ErrorHeader)
             {
-                if (((ErrorItem)item).ErrorWindow == Error.ErrorWindow.Pulseblaster)
+                if (((ErrorHeader)item).ErrorCategory == Error.ErrorCategory.Pulseblaster)
                 {
                     if (errorClass.ShowPulseblaster)
                     {
@@ -218,7 +219,7 @@ namespace Errors
                     }
                     return errorItemHeaderTemplate;
                 }
-                if (((ErrorItem)item).ErrorWindow == Error.ErrorWindow.Basic)
+                if (((ErrorHeader)item).ErrorCategory == Error.ErrorCategory.Basic)
                 {
                     if (errorClass.ShowBasic)
                     {
@@ -226,7 +227,7 @@ namespace Errors
                     }
                     return errorItemHeaderTemplate;
                 }
-                if (((ErrorItem)item).ErrorWindow == Error.ErrorWindow.Variables)
+                if (((ErrorHeader)item).ErrorCategory == Error.ErrorCategory.Variables)
                 {
                     if (errorClass.ShowVariables)
                     {
@@ -234,7 +235,7 @@ namespace Errors
                     }
                     return errorItemHeaderTemplate;
                 }
-                if (((ErrorItem)item).ErrorWindow == Error.ErrorWindow.MainHardware)
+                if (((ErrorHeader)item).ErrorCategory == Error.ErrorCategory.MainHardware)
                 {
                     if (errorClass.ShowMainHardware)
                     {
@@ -242,7 +243,7 @@ namespace Errors
                     }
                     return errorItemHeaderTemplate;
                 }
-                if (((ErrorItem)item).ErrorWindow == Error.ErrorWindow.Python)
+                if (((ErrorHeader)item).ErrorCategory == Error.ErrorCategory.Python)
                 {
                     if (errorClass.ShowPython)
                     {
@@ -251,7 +252,7 @@ namespace Errors
                     return errorItemHeaderTemplate;
                 }
             }
-            if (((ErrorItem)item).StayOnDelete)
+            if (((ConcreteErrorItem)item).StayOnDelete)
             {
                 return errorItemTemplateCrit;
             }
@@ -260,34 +261,6 @@ namespace Errors
                 return errorItemTemplate;
             }
            
-        }
-    }
-    public class WidthConverter : System.Windows.Data.IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            //System.Console.Write("aaa {0}\n", ((double)value));
-            return ((double)value-275);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            //System.Console.Write("bbb\n");
-            return (value);
-        }
-    }
-    public class WidthConverter2 : System.Windows.Data.IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-           // System.Console.Write("aaa {0}\n", ((double)value));
-            return ((double)value - 150);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            //System.Console.Write("bbb\n");
-            return (value);
         }
     }
    

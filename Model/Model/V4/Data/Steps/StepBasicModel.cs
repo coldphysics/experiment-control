@@ -119,14 +119,14 @@ namespace Model.V4.Data.Steps
                 {
                     errorCollector.AddError(
                         "Critical state at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " +
-                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.Messages, false,
+                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.Messages, false,
                         ErrorTypes.Other);
                 }
                 else
                 {
                     errorCollector.AddError(
                         "Critical state (" + MessageString + ") at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " +
-                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.Messages, false,
+                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.Messages, false,
                         ErrorTypes.Other);
                 }
             }

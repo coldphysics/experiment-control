@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Errors.Error.ErrorItems;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,30 +9,6 @@ using System.Threading;
 
 namespace Errors.Error
 {
-    // ******************** enums ********************
-    public enum ErrorWindow
-    {
-        Pulseblaster,
-        MainHardware,
-        Variables,
-        Basic,
-        Python,
-        Messages
-    };
-
-    public enum ErrorTypes
-    {
-        ProgramError,
-        OutOfRange,
-        NegativeTime,
-        DynamicCompileError,
-        StrangeStephanError,
-        FileNameEmpty,
-        FileNotFound,
-        ExternalError,
-        Other
-    };
-
     /// <summary>
     /// Error Class responsible for the whole error handling
     /// </summary>
@@ -41,7 +18,7 @@ namespace Errors.Error
         /// <summary>
         /// a list containing all errors as ErrorItems
         /// </summary>
-        private List<ErrorItem> errors = new List<ErrorItem>();
+        private List<ConcreteErrorItem> errors = new List<ConcreteErrorItem>();
         private bool _blinkstate = false;
         private bool showEmptyCategories = false;
         private bool _showBasic = true;
@@ -120,7 +97,7 @@ namespace Errors.Error
             }
         }
 
-        public List<ErrorItem> SortedList
+        public List<AbstractErrorItem> SortedList
         {
             get { return CreateErrorList(); }
         }
@@ -187,22 +164,20 @@ namespace Errors.Error
             }
         }
 
-        private void CreateErrorListForSingleCategory(List<ErrorItem> newErrors, List<ErrorItem> _sortedList, ErrorWindow errorWindow, string errorWindowName, bool showThisCategory)
+        private void CreateErrorListForSingleCategory(List<ConcreteErrorItem> newErrors, List<AbstractErrorItem> _sortedList, ErrorCategory errorWindow, string errorWindowName, bool showThisCategory)
         {
             bool isHeaderAdded = false;
-            ErrorItem header;
+            AbstractErrorItem header;
 
             for (int i = 0; i < newErrors.Count(); i++)
             {
-                if (newErrors[i].ErrorWindow == errorWindow)
+                if (newErrors[i].ErrorCategory == errorWindow)
                 {
                     if (!isHeaderAdded)
                     {
-                        header = new ErrorItem();
-                        header.DataTime = "";
-                        header.ErrorMessage = "--- " + errorWindowName + " ---";
-                        header.isHeader = true;
-                        header.ErrorWindow = errorWindow;
+                        header = new ErrorHeader();
+                        header.Message = "--- " + errorWindowName + " ---";
+                        header.ErrorCategory = errorWindow;
                         _sortedList.Add(header);
                         isHeaderAdded = true;
                     }
@@ -214,11 +189,9 @@ namespace Errors.Error
             }
             if (!isHeaderAdded && showEmptyCategories)
             {
-                header = new ErrorItem();
-                header.DataTime = "";
-                header.ErrorMessage = errorWindowName + " OK";
-                header.isHeader = true;
-                header.ErrorWindow = errorWindow;
+                header = new ErrorHeader();
+                header.Message = errorWindowName + " OK";
+                header.ErrorCategory = errorWindow;
                 _sortedList.Add(header);
             }
         }
@@ -227,22 +200,22 @@ namespace Errors.Error
         /// a method returning an error list
         /// </summary>
         /// <returns>an ErrorItem list containing all errors</returns>
-        private List<ErrorItem> CreateErrorList()
+        private List<AbstractErrorItem> CreateErrorList()
         {
-            List<ErrorItem> errorsCopy;
+            List<ConcreteErrorItem> errorsCopy;
             //Lock, deepClone of "newErrors"
             lock (_lockObj)
             {
-                errorsCopy = new List<ErrorItem>(errors);
+                errorsCopy = new List<ConcreteErrorItem>(errors);
             }
 
-            List<ErrorItem> _sortedList = new List<ErrorItem>();
+            List<AbstractErrorItem> _sortedList = new List<AbstractErrorItem>();
 
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Basic, "Basic", ShowBasic);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.MainHardware, "Main Hardware", ShowMainHardware);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Pulseblaster, "Pulseblaster", ShowPulseblaster);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Variables, "Variables", ShowVariables);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Python, "Python / External", ShowPython);
+            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Basic, "Basic", ShowBasic);
+            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.MainHardware, "Main Hardware", ShowMainHardware);
+            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Pulseblaster, "Pulseblaster", ShowPulseblaster);
+            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Variables, "Variables", ShowVariables);
+            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Python, "Python / External", ShowPython);
 
             if (_sortedList.Count != 0)
             {
@@ -262,7 +235,7 @@ namespace Errors.Error
         }
 
         // ******************** delete Errors ********************
-        public void RemoveSingleError(ErrorItem error)
+        public void RemoveSingleError(ConcreteErrorItem error)
         {
             lock (_lockObj)
             {
@@ -278,12 +251,12 @@ namespace Errors.Error
         /// </summary>
         /// <param name="errorWindow">Window the errors belong to</param>
         /// <param name="errorType">Type of the errors to delete</param>
-        public void RemoveErrorsOfWindowAndType(ErrorWindow errorWindow, ErrorTypes errorType)
+        public void RemoveErrorsOfWindowAndType(ErrorCategory errorWindow, ErrorTypes errorType)
         {
             lock (_lockObj)
             {
                 errors.RemoveAll(error => {
-                    return error.ErrorWindow == errorWindow && !error.StayOnDelete && error.ErrorType == errorType && !(error is StickyErrorItem);
+                    return error.ErrorCategory == errorWindow && !error.StayOnDelete && error.ErrorType == errorType && !(error is StickyErrorItem);
                 });
             }
             OnUpdateErrorList();
@@ -293,12 +266,12 @@ namespace Errors.Error
         /// Deletes all Errors of the specified Window without the StayOnDeleteErrors
         /// </summary>
         /// <param name="errorWindow">Window the errors belong to</param>
-        public void RemoveErrorsOfWindow(ErrorWindow errorWindow)
+        public void RemoveErrorsOfWindow(ErrorCategory errorWindow)
         {
             lock (_lockObj)
             {
                 errors.RemoveAll(error => {
-                    return error.ErrorWindow == errorWindow && !error.StayOnDelete && !(error is StickyErrorItem);
+                    return error.ErrorCategory == errorWindow && !error.StayOnDelete && !(error is StickyErrorItem);
                 });
             }
             OnUpdateErrorList();
@@ -308,12 +281,12 @@ namespace Errors.Error
         /// Deletes all Errors of the specified Window, even the StayOnDeleteErrors
         /// </summary>
         /// <param name="errorWindow">Window the errors belong to</param>
-        public void RemoveErrorsOfWindowEvenStayOnDelete(ErrorWindow errorWindow)
+        public void RemoveErrorsOfWindowEvenStayOnDelete(ErrorCategory errorWindow)
         {
             lock (_lockObj)
             {
                 errors.RemoveAll(error => {
-                    return error.ErrorWindow == errorWindow && !(error is StickyErrorItem);
+                    return error.ErrorCategory == errorWindow && !(error is StickyErrorItem);
                 });
 
             }
@@ -362,7 +335,7 @@ namespace Errors.Error
                     if (dataFromClient.Substring(0, 5).Equals("ERROR"))
                     {
                         ErrorCollector errorCollector = ErrorCollector.Instance;
-                        errorCollector.AddError(dataFromClient.Substring(5, dataFromClient.Length - 5), ErrorWindow.Python, true, ErrorTypes.ExternalError);
+                        errorCollector.AddError(dataFromClient.Substring(5, dataFromClient.Length - 5), ErrorCategory.Python, true, ErrorTypes.ExternalError);
                     }
                 }
             });
@@ -391,34 +364,34 @@ namespace Errors.Error
         /// <param name="errorCard">ErrorCards enum</param>
         /// <param name="stayOnDelete">true if error should stay even if the category is cleaned up</param>
         /// <param name="errorType">ErrorTypes enum</param>
-        public ErrorItem AddError(string errorMsg, ErrorWindow errorCard, bool stayOnDelete, ErrorTypes errorType)
+        public ConcreteErrorItem AddError(string errorMsg, ErrorCategory errorCard, bool stayOnDelete, ErrorTypes errorType)
         {
             return AddError(errorMsg, errorCard, stayOnDelete, errorType, false);
         }
 
-        public StickyErrorItem AddStickyError(string errorMsg, ErrorWindow errorCard, bool stayOnDelete, ErrorTypes errorType)
+        public StickyErrorItem AddStickyError(string errorMsg, ErrorCategory errorCard, bool stayOnDelete, ErrorTypes errorType)
         {
             return (StickyErrorItem)AddError(errorMsg, errorCard, stayOnDelete, errorType, true);
         }
 
-        private ErrorItem AddError(string errorMsg, ErrorWindow errorCard, bool stayOnDelete, ErrorTypes errorType, bool isSticky)
+        private ConcreteErrorItem AddError(string errorMsg, ErrorCategory errorCard, bool stayOnDelete, ErrorTypes errorType, bool isSticky)
         {
-            ErrorItem error = null;
+            ConcreteErrorItem error = null;
 
             if (errorMsg != null)
             {
-                ErrorItem alreadyExistingError = errors.Where(param => param.ErrorMessage.Equals(errorMsg)).FirstOrDefault();
+                ConcreteErrorItem alreadyExistingError = errors.Where(param => param.Message.Equals(errorMsg)).FirstOrDefault();
 
                 if (alreadyExistingError != null)
                     RemoveSingleError(alreadyExistingError);//This guarantees a new datetime information for the error
 
                 if (!isSticky)
                 {
-                    error = new ErrorItem
+                    error = new ConcreteErrorItem
                     {
                         DataTime = "GC " + GlobalCounter + " " + DateTime.Now.ToString("ddd, dd.MM., HH:mm:ss"),
-                        ErrorMessage = errorMsg,
-                        ErrorWindow = errorCard,
+                        Message = errorMsg,
+                        ErrorCategory = errorCard,
                         StayOnDelete = stayOnDelete,
                         ErrorType = errorType
                     };
@@ -428,8 +401,8 @@ namespace Errors.Error
                     error = new StickyErrorItem
                     {
                         DataTime = "GC " + GlobalCounter + " " + DateTime.Now.ToString("ddd, dd.MM., HH:mm:ss"),
-                        ErrorMessage = errorMsg,
-                        ErrorWindow = errorCard,
+                        Message = errorMsg,
+                        ErrorCategory = errorCard,
                         StayOnDelete = stayOnDelete,
                         ErrorType = errorType
                     };
@@ -439,7 +412,7 @@ namespace Errors.Error
                 {
                     if (Status.ContainsKey("Python"))
                     {
-                        error.ErrorMessage += " at " + Status["Python"];
+                        error.Message += " at " + Status["Python"];
                     }
                     errors.Add(error);
                 }

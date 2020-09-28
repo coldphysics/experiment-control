@@ -129,11 +129,15 @@
     <Compile Include="ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Error\ErrorCategory.cs" />
     <Compile Include="Error\ErrorCollector.cs" />
-    <Compile Include="Error\ErrorItem.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Error\StickyErrorItem.cs" />
+    <Compile Include="Error\ErrorItems\AbstractErrorItem.cs" />
+    <Compile Include="Error\ErrorItems\ErrorHeader.cs" />
+    <Compile Include="Error\ErrorItems\ConcreteErrorItem.cs" />
+    <Compile Include="Error\ErrorTypes.cs" />
+    <Compile Include="Error\ErrorItems\StickyErrorItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

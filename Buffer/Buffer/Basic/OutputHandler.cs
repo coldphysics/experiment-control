@@ -750,7 +750,7 @@ namespace Buffer.Basic
                             "The preparation time in front of a cycles is too short!\nTime passed (ms): " +
                             ((double)GapTimespan + (-timeToWait)) +
                             "\nWanted preparation time (ms): " + GapTimespan,
-                            ErrorWindow.Basic, true, ErrorTypes.ProgramError);
+                            ErrorCategory.Basic, true, ErrorTypes.ProgramError);
                     }
 
                     SetOutputLoopThreadState(OutputLoopStates.PostStart);
@@ -936,7 +936,7 @@ namespace Buffer.Basic
             if (!foundVariable)
             {
                 var errorCollector = ErrorCollector.Instance;
-                errorCollector.AddError("IonizationPuleses variable not found (outputHandler, Lecroy)!", ErrorWindow.Variables, false,
+                errorCollector.AddError("IonizationPuleses variable not found (outputHandler, Lecroy)!", ErrorCategory.Variables, false,
                     ErrorTypes.Other);
                 return;
             }
@@ -949,7 +949,7 @@ namespace Buffer.Basic
             catch (Exception e)
             {
                 var errorCollector = ErrorCollector.Instance;
-                errorCollector.AddError(e.ToString(), ErrorWindow.Python, false, ErrorTypes.DynamicCompileError);
+                errorCollector.AddError(e.ToString(), ErrorCategory.Python, false, ErrorTypes.DynamicCompileError);
                 // FIXME - display Error
             }
 
@@ -1086,7 +1086,7 @@ namespace Buffer.Basic
                     //Process KILLED - error Message
                     var errorCollector = ErrorCollector.Instance;
                     errorCollector.AddError("Python (" + scriptPath + ") not finished!",
-                        ErrorWindow.Python, true, ErrorTypes.DynamicCompileError);
+                        ErrorCategory.Python, true, ErrorTypes.DynamicCompileError);
                 }
                 catch (Exception)
                 {
@@ -1121,7 +1121,7 @@ namespace Buffer.Basic
             catch (Exception e)
             {
                 var errorCollector = ErrorCollector.Instance;
-                errorCollector.AddError(e.ToString(), ErrorWindow.Python, false, ErrorTypes.DynamicCompileError);
+                errorCollector.AddError(e.ToString(), ErrorCategory.Python, false, ErrorTypes.DynamicCompileError);
                 string error = pyExecutor.ExplainException(e);
                 Console.Error.WriteLine(error);
             }
@@ -1200,7 +1200,7 @@ namespace Buffer.Basic
             catch (Exception e)
             {
                 var errorCollector = ErrorCollector.Instance;
-                errorCollector.AddError("Could not connect to SQL database!" + e, ErrorWindow.Basic, true,
+                errorCollector.AddError("Could not connect to SQL database!" + e, ErrorCategory.Basic, true,
                     ErrorTypes.FileNameEmpty);
             }
 
@@ -1263,7 +1263,7 @@ namespace Buffer.Basic
                 catch (Exception e)
                 {
                     var errorCollector = ErrorCollector.Instance;
-                    errorCollector.AddError("Could not connect to SQL database!" + e, ErrorWindow.Basic, true,
+                    errorCollector.AddError("Could not connect to SQL database!" + e, ErrorCategory.Basic, true,
                         ErrorTypes.FileNameEmpty);
                 }
 
@@ -1326,7 +1326,7 @@ namespace Buffer.Basic
                 catch (Exception e)
                 {
                     var errorCollector = ErrorCollector.Instance;
-                    errorCollector.AddError("Could not save to SQL database!" + e, ErrorWindow.Basic, true,
+                    errorCollector.AddError("Could not save to SQL database!" + e, ErrorCategory.Basic, true,
                         ErrorTypes.FileNameEmpty);
                     Console.WriteLine(query);
                     Console.WriteLine(e.ToString());
@@ -1354,7 +1354,7 @@ namespace Buffer.Basic
             catch (Exception e)
             {
                 var errorCollector = ErrorCollector.Instance;
-                errorCollector.AddError("Could not connect to SQL database!" + e, ErrorWindow.Basic, true,
+                errorCollector.AddError("Could not connect to SQL database!" + e, ErrorCategory.Basic, true,
                     ErrorTypes.FileNameEmpty);
             }
 
@@ -1371,7 +1371,7 @@ namespace Buffer.Basic
             {
                 // FIXME - do some good error handling here
                 ErrorCollector errorCollector = ErrorCollector.Instance;
-                errorCollector.AddError("Could not load the global counter out of the SQL database!", ErrorWindow.Basic,
+                errorCollector.AddError("Could not load the global counter out of the SQL database!", ErrorCategory.Basic,
                     true, ErrorTypes.FileNameEmpty);
                 Console.WriteLine(query);
                 Console.WriteLine(e.ToString());

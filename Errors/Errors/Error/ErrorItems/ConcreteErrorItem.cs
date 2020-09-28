@@ -1,35 +1,18 @@
-﻿namespace Errors.Error
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Errors.Error.ErrorItems
 {
-    /// <summary>
-    /// An error Item containing all information about one error message
-    /// </summary>
-    public class ErrorItem
+    public class ConcreteErrorItem : AbstractErrorItem
     {
         /// <summary>
         /// The time the error occurred
         /// don't know yet what data type to use, so is is string with a specified format in ErrorClass
         /// </summary>
         public string DataTime
-        {
-            get;
-            set;
-        }
-
-        public bool isHeader { get; set; } = false;
-
-        /// <summary>
-        /// String containing the Message text of the Error
-        /// </summary>
-        public string ErrorMessage
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// enum which describes on which Card the error occurred
-        /// </summary>
-        public ErrorWindow ErrorWindow
         {
             get;
             set;
