@@ -33,6 +33,7 @@ namespace View.Helper
         public Dictionary<string, Window> Generate(Dictionary<string, IWindowController> windows)
         {
             var output = new Dictionary<string, Window>();
+
             foreach (var window in windows)
             {
 
@@ -40,12 +41,18 @@ namespace View.Helper
                 {
                     if (errorsWindow == null)
                         errorsWindow = new Errors.ErrorWindow();
+
                     output.Add(window.Key, errorsWindow);
                 }
                 else if (window.Value.GetType() == typeof(Controller.Variables.VariablesController))
                 {
                     if (variablesWindow == null)
-                        variablesWindow = new Variables.VariablesView((Controller.Variables.VariablesController)window.Value);
+                    {
+                        variablesWindow = WindowsHelper.CreateWindowToHostViewModel(window.Value, true, false, true, true);
+                        variablesWindow.Title = "Variables";
+                        variablesWindow.ShowInTaskbar = false;
+                    }
+
                     output.Add(window.Key, variablesWindow);
                 }
                 else
@@ -57,16 +64,10 @@ namespace View.Helper
                     Window currentWindow = WindowsHelper.CreateWindowToHostViewModel(realController, true, false, true, true);
                     currentWindow.ShowInTaskbar = false;
                     currentWindow.Title = realController.Name;
-                    // Prevent card windows from closing
-                    currentWindow.Closing += (sender, args) =>
-                    {
-                        args.Cancel = true;
-                        ((Window)sender).Hide();
-                    };
-
                     output.Add(window.Key, currentWindow);
                 }
             }
+
             return output;
         }
     }

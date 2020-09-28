@@ -15,6 +15,7 @@
     xmlns:vmsba="clr-namespace:Controller.Control.StepBatchAddition;assembly=Controller"
     xmlns:vmsettings="clr-namespace:Controller.Settings;assembly=Controller"
     xmlns:vmsimulator="clr-namespace:Controller.AdWin.Simulator;assembly=Controller"
+    xmlns:vmvariables="clr-namespace:Controller.Variables;assembly=Controller"
     xmlns:vmvisualizer="clr-namespace:Controller.OutputVisualizer;assembly=Controller"
     xmlns:vwc="clr-namespace:View.Control;assembly=View"
     xmlns:vwcards="clr-namespace:View.Data.Windows;assembly=View"
@@ -28,6 +29,7 @@
     xmlns:vws="clr-namespace:View.Data.Steps;assembly=View"
     xmlns:vwsettings="clr-namespace:View.Settings;assembly=View"
     xmlns:vwsimulator="clr-namespace:View.AdWin.Simulator;assembly=View"
+    xmlns:vwvariables="clr-namespace:View.Variables;assembly=View"
     xmlns:vwvisualizer="clr-namespace:View.OutputVisualizer;assembly=View"
     StartupUri="MainWindow.xaml">
     <Application.Resources>
@@ -128,6 +130,10 @@
 
         <DataTemplate DataType="{x:Type vmcards:DigitalWindowController}">
             <vwcards:WindowDigitalView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmvariables:VariablesController}">
+            <vwvariables:VariablesView />
         </DataTemplate>
 
     </Application.Resources>

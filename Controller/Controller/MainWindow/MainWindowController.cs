@@ -86,8 +86,6 @@ namespace Controller.MainWindow
 
             CurrentModeController = MeasurementRoutineController;
             _incrementIteratorsIsEnabled = true;
-
-
         }
 
         public MainWindowController()
@@ -1477,6 +1475,7 @@ namespace Controller.MainWindow
             CloseWindows();
             CreateWindows();
         }
+
         /// <summary>
         /// Creates the new windows for a new model resulting from a click on "new"
         /// </summary>
@@ -1488,17 +1487,25 @@ namespace Controller.MainWindow
             LoadModel((RootModel)newModel, MeasurementRoutineController.CurrentRoutineModel.TimesToReplicate);
         }
 
-        //A hack that ensures the "Variables" window and the "Errors" window are not closed automatically
+        //This ensures the "Variables" window and the "Errors" window are not closed automatically
         private void CloseWindows()
         {
             foreach (KeyValuePair<string, Window> window in _windowList.Windows())
             {
                 if (window.Key != "Variables" && window.Key != "Errors")
+                {
+                    window.Value.Closing -= PreventWindowFromClosing;
                     window.Value.Close();
+                }
             }
         }
 
-        //RECO this method references a class in the View project that maps views to controllers, a task that a datatemplate should be doing!
+        private void PreventWindowFromClosing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true;
+            ((Window)sender).Hide();
+        }
+
         private void CreateWindows()
         {
             RootController controller = GetRootController();
@@ -1507,6 +1514,18 @@ namespace Controller.MainWindow
             windowControllers.Add("Errors", null);
 
             Dictionary<string, Window> newWindows = _windowsGenerator.Generate(windowControllers);
+
+            // Prevent these windows from closing (hiding them instead). We do this here, ot in the Window generator so that we can
+            // unsubscribe the event handler in the CloseWindows method later
+            // The Variables and Errors windows are reused. Therefore, we unsubscribe the event handler before subscribing it (otherwise, 
+            // the same event handler will be triggered multiple times for these two windows). Trying to unsubscribe a non-existing subscription
+            // does not throw an exception.
+            foreach (Window window in newWindows.Values)
+            {
+                window.Closing -= PreventWindowFromClosing;
+                window.Closing += PreventWindowFromClosing;
+            }
+            
 
             _windowList = new WindowList(newWindows);
 

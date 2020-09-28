@@ -1,21 +1,16 @@
-﻿<Window
+﻿<UserControl
     x:Class="View.Variables.VariablesView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Control="clr-namespace:View.Control"
-    xmlns:VariableTypes="clr-namespace:View.Variables.VariableTypes"
-    xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
-    xmlns:submitTextBox="clr-namespace:CustomElements.SubmitTextBox;assembly=CustomElements"
-    xmlns:variables="clr-namespace:View.Variables"
-    Name="theWindow"
-    Title="VariablesView"
-    Width="750"
-    Height="300"
-    ShowInTaskbar="False">
+    xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+    Name="UC"
+    MinWidth="750"
+    MinHeight="300">
 
-    <Window.Resources>
+    <UserControl.Resources>
         <ResourceDictionary Source="VariablesResources.xaml" />
-    </Window.Resources>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -23,11 +18,10 @@
             <RowDefinition Height="28" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <!--  PreviewMouseMove="VariablesControl_PreviewMouseMove">  -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200*" />
-                <ColumnDefinition Width="180*" />
-                <ColumnDefinition Width="200*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="9*" />
+                <ColumnDefinition Width="10*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="28" />
@@ -91,7 +85,7 @@
                 <ListBox.GroupStyle>
                     <GroupStyle ContainerStyle="{StaticResource ListBoxStyle}" />
                 </ListBox.GroupStyle>
-                <!--  PreviewMouseLeftButtonDown="VariablesControl_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="VariablesControl_PreviewMouseLeftButtonUp">  -->
+
                 <ListBox.ItemContainerStyle>
                     <Style>
                         <Setter Property="FrameworkElement.Margin" Value="0,0,0,5" />
@@ -100,10 +94,9 @@
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
 
-                        <!--<UniformGrid Columns="3" VerticalAlignment="Top" />-->
                         <WrapPanel
                             MaxHeight="{Binding StaticGroupHeight}"
-                            DataContext="{Binding ElementName=theWindow, Path=DataContext}"
+                            DataContext="{Binding ElementName=UC, Path=DataContext}"
                             ItemWidth="215"
                             Orientation="Vertical" />
                     </ItemsPanelTemplate>
@@ -164,7 +157,13 @@
                 IsSynchronizedWithCurrentItem="True"
                 ItemTemplate="{StaticResource VariableIteratorTemplate}"
                 ItemsSource="{Binding VariablesIterator, UpdateSourceTrigger=PropertyChanged}"
-                PreviewKeyDown="VariablesIteratorsControl_PreviewKeyDown">
+                SelectedItem="{Binding SelectedIterator, Mode=OneWayToSource}">
+
+                <behaviors:Interaction.Triggers>
+                    <behaviors:EventTrigger EventName="PreviewKeyDown" SourceObject="{Binding ElementName=VariablesIteratorsControl}">
+                        <behaviors:InvokeCommandAction Command="{Binding KeyDownOnIteratorCommand}" PassEventArgsToCommand="True" />
+                    </behaviors:EventTrigger>
+                </behaviors:Interaction.Triggers>
 
                 <ListBox.ItemContainerStyle>
                     <Style>
@@ -207,9 +206,14 @@
                 IsSynchronizedWithCurrentItem="True"
                 ItemTemplate="{StaticResource VariableDynamicTemplate}"
                 ItemsSource="{Binding VariablesDynamic, UpdateSourceTrigger=PropertyChanged}"
-                PreviewKeyDown="VariablesDynamicsControl_PreviewKeyDown">
+                SelectedItem="{Binding SelectedDynamic, Mode=OneWayToSource}">
 
-                <!--  PreviewMouseLeftButtonDown="VariablesControl_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="VariablesControl_PreviewMouseLeftButtonUp">  -->
+                <behaviors:Interaction.Triggers>
+                    <behaviors:EventTrigger EventName="PreviewKeyDown" SourceObject="{Binding ElementName=VariablesDynamicsControl}">
+                        <behaviors:InvokeCommandAction Command="{Binding KeyDownOnDynamicCommand}" PassEventArgsToCommand="True" />
+                    </behaviors:EventTrigger>
+                </behaviors:Interaction.Triggers>
+
                 <ListBox.ItemContainerStyle>
                     <Style>
                         <Setter Property="FrameworkElement.Margin" Value="0,0,0,5" />
@@ -229,4 +233,4 @@
             <Button Grid.Column="2" Command="{Binding Check}">Check Usage</Button>
         </Grid>
     </Grid>
-</Window>
+</UserControl>

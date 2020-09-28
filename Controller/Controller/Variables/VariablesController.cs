@@ -85,6 +85,8 @@ namespace Controller.Variables
             Check = new RelayCommand(CheckAllVariablesUsage);
             StaticGroupSelect = new RelayCommand(DoStaticGroupSelect);
             MoveVariableToNewGroupCommand = new RelayCommand(MoveVariableToNewGroup);
+            KeyDownOnIteratorCommand = new RelayCommand(VariablesIteratorsControl_PreviewKeyDown);
+            KeyDownOnDynamicCommand = new RelayCommand(VariablesDynamicsControl_PreviewKeyDown);
 
             ReadOptions();
         }
@@ -226,6 +228,22 @@ namespace Controller.Variables
         }
 
         private ICommand MoveVariableToNewGroupCommand { set; get; }
+
+        public ICommand KeyDownOnIteratorCommand { private set; get; }
+
+        public ICommand KeyDownOnDynamicCommand { private set; get; }
+
+        public VariableController SelectedIterator
+        {
+            set;
+            get;
+        }
+
+        public VariableController SelectedDynamic
+        {
+            set;
+            get;
+        }
 
         // ******************** Public Methods ********************
         /// <summary>
@@ -1040,6 +1058,47 @@ namespace Controller.Variables
                 iterator.VariableLocked = false;
             }
             System.Console.WriteLine("Unlocked iterators");
+        }
+
+        private static bool MoveVariableWithArrowsIfNecessary(VariableController controller, KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                if (e.Key == Key.Up)
+                {
+                    controller.moveUp(null);
+                    e.Handled = true;
+                    return true;
+                }
+                else if (e.Key == Key.Down)
+                {
+                    controller.moveDown(null);
+                    e.Handled = true;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void VariablesIteratorsControl_PreviewKeyDown(object parameter)
+        {
+            KeyEventArgs e = (KeyEventArgs)parameter;
+
+            if (SelectedIterator != null)
+            {
+                MoveVariableWithArrowsIfNecessary(SelectedIterator, e);
+            }
+        }
+
+        private void VariablesDynamicsControl_PreviewKeyDown(object parameter)
+        {
+            KeyEventArgs e = (KeyEventArgs)parameter;
+
+            if (SelectedDynamic != null)
+            {
+                MoveVariableWithArrowsIfNecessary(SelectedDynamic, e);
+            }
         }
     }
 }
