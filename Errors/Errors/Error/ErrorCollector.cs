@@ -244,6 +244,7 @@ namespace Errors.Error
                     errors.Remove(error);
                 }
             }
+            OnUpdateErrorList();
         }
 
         /// <summary>

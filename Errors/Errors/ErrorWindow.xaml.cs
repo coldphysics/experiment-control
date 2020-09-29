@@ -29,7 +29,7 @@ namespace Errors
 
         public static Window MainWindow;
 
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)  
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
             this.Hide();
@@ -62,7 +62,7 @@ namespace Errors
                 MainWindow.TaskbarItemInfo = taskInfo;
                 this.Activate();
             }));
-            new Thread(delegate()
+            new Thread(delegate ()
             {
                 Console.Beep(2000, 200);
                 Thread.Sleep(200);
@@ -85,26 +85,27 @@ namespace Errors
 
         private void DeleteThisErrorClick(object sender, RoutedEventArgs e)
         {
-            if (sender.GetType() != typeof(Button))
+            if (!(sender is Button))
             {
                 return;
             }
-            Button realSender = (Button) sender;
+
+            Button realSender = (Button)sender;
             ErrorCollector errorClass = ErrorCollector.Instance;
 
             // FIXME it might happen that get a DisconnectedItem here (see http://go4answers.webhost4life.com/Question/thread-brought-attention-response-442346.aspx)
-            if (realSender.DataContext.GetType() != typeof (AbstractErrorItem))
+            if (!(realSender.DataContext is AbstractErrorItem))
             {
                 Console.WriteLine("error: wrong class");
                 return;
             }
             if (realSender.DataContext is ErrorHeader)
             {
-                errorClass.RemoveErrorsOfWindowEvenStayOnDelete(((ErrorHeader) realSender.DataContext).ErrorCategory);
+                errorClass.RemoveErrorsOfWindowEvenStayOnDelete(((ErrorHeader)realSender.DataContext).ErrorCategory);
             }
             else
             {
-                errorClass.RemoveSingleError(((ConcreteErrorItem) realSender.DataContext));
+                errorClass.RemoveSingleError(((ConcreteErrorItem)realSender.DataContext));
             }
         }
 
@@ -113,7 +114,7 @@ namespace Errors
             Button realSender = (Button)sender;
             ErrorCollector errorClass = ErrorCollector.Instance;
             // FIXME it might happen that get a DisconnectedItem here (see http://go4answers.webhost4life.com/Question/thread-brought-attention-response-442346.aspx)
-            if (realSender.DataContext.GetType() != typeof(AbstractErrorItem))
+            if (!(realSender.DataContext is AbstractErrorItem))
             {
                 Console.WriteLine("error: wrong class");
                 return;
@@ -126,7 +127,7 @@ namespace Errors
             Button realSender = (Button)sender;
             ErrorCollector errorClass = ErrorCollector.Instance;
             // FIXME it might happen that get a DisconnectedItem here (see http://go4answers.webhost4life.com/Question/thread-brought-attention-response-442346.aspx)
-            if (realSender.DataContext.GetType() != typeof(AbstractErrorItem))
+            if (!(realSender.DataContext is AbstractErrorItem))
             {
                 Console.WriteLine("error: wrong class");
                 return;
@@ -164,35 +165,30 @@ namespace Errors
             //System.Console.Write("real sender: {0}\n", (((ErrorItem)realSender.DataContext)).errorWindow);
             ErrorCollector errorClass = ErrorCollector.Instance;
             // FIXME it might happen that get a DisconnectedItem here (see http://go4answers.webhost4life.com/Question/thread-brought-attention-response-442346.aspx)
-            if (realSender.DataContext.GetType() != typeof(AbstractErrorItem))
+
+            if (!(realSender.DataContext is AbstractErrorItem))
             {
                 Console.WriteLine("error: wrong class");
                 return;
             }
-            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Pulseblaster)
+
+            switch (((AbstractErrorItem)realSender.DataContext).ErrorCategory)
             {
-                errorClass.ShowPulseblaster = false;
-                return;
-            }
-            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Basic)
-            {
-                errorClass.ShowBasic = false;
-                return;
-            }
-            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Variables)
-            {
-                errorClass.ShowVariables = false;
-                return;
-            }
-            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.MainHardware)
-            {
-                errorClass.ShowMainHardware = false;
-                return;
-            }
-            if (((AbstractErrorItem)realSender.DataContext).ErrorCategory == Error.ErrorCategory.Python)
-            {
-                errorClass.ShowPython = false;
-                return;
+                case ErrorCategory.Pulseblaster:
+                    errorClass.ShowPulseblaster = false;
+                    break;
+                case ErrorCategory.Basic:
+                    errorClass.ShowBasic = false;
+                    break;
+                case ErrorCategory.Variables:
+                    errorClass.ShowVariables = false;
+                    break;
+                case ErrorCategory.MainHardware:
+                    errorClass.ShowMainHardware = false;
+                    break;
+                case ErrorCategory.Python:
+                    errorClass.ShowPython = false;
+                    break;
             }
         }
     }
@@ -204,64 +200,59 @@ namespace Errors
         public DataTemplate errorItemHeaderTemplate { get; set; }
         public DataTemplate errorItemHeaderTemplateUp { get; set; }
 
-        public override DataTemplate SelectTemplate(object item,
-                   DependencyObject container)
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             ErrorCollector errorClass = ErrorCollector.Instance;
-            //System.Console.Write("typeof item : {0}\n", container.GetType());
+
             if (item is ErrorHeader)
             {
-                if (((ErrorHeader)item).ErrorCategory == Error.ErrorCategory.Pulseblaster)
+                switch (((ErrorHeader)item).ErrorCategory)
                 {
-                    if (errorClass.ShowPulseblaster)
-                    {
-                        return errorItemHeaderTemplateUp;
-                    }
-                    return errorItemHeaderTemplate;
+                    case ErrorCategory.Pulseblaster:
+                        if (errorClass.ShowPulseblaster)
+                        {
+                            return errorItemHeaderTemplateUp;
+                        }
+
+                        return errorItemHeaderTemplate;
+                    case ErrorCategory.Basic:
+                        if (errorClass.ShowBasic)
+                        {
+                            return errorItemHeaderTemplateUp;
+                        }
+
+                        return errorItemHeaderTemplate;
+                    case ErrorCategory.Variables:
+                        if (errorClass.ShowVariables)
+                        {
+                            return errorItemHeaderTemplateUp;
+                        }
+
+                        return errorItemHeaderTemplate;
+                    case ErrorCategory.MainHardware:
+                        if (errorClass.ShowMainHardware)
+                        {
+                            return errorItemHeaderTemplateUp;
+                        }
+
+                        return errorItemHeaderTemplate;
+                    case ErrorCategory.Python:
+                        if (errorClass.ShowPython)
+                        {
+                            return errorItemHeaderTemplateUp;
+                        }
+
+                        return errorItemHeaderTemplate;
                 }
-                if (((ErrorHeader)item).ErrorCategory == Error.ErrorCategory.Basic)
-                {
-                    if (errorClass.ShowBasic)
-                    {
-                        return errorItemHeaderTemplateUp;
-                    }
-                    return errorItemHeaderTemplate;
-                }
-                if (((ErrorHeader)item).ErrorCategory == Error.ErrorCategory.Variables)
-                {
-                    if (errorClass.ShowVariables)
-                    {
-                        return errorItemHeaderTemplateUp;
-                    }
-                    return errorItemHeaderTemplate;
-                }
-                if (((ErrorHeader)item).ErrorCategory == Error.ErrorCategory.MainHardware)
-                {
-                    if (errorClass.ShowMainHardware)
-                    {
-                        return errorItemHeaderTemplateUp;
-                    }
-                    return errorItemHeaderTemplate;
-                }
-                if (((ErrorHeader)item).ErrorCategory == Error.ErrorCategory.Python)
-                {
-                    if (errorClass.ShowPython)
-                    {
-                        return errorItemHeaderTemplateUp;
-                    }
-                    return errorItemHeaderTemplate;
-                }
+
             }
-            if (((ConcreteErrorItem)item).StayOnDelete)
+            else if (((ConcreteErrorItem)item).StayOnDelete)
             {
                 return errorItemTemplateCrit;
             }
-            else
-            {
-                return errorItemTemplate;
-            }
-           
+
+            return errorItemTemplate;
         }
     }
-   
+
 }
