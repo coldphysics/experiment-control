@@ -1,4 +1,5 @@
 ﻿using Microsoft.Scripting.Hosting;
+using System;
 using System.Collections.Generic;
 
 namespace PythonUtils
@@ -32,11 +33,9 @@ namespace PythonUtils
                 if (engine == null)
                 {
                     engine = IronPython.Hosting.Python.CreateEngine();
-                    
                 }
 
                 return engine;
-
             }
         }
 

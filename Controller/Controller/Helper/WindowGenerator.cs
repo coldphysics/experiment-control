@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using Communication.Interfaces.Controller;
 using Communication.Interfaces.Windows;
 using Controller.Data.Windows;
@@ -40,11 +41,18 @@ namespace Controller.Helper
                 if (window.Key.Equals("Errors"))
                 {
                     if (errorsWindow == null)
-                        errorsWindow = new Errors.ErrorWindow();
+                    {
+                        errorsWindow = WindowsHelper.CreateWindowToHostViewModel(window.Value, true, false, true, true);
+                        errorsWindow.Title = "Errors";
+                        errorsWindow.ShowInTaskbar = false;
+                        //errorsWindow.Icon = new BitmapImage(new Uri("/View;component/Resources/errorIcon.png", UriKind.Relative));
+
+                    }
+                        
 
                     output.Add(window.Key, errorsWindow);
                 }
-                else if (window.Value.GetType() == typeof(Controller.Variables.VariablesController))
+                else if (window.Key.Equals("Variables"))
                 {
                     if (variablesWindow == null)
                     {

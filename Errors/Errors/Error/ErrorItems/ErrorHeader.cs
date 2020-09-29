@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Errors.Error.ErrorItems
+﻿namespace Errors.Error.ErrorItems
 {
     public class ErrorHeader : AbstractErrorItem
     {

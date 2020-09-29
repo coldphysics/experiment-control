@@ -8,6 +8,8 @@
     xmlns:vmchannels="clr-namespace:Controller.Data.Channels;assembly=Controller"
     xmlns:vmcommon="clr-namespace:Controller.Common;assembly=Controller"
     xmlns:vmcomparison="clr-namespace:Controller.Control.Compare;assembly=Controller"
+    xmlns:vmerror="clr-namespace:Controller.Error;assembly=Controller"
+    xmlns:vmerrorerroritems="clr-namespace:Controller.Error.ErrorItems;assembly=Controller"
     xmlns:vmexporter="clr-namespace:Controller.OutputVisualizer.Export;assembly=Controller"
     xmlns:vmfifodebug="clr-namespace:Controller.AdWin.Debug;assembly=Controller"
     xmlns:vmmain="clr-namespace:Controller.MainWindow;assembly=Controller"
@@ -26,6 +28,8 @@
     xmlns:vwchannels="clr-namespace:View.Data.Channels;assembly=View"
     xmlns:vwcommon="clr-namespace:View.Common;assembly=View"
     xmlns:vwcomparison="clr-namespace:View.Control.Compare;assembly=View"
+    xmlns:vwerror="clr-namespace:View.Error;assembly=View"
+    xmlns:vwerrorerroritems="clr-namespace:View.Error.ErrorItems;assembly=View"
     xmlns:vwexporter="clr-namespace:View.OutputVisualizer.Export;assembly=View"
     xmlns:vwfifodebug="clr-namespace:View.AdWin.Debugging;assembly=View"
     xmlns:vwmain="clr-namespace:View.Main;assembly=View"
@@ -234,6 +238,17 @@
             <vws:StepPythonView BorderBrush="DarkGray" />
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vmerror:ErrorsWindowController}">
+            <vwerror:ErrorWindowView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmerrorerroritems:ConcreteErrorItemController}">
+            <vwerrorerroritems:ConcreteErrorItemView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vmerrorerroritems:ErrorHeaderController}">
+            <vwerrorerroritems:ErrorHeaderView />
+        </DataTemplate>
 
     </Application.Resources>
 </Application>

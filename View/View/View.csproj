@@ -205,6 +205,16 @@
     <Compile Include="Data\Windows\WindowDigitalView.xaml.cs">
       <DependentUpon>WindowDigitalView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Error\ErrorItems\BoolToBorderWidthConverter.cs" />
+    <Compile Include="Error\ErrorItems\ConcreteErrorItemView.xaml.cs">
+      <DependentUpon>ConcreteErrorItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Error\ErrorItems\ErrorHeaderView.xaml.cs">
+      <DependentUpon>ErrorHeaderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Error\ErrorWindowView.xaml.cs">
+      <DependentUpon>ErrorWindowView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Main\BooleanToVisibilityConverter.cs" />
     <Compile Include="Main\IterationManagerView.xaml.cs">
       <DependentUpon>IterationManagerView.xaml</DependentUpon>
@@ -385,6 +395,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Data\Windows\WindowDigitalView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Error\ErrorItems\ConcreteErrorItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Error\ErrorItems\ErrorHeaderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Error\ErrorWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -588,6 +610,17 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\info-icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\errorIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\arrow_down.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\arrow_up.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

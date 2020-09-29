@@ -6,6 +6,7 @@ using Controller.MainWindow;
 using Model.Data.Cards;
 using Model.Root;
 using Controller.Helper;
+using Controller.Error;
 
 namespace MainProject.Builders
 {
@@ -30,6 +31,7 @@ namespace MainProject.Builders
             var windowGenerator = new WindowGenerator(cardNames);
 
 
+
             //Initializes the Variables window
             //rootModel.Data.variablesModel = new VariablesModel();
             var variablesController = new Controller.Variables.VariablesController(rootModel.Data.variablesModel, outputHandler, rootModel);
@@ -40,6 +42,8 @@ namespace MainProject.Builders
       
             //Initializes the controlWindow and creates it (and with it all other Windows)
             this.mainController = new MainWindowController(rootModel, doubleBuffer, outputHandler, controllerWrapper, windowGenerator, variablesController);
+            ErrorsWindowController errorWindowController = new ErrorsWindowController(mainController);
+
             doubleBuffer.OnGeneratorStateChange += mainController.OnGeneratorStateChange;
             outputHandler.OnScanChange += mainController.OnScanChange;
             outputHandler.OnOuputLoopStateChange += mainController.OnOuputLoopStateChange;

@@ -46,6 +46,7 @@ using Controller.Control.Compare;
 using System.Linq;
 using Model.Utilities;
 using Controller.Helper;
+using Controller.Error;
 
 namespace Controller.MainWindow
 {
@@ -63,6 +64,7 @@ namespace Controller.MainWindow
                                        IWindowGenerator windows, VariablesController variables)
         {
             _variables = variables;
+            _errorsController = new ErrorsWindowController(this);
             _variables.RefreshWindows += ControlWindowController_RefreshWindows;
             _model = model;
             _buffer = buffer;
@@ -108,15 +110,6 @@ namespace Controller.MainWindow
         /// Indicates whether the fifo debug window is open
         /// </summary>
         private bool isFifoDebugWindowOpen;
-        //look
-        public static Window visualizationWindow;
-        //look
-        private static bool isVisualizationWindowOpen = false;
-
-        private Window variablesComparisonWindow;
-
-
-
         #endregion
 
         // ********************* Properties ****************************************
@@ -191,6 +184,9 @@ namespace Controller.MainWindow
         /// </summary>
         private Window fifoDebugWindow;
 
+        private Window variablesComparisonWindow;
+
+
         #endregion
 
         // ******************** Child Controllers (View Models) ********************
@@ -199,6 +195,8 @@ namespace Controller.MainWindow
         /// The controller for the variables window
         /// </summary>
         private readonly VariablesController _variables;
+
+        private readonly ErrorsWindowController _errorsController;
 
         /// <summary>
         /// Gets the step batch adder controller.
@@ -320,6 +318,7 @@ namespace Controller.MainWindow
         public IterationManagerController IterationManagerController { private set; get; }
 
         public BaseController CurrentModeController { private set; get; }
+
 
         #endregion
 
@@ -1532,7 +1531,7 @@ namespace Controller.MainWindow
             RootController controller = GetRootController();
             Dictionary<string, IWindowController> windowControllers = GenerateWindowControllerCollection(controller);
             windowControllers.Add("Variables", _variables);//adding these two ensures the "generator" creates the corresponding windows if necessary
-            windowControllers.Add("Errors", null);
+            windowControllers.Add("Errors", _errorsController);
 
             Dictionary<string, Window> newWindows = _windowsGenerator.Generate(windowControllers);
 
@@ -1561,6 +1560,7 @@ namespace Controller.MainWindow
 
             WindowsListChanged?.Invoke(null, null);
         }
+
 
         /// <summary>
         /// Loads selected changes made by the user to the UI

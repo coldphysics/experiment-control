@@ -1,0 +1,49 @@
+﻿<UserControl
+    x:Class="View.Error.ErrorItems.ErrorHeaderView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:View.Error.ErrorItems"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="50"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Background="Gray">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="30" />
+            <ColumnDefinition Width="25" />
+            <ColumnDefinition Width="25" />
+        </Grid.ColumnDefinitions>
+        <TextBlock
+            Grid.Column="0"
+            HorizontalAlignment="Center"
+            Text="{Binding Path=Message}"
+            TextAlignment="Center" />
+        <Button
+            Grid.Column="1"
+            Padding="2"
+            Panel.ZIndex="2"
+            Command="{Binding ToggleCategoryCommand}">
+
+            <Image Opacity="0.75">
+                <Image.Style>
+                    <Style TargetType="Image">
+                        <Setter Property="Source" Value="/View;component/Resources/arrow_down.png" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsExpanded}" Value="True">
+                                <Setter Property="Source" Value="/View;component/Resources/arrow_up.png" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+        </Button>
+        <Button Grid.Column="2" Command="{Binding ClearCategoryCommand}">
+            <Image Opacity="0.75" Source="/View;component/Resources/Clear.png" />
+        </Button>
+        <Button Grid.Column="3" Command="{Binding DeleteThisErrorCommand}">
+            <Image Opacity="0.75" Source="/View;component/Resources/1484583618_cross-24.png" />
+        </Button>
+    </Grid>
+</UserControl>

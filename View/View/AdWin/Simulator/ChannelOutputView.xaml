@@ -39,7 +39,7 @@
                     Configuration="{Binding Path=ChartMapper}"
                     Fill="Transparent"
                     PointGeometry="{x:Null}"
-                    Values="{Binding Path=ChartValues}" /> 
+                    Values="{Binding Path=ChartValues}" />
                 <!--  StrokeThickness="2" LineSmoothness="0"/>  -->
             </lvc:CartesianChart.Series>
             <lvc:CartesianChart.AxisY>
