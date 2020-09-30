@@ -212,7 +212,7 @@ To execute all unit tests in the solution follow these steps:
    1. While still on the `Publish` window, click on `Publish Wizard`
    2. Select a local path in which you would like the installer to be placed (the folder must be named `v[version]`, e.g., `v1.4.1`).
    3. Finish the remaining steps of the wizard and click finish. The installer will be placed in the path you specified. 
-4. Create a binary release by adding, committing and pushing the folder containing the installer (generated in step 3) to the [private release repository](https://github.com/coldphysics/releases).
+4. Create a binary release by adding, committing and pushing a __zipped__ version of the folder containing the installer (generated in step 3) to the [private release repository](https://github.com/coldphysics/releases).
 5. Add, commit and push latest changes of the codebase to Github (__ensure the installer is not pushed to Github!!__)
 6. Generate an apropriate changelog to describe the changes made since the last release. For example, you can use the tool [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator):
    1. Install `github-changelog-generator`.
