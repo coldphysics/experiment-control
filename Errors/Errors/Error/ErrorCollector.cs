@@ -20,6 +20,7 @@ namespace Errors.Error
         private List<ConcreteErrorItem> errors = new List<ConcreteErrorItem>();
         private bool _notificationsEnabled = true;
         private bool _pendingNotifications = false;
+        private object notificationLock;
 
         private static readonly int PORT_FOR_NETWORK_STATUS_MESSAGES = 7205;
         private static readonly int PORT_FOR_NETWORK_ERROR_MESSAGES = 7200;
@@ -42,33 +43,6 @@ namespace Errors.Error
         public Dictionary<ErrorCategory, string> Status { get; set; } = new Dictionary<ErrorCategory, string>();
 
         public int GlobalCounter { get; set; } = 0;
-
-        public bool NotificationsEnabled
-        {
-            set
-            {
-                lock (_lockObj)
-                {
-                    if (_notificationsEnabled != value)
-                    {
-                        _notificationsEnabled = value;
-
-                        if (_notificationsEnabled)
-                        {
-                            if (_pendingNotifications)
-                            {
-                                _pendingNotifications = false;
-                                OnUpdateErrorList();
-                            }
-                        }
-                    }
-                }
-            }
-            get
-            {
-                return _notificationsEnabled;
-            }
-        }
 
         // ******************** constructor and instance constructor ********************
         /// <summary>
@@ -123,6 +97,45 @@ namespace Errors.Error
                 }
             }
             
+        }
+
+        public object StartBulkUpdate()
+        {
+            object candidateLock = new object();
+
+            lock (_lockObj)
+            {
+                if (notificationLock == null)
+                {
+                    notificationLock = candidateLock;
+                }
+
+                _notificationsEnabled = false;
+            }
+
+            return candidateLock;
+        }
+
+        public bool EndBulkUpdate(object candidateLock)
+        {
+            lock (_lockObj)
+            {
+                if (candidateLock == notificationLock)
+                {
+                    notificationLock = null;
+                    _notificationsEnabled = true;
+
+                    if (_pendingNotifications)
+                    {
+                        _pendingNotifications = false;
+                        OnUpdateErrorList();
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // ******************** delete Errors ********************

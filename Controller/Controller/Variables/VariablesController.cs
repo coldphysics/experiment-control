@@ -507,7 +507,8 @@ namespace Controller.Variables
         public void Evaluate(object parameter)
         {
             // prevent inconsistencies and multiple updates on the buffer
-            Object bufferUpdateLock = VariableUpdateStart();
+            object errorNotificationLock = ErrorCollector.Instance.StartBulkUpdate();
+            object bufferUpdateLock = GetRootController().BulkUpdateStart();
             ErrorCollector errorCollector = ErrorCollector.Instance;
             errorCollector.RemoveErrorsOfWindowAndType(ErrorCategory.Variables, ErrorTypes.DynamicCompileError);
 
@@ -540,9 +541,9 @@ namespace Controller.Variables
             }
 
             // reenable buffer updates
-            VariableUpdateDone(bufferUpdateLock);
+            VariableUpdateDone(bufferUpdateLock, errorNotificationLock);
             RefreshVariableValuesInGUI(false, true, true);
-            System.Console.Write("Eval done!\n");
+            Console.Write("Variable evaluation done!\n");
         }
 
         /// <summary>
@@ -605,7 +606,8 @@ namespace Controller.Variables
         public void iterate(object parameter)
         {
             // prevent inconsistencies and multiple updates on the buffer
-            Object bufferUpdateLock = VariableUpdateStart();
+            object errorNotificationLock = ErrorCollector.Instance.StartBulkUpdate();
+            object bufferUpdateLock = GetRootController().BulkUpdateStart();
 
             //createIterationPattern();
             if (!_outputHandler.shuffleIterations)
@@ -675,7 +677,7 @@ namespace Controller.Variables
             Evaluate(null);
 
             // reenable buffer updates
-            VariableUpdateDone(bufferUpdateLock);
+            VariableUpdateDone(bufferUpdateLock, errorNotificationLock);
         }
 
         /// <summary>
@@ -993,21 +995,13 @@ namespace Controller.Variables
         /// <summary>
         /// re-enables and triggers the CopyToBuffer function if the object in the argument matches the _variableUpdateLockObject
         /// </summary>
-        /// <param name="lockObject">lock/unlock object</param>
-        public bool VariableUpdateDone(object lockObject)
+        /// <param name="copyLock">lock/unlock object</param>
+        public bool VariableUpdateDone(object copyLock, object errorNotificationsLock)
         {
-            ErrorCollector.Instance.NotificationsEnabled = true;
-            return _parentController.BulkUpdateEnd(lockObject);
+            ErrorCollector.Instance.EndBulkUpdate(errorNotificationsLock);
+            return _parentController.BulkUpdateEnd(copyLock);
         }
 
-        /// <summary>
-        /// disables the CopyToBuffer function until a VariablesUpdateDone with the object _variableUpdateLockObject is called
-        /// </summary>
-        public Object VariableUpdateStart()
-        {
-            ErrorCollector.Instance.NotificationsEnabled = false;
-            return _parentController.BulkUpdateStart();
-        }
 
         /// <summary>
         /// Sets the parent controller.

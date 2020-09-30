@@ -47,6 +47,7 @@ using System.Linq;
 using Model.Utilities;
 using Controller.Helper;
 using Controller.Error;
+using Errors.Error;
 
 namespace Controller.MainWindow
 {
@@ -1194,9 +1195,11 @@ namespace Controller.MainWindow
                     foreach (ChannelBasicModel channel in sequence.Channels)
                     {
                         bool restart = true;
+
                         while (restart)
                         {
                             restart = false;
+
                             foreach (StepBasicModel step in channel.Steps)
                             {
                                 if (step.Duration.Value == 0)
@@ -1315,13 +1318,12 @@ namespace Controller.MainWindow
             else
             {
                 MessageBoxResult errorBox = new MessageBoxResult();
-                String error = "Due to errors in the current model, the ouput visualizer can not show the output";
+                string error = "Due to errors in the current model, the ouput visualizer can not show the output";
                 errorBox = MessageBox.Show(error);
             }
 
         }
-
-
+        
         public void ShutdownApplication(object parameter)
         {
             CancelEventArgs e = (CancelEventArgs)parameter;
@@ -1427,6 +1429,7 @@ namespace Controller.MainWindow
 
         public void LoadModel(RootModel model, int timesToReplicate, GenerationFinishedCallback callback = null, bool isSilent = false)
         {
+            object token = ErrorCollector.Instance.StartBulkUpdate();
             _model = model;
             ModelSpecificCounters counters = MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters;
 
@@ -1469,6 +1472,7 @@ namespace Controller.MainWindow
             // Debug.Assert(GetRootController()._enableCopyToBuffer == false);
             GetRootController().CopyToBuffer(); // to ensure copying to the buffer for the first time after start (this sets pending changes to true for the first time).
             GetRootController().EnableCopyToBufferAndCopyChanges();
+            ErrorCollector.Instance.EndBulkUpdate(token);
 
             if (!isSilent)
             {

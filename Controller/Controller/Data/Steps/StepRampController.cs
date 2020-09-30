@@ -1,5 +1,6 @@
 ﻿using System;
 using Controller.Data.Channels;
+using Errors.Error;
 using Model.Data.Steps;
 
 namespace Controller.Data.Steps
@@ -42,6 +43,7 @@ namespace Controller.Data.Steps
             set
             {
                 StepRampModel.StoreType store;
+                object errorNotificationLock = ErrorCollector.Instance.StartBulkUpdate();
                 object token = _rootController.BulkUpdateStart();
 
                 if (Enum.TryParse(value.ToString(), out store))
@@ -55,6 +57,7 @@ namespace Controller.Data.Steps
 
                 ((ChannelBasicController)Parent).CopyToBuffer();
                 _rootController.BulkUpdateEnd(token);
+                ErrorCollector.Instance.EndBulkUpdate(errorNotificationLock);
             }
         }
 
@@ -75,6 +78,7 @@ namespace Controller.Data.Steps
             set
             {
                 StepRampModel.StoreType store;
+                object errorNotificationLock = ErrorCollector.Instance.StartBulkUpdate();
                 object token = _rootController.BulkUpdateStart();
                 if (Enum.TryParse(value.ToString(), out store))
                 {
@@ -86,6 +90,7 @@ namespace Controller.Data.Steps
                 }
                 ((ChannelBasicController)Parent).CopyToBuffer();
                 _rootController.BulkUpdateEnd(token);
+                ErrorCollector.Instance.EndBulkUpdate(errorNotificationLock);
             }
         }
 

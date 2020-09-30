@@ -318,6 +318,8 @@ namespace Controller.MainWindow.MeasurementRoutine
         public async Task<RootModel> LoadModelAsync(string filePath, bool isPrimaryModel, bool isSilent = false)
         {
             Parent.BlockUI("Loading Model...");
+            object token = ErrorCollector.Instance.StartBulkUpdate();
+            RootModel result = null;
 
             try
             {
@@ -330,9 +332,8 @@ namespace Controller.MainWindow.MeasurementRoutine
                 }
                 else
                 {
-                    ErrorCollector.Instance.NotificationsEnabled = false;
+                    
                     bool verificationResult = model.Verify();
-                    ErrorCollector.Instance.NotificationsEnabled = true;
 
                     //RECO: a hard check for errors might be necessary by creating a generator and trying to generate the sequence and verifying it afterwards.
                     if (verificationResult)//'Soft' check for errors
@@ -354,7 +355,8 @@ namespace Controller.MainWindow.MeasurementRoutine
                     }
 
                 }
-                return model;
+
+                result = model;
 
             }
             catch (Exception e)
@@ -366,9 +368,11 @@ namespace Controller.MainWindow.MeasurementRoutine
                     MessageBox.Show("Failed to load the specified model, a conversion error might exist. Reason: " + reason, "Model Has Errors", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                return null;
             }
 
+            ErrorCollector.Instance.EndBulkUpdate(token);
+
+            return result;
         }
 
         private async Task<RootModel> DoLoadModel(string filePath, bool isSilent)

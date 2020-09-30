@@ -4,35 +4,45 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
     MinWidth="800"
     MinHeight="400"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid Name="ErrorRoot">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Label HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="5">
-            <Label.Style>
-                <Style TargetType="Label">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Errors.Count}" Value="0">
-                            <Setter Property="Content" Value="The list of errors is empty!"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Label.Style>
-        </Label>
-        <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="5">
-
-            <ItemsControl
-                Name="ErrorListBox"
-                Grid.Row="0"
-                Grid.Column="0"
+    <Border
+        Padding="1"
+        Margin="2"
+        BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+        BorderThickness="1"
+        CornerRadius="3">
+        <Grid Name="ErrorRoot">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label
+                Margin="5"
                 HorizontalAlignment="Stretch"
-                VerticalContentAlignment="Stretch"
-                ItemsSource="{Binding Path=Errors}" />
-        </ScrollViewer>
-    </Grid>
+                VerticalAlignment="Top">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Errors.Count}" Value="0">
+                                <Setter Property="Content" Value="The list of errors is empty!" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
+            <ScrollViewer Margin="5" ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                <ItemsControl
+                    Name="ErrorListBox"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    ItemsSource="{Binding Path=Errors}" />
+            </ScrollViewer>
+        </Grid>
+    </Border>
 </UserControl>

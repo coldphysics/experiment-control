@@ -24,7 +24,7 @@
     <Border BorderBrush="Red" BorderThickness="1">
         <Border BorderBrush="Black" BorderThickness="{Binding Path=StayOnDelete, Converter={StaticResource theConverter}}">
             <Border BorderBrush="Red" BorderThickness="{Binding Path=StayOnDelete, Converter={StaticResource theConverter}}">
-                <Grid Name="thisGrid">
+                <Grid Name="thisGrid" Margin="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200" MaxWidth="200" />
                         <ColumnDefinition Width="*" />
@@ -40,6 +40,7 @@
                         Width="25"
                         Height="25"
                         HorizontalAlignment="Right"
+                        Background="{DynamicResource {x:Static SystemColors.MenuBarBrushKey}}"
                         Command="{Binding DeleteThisErrorCommand}">
                         <Image Source="/View;component/Resources/1484583618_cross-24.png" />
                     </Button>
