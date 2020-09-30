@@ -10,7 +10,7 @@ using System.Threading;
 namespace Errors.Error
 {
     /// <summary>
-    /// Error Class responsible for the whole error handling
+    /// A singleton class that manages the collection of errors emitted by the various parts of the application
     /// </summary>
     public sealed class ErrorCollector : INotifyPropertyChanged
     {
@@ -18,17 +18,41 @@ namespace Errors.Error
         /// a list containing all errors as ErrorItems
         /// </summary>
         private List<ConcreteErrorItem> errors = new List<ConcreteErrorItem>();
+        /// <summary>
+        /// A flag that indicates whether changing the contents of the error list causes properychanged events to be emitted or not
+        /// </summary>
         private bool _notificationsEnabled = true;
+        /// <summary>
+        /// A flag to indicate that the error list has changed during the period in which notifications were disabled
+        /// </summary>
         private bool _pendingNotifications = false;
+        /// <summary>
+        /// A lock that ensures that only the first invoker of the StartBulkUpdate can reenable notifications via the EndBulkUpdate method
+        /// </summary>
         private object notificationLock;
 
+        /// <summary>
+        /// The port at which this class listens for incoming status messages over TCP
+        /// </summary>
         private static readonly int PORT_FOR_NETWORK_STATUS_MESSAGES = 7205;
+        /// <summary>
+        /// The port at which this class listens for incoming error messages over TCP
+        /// </summary>
         private static readonly int PORT_FOR_NETWORK_ERROR_MESSAGES = 7200;
+        /// <summary>
+        /// A string all network status messages MUST start with
+        /// </summary>
         private static readonly string STATUS = "STATUS";
+        /// <summary>
+        /// A string all network error messages MUST start with
+        /// </summary>
         private static readonly string ERROR = "ERROR";
 
         // ******************** events ********************
 
+        /// <summary>
+        /// Indicates when the errors list or status list have changed
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         // ******************** lock stuff ********************
@@ -36,22 +60,30 @@ namespace Errors.Error
         /// lock variable
         /// </summary>
         private static readonly object _singletonLockObj = new object();
-
+        /// <summary>
+        /// A synchronization object that ensures that invocations to this class methods are thread-safe
+        /// </summary>
         private readonly object _lockObj = new object();
 
         // ******************** properties ********************
+        /// <summary>
+        /// Maps an error category to an status message
+        /// </summary>
         public Dictionary<ErrorCategory, string> Status { get; set; } = new Dictionary<ErrorCategory, string>();
 
+        /// <summary>
+        /// The latest known value for the global counter (setting the value here does not really change the actual global counter!)
+        /// </summary>
         public int GlobalCounter { get; set; } = 0;
 
         // ******************** constructor and instance constructor ********************
         /// <summary>
-        /// the instance return value for creating a new ErrorClass instance
+        /// the singleton instance of this class
         /// </summary>
         private static volatile ErrorCollector _instance;
 
         /// <summary>
-        /// instance Constructor, for this being a Singleton Class (thread-safe)
+        /// the singleton instance of this class (thread-safe)
         /// </summary>
         public static ErrorCollector Instance
         {
@@ -71,7 +103,9 @@ namespace Errors.Error
             }
         }
 
-
+        /// <summary>
+        /// Instantiate a new instance of this class. Private to force callers to use the Instance property
+        /// </summary>
         private ErrorCollector()
         {
             Thread waitForNetworkErrors = new Thread(AwaitNetworkErrors);
@@ -83,6 +117,10 @@ namespace Errors.Error
             waitForNetworkStatusReports.Start();
         }
 
+        /// <summary>
+        /// Called when the contents of the error list get changed
+        /// Will not emit an event if the _notificationsEnabled flag is false. In this case it well set the _pendingNotifications flag to true.
+        /// </summary>
         private void OnUpdateErrorList()
         {
             lock (_lockObj)
@@ -96,9 +134,14 @@ namespace Errors.Error
                     _pendingNotifications = true;
                 }
             }
-            
+
         }
 
+        /// <summary>
+        /// Blocks the notifications emitted from this class regarding changes in the error list. Useful before starting an operation known for the ability to detect
+        /// multiple errors at once, e.g., RootModel.Verify()
+        /// </summary>
+        /// <returns>An object that can be used to unblock the notifications (only if the caller is the caller actually causing the blocking to happen)</returns>
         public object StartBulkUpdate()
         {
             object candidateLock = new object();
@@ -116,6 +159,11 @@ namespace Errors.Error
             return candidateLock;
         }
 
+        /// <summary>
+        /// Unblocks the notifications emitted from this class regarding changes in the error list.
+        /// </summary>
+        /// <param name="candidateLock">The lock returned from the corresponding StartBulkUpdate method call</param>
+        /// <returns>true if the notifications were unblocked, false otherwise (either not the first blocker, or wrong lock object)</returns>
         public bool EndBulkUpdate(object candidateLock)
         {
             lock (_lockObj)
@@ -139,6 +187,10 @@ namespace Errors.Error
         }
 
         // ******************** delete Errors ********************
+        /// <summary>
+        /// Deletes a specifc concrete error item (forcefully)
+        /// </summary>
+        /// <param name="error"></param>
         public void RemoveSingleError(ConcreteErrorItem error)
         {
             bool removed = false;
@@ -157,7 +209,8 @@ namespace Errors.Error
         }
 
         /// <summary>
-        /// Deletes all Errors of the specified Window and Type without the StayOnDeleteErrors
+        /// Deletes all Errors of the specified Window and Type without the errors with the StayOnDeleteErrors flag 
+        /// or the <see cref="StickyErrorItem"/> errors
         /// </summary>
         /// <param name="errorWindow">Window the errors belong to</param>
         /// <param name="errorType">Type of the errors to delete</param>
@@ -178,10 +231,11 @@ namespace Errors.Error
         }
 
         /// <summary>
-        /// Deletes all Errors of the specified Window without the StayOnDeleteErrors
+        /// Deletes all Errors of the specified Window without the errors with the StayOnDeleteErrors flag 
+        /// or the <see cref="StickyErrorItem"/> errors
         /// </summary>
-        /// <param name="errorWindow">Window the errors belong to</param>
-        public void RemoveErrorsOfWindow(ErrorCategory errorWindow)
+        /// <param name="errorCategory">Category the errors belong to</param>
+        public void RemoveErrorsOfWindow(ErrorCategory errorCategory)
         {
             int removed;
 
@@ -189,7 +243,7 @@ namespace Errors.Error
             {
                 removed = errors.RemoveAll(error =>
                 {
-                    return error.ErrorCategory == errorWindow && !error.StayOnDelete && !(error is StickyErrorItem);
+                    return error.ErrorCategory == errorCategory && !error.StayOnDelete && !(error is StickyErrorItem);
                 });
             }
 
@@ -198,10 +252,10 @@ namespace Errors.Error
         }
 
         /// <summary>
-        /// Deletes all Errors of the specified Window, even the StayOnDeleteErrors
+        /// Deletes all Errors of the specified category, even the StayOnDeleteErrors
         /// </summary>
-        /// <param name="errorWindow">Window the errors belong to</param>
-        public void RemoveErrorsOfWindowEvenStayOnDelete(ErrorCategory errorWindow)
+        /// <param name="errorCategory">Category the errors belong to</param>
+        public void RemoveErrorsOfWindowEvenStayOnDelete(ErrorCategory errorCategory)
         {
             int removed;
 
@@ -209,7 +263,7 @@ namespace Errors.Error
             {
                 removed = errors.RemoveAll(error =>
                 {
-                    return error.ErrorCategory == errorWindow && !(error is StickyErrorItem);
+                    return error.ErrorCategory == errorCategory && !(error is StickyErrorItem);
                 });
 
             }
@@ -218,8 +272,12 @@ namespace Errors.Error
                 OnUpdateErrorList();
         }
 
-        // ******************** add Errors ********************
-
+        // ******************** Networking ********************
+        /// <summary>
+        /// Waits for a TCP message at a specific port, and executes an action that processes it
+        /// </summary>
+        /// <param name="port">The port at which the message will be received</param>
+        /// <param name="action">The action that will process the message</param>
         private void AwaitNetworkMessages(int port, Action<string> action)
         {
             TcpListener serverSocket = new TcpListener(IPAddress.Any, port);
@@ -266,6 +324,9 @@ namespace Errors.Error
 
         }
 
+        /// <summary>
+        /// The usage of status reports over the network is not clear??
+        /// </summary>
         private void AwaitNetworkStatusReports()
         {
             AwaitNetworkMessages(PORT_FOR_NETWORK_STATUS_MESSAGES, (dataFromClient) =>
@@ -281,16 +342,17 @@ namespace Errors.Error
 
         }
 
+        // ******************** add Errors ********************
         /// <summary>
-        /// a function adding an error to the errorList
+        /// Adds an error to the errorList (if an error with the same message exists, it is replaced)
         /// </summary>
         /// <param name="errorMsg">string error message</param>
-        /// <param name="errorCard">ErrorCards enum</param>
+        /// <param name="errorCategory">category of error</param>
         /// <param name="stayOnDelete">true if error should stay even if the category is cleaned up</param>
-        /// <param name="errorType">ErrorTypes enum</param>
-        public ConcreteErrorItem AddError(string errorMsg, ErrorCategory errorCard, bool stayOnDelete, ErrorTypes errorType)
+        /// <param name="errorType">specific error type</param>
+        public ConcreteErrorItem AddError(string errorMsg, ErrorCategory errorCategory, bool stayOnDelete, ErrorTypes errorType)
         {
-            return AddError(errorMsg, errorCard, stayOnDelete, errorType, false);
+            return AddError(errorMsg, errorCategory, stayOnDelete, errorType, false);
         }
 
         public StickyErrorItem AddStickyError(string errorMsg, ErrorCategory errorCard, bool stayOnDelete, ErrorTypes errorType)
@@ -372,6 +434,10 @@ namespace Errors.Error
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Status"));
         }
 
+        /// <summary>
+        /// Gets a snapshot of the current state of the error list
+        /// </summary>
+        /// <returns></returns>
         public List<ConcreteErrorItem> GetErrorsSnapshot()
         {
             List<ConcreteErrorItem> errorsCopy;

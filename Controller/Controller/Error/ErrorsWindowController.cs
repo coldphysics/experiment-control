@@ -10,11 +10,23 @@ using System.Linq;
 
 namespace Controller.Error
 {
+    /// <summary>
+    /// A controller for the ErrorWindowView
+    /// </summary>
     public class ErrorsWindowController : ChildController, IWindowController
     {
+        /// <summary>
+        /// A list of all child <see cref="AbstractErrorItemController"/>s (both headers and concrete items)
+        /// </summary>
         private ObservableCollection<AbstractErrorItemController> errors = new ObservableCollection<AbstractErrorItemController>();
+        /// <summary>
+        /// The opened state for every error category
+        /// </summary>
         private readonly Dictionary<ErrorCategory, bool> openedState = new Dictionary<ErrorCategory, bool>();
 
+        /// <summary>
+        /// Provides access for the errors list
+        /// </summary>
         public ObservableCollection<AbstractErrorItemController> Errors
         {
             set
@@ -29,6 +41,10 @@ namespace Controller.Error
             }
         }
 
+        /// <summary>
+        /// Creates a new instance of this class
+        /// </summary>
+        /// <param name="parent">The parent controller (most likely the <see cref="MainWindowController"/>)</param>
         public ErrorsWindowController(BaseController parent) : base(parent)
         {
             // We start with all categories opened
@@ -40,6 +56,11 @@ namespace Controller.Error
             ErrorCollector.Instance.PropertyChanged += ErrorCollector_PropertyChanged;
         }
 
+        /// <summary>
+        /// Handles the event emitted by the underlying <see cref="ErrorCollector"/> indicating that the list of errors has changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ErrorCollector_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Errors")
@@ -48,16 +69,29 @@ namespace Controller.Error
             }
         }
 
+        /// <summary>
+        /// Expands a specific error category
+        /// </summary>
+        /// <param name="category"></param>
         public void OpenCategory(ErrorCategory category)
         {
             SetOpenedState(category, true);
         }
 
+        /// <summary>
+        /// Collapses a specific error category
+        /// </summary>
+        /// <param name="category"></param>
         public void CloseCategory(ErrorCategory category)
         {
             SetOpenedState(category, false);
         }
 
+        /// <summary>
+        /// Handles changing the opened state of a given category with the help of the openedState dictionary
+        /// </summary>
+        /// <param name="category">The category to operate on</param>
+        /// <param name="state">The new state</param>
         private void SetOpenedState(ErrorCategory category, bool state)
         {
             if (openedState[category] != state)
@@ -72,11 +106,21 @@ namespace Controller.Error
             }
         }
 
+        /// <summary>
+        /// Gets the current opened state for a given category
+        /// </summary>
+        /// <param name="category">The category</param>
+        /// <returns>true if the category is opened; otherwise, false</returns>
         public bool GetOpenedState(ErrorCategory category)
         {
             return openedState[category];
         }
 
+        /// <summary>
+        /// Maps a <see cref="ErrorCategory"/> to a human-friendly name
+        /// </summary>
+        /// <param name="category">The category to map</param>
+        /// <returns>The resulting human-friendly name</returns>
         private static string GetCategoryName(ErrorCategory category)
         {
             switch (category)
@@ -98,6 +142,9 @@ namespace Controller.Error
             return "Unknown";
         }
 
+        /// <summary>
+        /// Handles the event that the error list managed by the <see cref="ErrorCollector"/> has changed
+        /// </summary>
         private void UpdateErrorList()
         {
             List<ConcreteErrorItem> errorsCopy = ErrorCollector.Instance.GetErrorsSnapshot();
@@ -135,6 +182,12 @@ namespace Controller.Error
             }
         }
 
+        /// <summary>
+        /// Creates the child controllers (<see cref="AbstractErrorItemController"/>) for a given <see cref="ErrorCategory"/>.
+        /// </summary>
+        /// <param name="newErrors">The set of all errors retrieved from the <see cref="ErrorCollector"/></param>
+        /// <param name="_sortedList">The resulting list of controllers</param>
+        /// <param name="category">The error category for which to create controllers</param>
         private void CreateErrorListForSingleCategory(List<ConcreteErrorItem> newErrors, List<AbstractErrorItemController> _sortedList, ErrorCategory category)
         {
             bool isHeaderAdded = false;
@@ -146,6 +199,7 @@ namespace Controller.Error
             {
                 if (newErrors[i].ErrorCategory == category)
                 {
+                    // there is one header per category. Ensure to create it
                     if (!isHeaderAdded)
                     {
                         header = new ErrorHeader();

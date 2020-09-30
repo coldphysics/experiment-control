@@ -8,10 +8,21 @@ namespace Controller.Error.ErrorItems
 {
     public class ErrorHeaderController : AbstractErrorItemController
     {
-
+        /// <summary>
+        /// A command to handle the button click to toggle the visibility of an error category
+        /// </summary>
         public ICommand ToggleCategoryCommand { set; get; }
+
+        /// <summary>
+        /// A command to handle the button click to clear the errors of an error category
+        /// </summary>
         public ICommand ClearCategoryCommand { set; get; }
 
+        /// <summary>
+        /// Creates a new instance of this class
+        /// </summary>
+        /// <param name="errorController">The parent controller</param>
+        /// <param name="errorItem">The underlying <see cref="ErrorHeader"/> </param>
         public ErrorHeaderController(ErrorsWindowController errorController, ErrorHeader errorItem) : base(errorController, errorItem)
         {
             ToggleCategoryCommand = new RelayCommand((parameter) => {
