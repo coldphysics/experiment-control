@@ -42,7 +42,6 @@ namespace MainProject.Builders
       
             //Initializes the controlWindow and creates it (and with it all other Windows)
             this.mainController = new MainWindowController(rootModel, doubleBuffer, outputHandler, controllerWrapper, windowGenerator, variablesController);
-            ErrorsWindowController errorWindowController = new ErrorsWindowController(mainController);
 
             doubleBuffer.OnGeneratorStateChange += mainController.OnGeneratorStateChange;
             outputHandler.OnScanChange += mainController.OnScanChange;

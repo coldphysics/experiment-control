@@ -98,8 +98,11 @@ namespace Controller.Root
         {
             ErrorCollector errorCollector = ErrorCollector.Instance;
             errorCollector.RemoveErrorsOfWindow(ErrorCategory.MainHardware);
+            errorCollector.NotificationsEnabled = false;
+            bool verificationResult = Model.Verify();
+            errorCollector.NotificationsEnabled = true;
 
-            if (Model.Verify())
+            if (verificationResult)
             {
                 //errorCollector.stopBlink();
 

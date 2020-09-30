@@ -8,19 +8,7 @@ namespace Controller.Error.ErrorItems
 {
     public class ErrorHeaderController : AbstractErrorItemController
     {
-        public bool IsExpanded
-        {
-            set
-            {
-                ((ErrorsWindowController)parent).SetOpenedState(Category, value);
-                // notification that the property has chaged happens through the parent (no need to worry about it here)
-            }
 
-            get
-            {
-                return ((ErrorsWindowController)parent).GetOpenedState(Category);
-            }
-        }
         public ICommand ToggleCategoryCommand { set; get; }
         public ICommand ClearCategoryCommand { set; get; }
 

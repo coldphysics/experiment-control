@@ -330,8 +330,12 @@ namespace Controller.MainWindow.MeasurementRoutine
                 }
                 else
                 {
+                    ErrorCollector.Instance.NotificationsEnabled = false;
+                    bool verificationResult = model.Verify();
+                    ErrorCollector.Instance.NotificationsEnabled = true;
+
                     //RECO: a hard check for errors might be necessary by creating a generator and trying to generate the sequence and verifying it afterwards.
-                    if (model.Verify())//'Soft' check for errors
+                    if (verificationResult)//'Soft' check for errors
                     {
                         RoutineBasedRootModel toAdd = new RoutineBasedRootModel() { ActualModel = model, FilePath = filePath, TimesToReplicate = 1 };
                         RoutineModelController controllerToAdd = new RoutineModelController(toAdd);

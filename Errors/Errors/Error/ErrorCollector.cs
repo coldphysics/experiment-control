@@ -18,6 +18,8 @@ namespace Errors.Error
         /// a list containing all errors as ErrorItems
         /// </summary>
         private List<ConcreteErrorItem> errors = new List<ConcreteErrorItem>();
+        private bool _notificationsEnabled = true;
+        private bool _pendingNotifications = false;
 
         private static readonly int PORT_FOR_NETWORK_STATUS_MESSAGES = 7205;
         private static readonly int PORT_FOR_NETWORK_ERROR_MESSAGES = 7200;
@@ -40,6 +42,33 @@ namespace Errors.Error
         public Dictionary<ErrorCategory, string> Status { get; set; } = new Dictionary<ErrorCategory, string>();
 
         public int GlobalCounter { get; set; } = 0;
+
+        public bool NotificationsEnabled
+        {
+            set
+            {
+                lock (_lockObj)
+                {
+                    if (_notificationsEnabled != value)
+                    {
+                        _notificationsEnabled = value;
+
+                        if (_notificationsEnabled)
+                        {
+                            if (_pendingNotifications)
+                            {
+                                _pendingNotifications = false;
+                                OnUpdateErrorList();
+                            }
+                        }
+                    }
+                }
+            }
+            get
+            {
+                return _notificationsEnabled;
+            }
+        }
 
         // ******************** constructor and instance constructor ********************
         /// <summary>
@@ -82,7 +111,18 @@ namespace Errors.Error
 
         private void OnUpdateErrorList()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Errors"));
+            lock (_lockObj)
+            {
+                if (_notificationsEnabled)
+                {
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Errors"));
+                }
+                else
+                {
+                    _pendingNotifications = true;
+                }
+            }
+            
         }
 
         // ******************** delete Errors ********************
@@ -114,7 +154,8 @@ namespace Errors.Error
 
             lock (_lockObj)
             {
-                removed = errors.RemoveAll(error => {
+                removed = errors.RemoveAll(error =>
+                {
                     return error.ErrorCategory == errorWindow && !error.StayOnDelete && error.ErrorType == errorType && !(error is StickyErrorItem);
                 });
             }
@@ -133,7 +174,8 @@ namespace Errors.Error
 
             lock (_lockObj)
             {
-                removed = errors.RemoveAll(error => {
+                removed = errors.RemoveAll(error =>
+                {
                     return error.ErrorCategory == errorWindow && !error.StayOnDelete && !(error is StickyErrorItem);
                 });
             }
@@ -152,7 +194,8 @@ namespace Errors.Error
 
             lock (_lockObj)
             {
-                removed = errors.RemoveAll(error => {
+                removed = errors.RemoveAll(error =>
+                {
                     return error.ErrorCategory == errorWindow && !(error is StickyErrorItem);
                 });
 

@@ -994,8 +994,9 @@ namespace Controller.Variables
         /// re-enables and triggers the CopyToBuffer function if the object in the argument matches the _variableUpdateLockObject
         /// </summary>
         /// <param name="lockObject">lock/unlock object</param>
-        public bool VariableUpdateDone(Object lockObject)
+        public bool VariableUpdateDone(object lockObject)
         {
+            ErrorCollector.Instance.NotificationsEnabled = true;
             return _parentController.BulkUpdateEnd(lockObject);
         }
 
@@ -1004,6 +1005,7 @@ namespace Controller.Variables
         /// </summary>
         public Object VariableUpdateStart()
         {
+            ErrorCollector.Instance.NotificationsEnabled = false;
             return _parentController.BulkUpdateStart();
         }
 

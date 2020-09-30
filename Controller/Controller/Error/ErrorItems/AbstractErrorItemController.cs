@@ -2,6 +2,7 @@
 using Controller.MainWindow;
 using Errors.Error;
 using Errors.Error.ErrorItems;
+using System;
 using System.Windows.Input;
 
 namespace Controller.Error.ErrorItems
@@ -21,6 +22,14 @@ namespace Controller.Error.ErrorItems
             get
             {
                 return _errorItem;
+            }
+        }
+
+        public virtual  bool IsExpanded
+        {
+            get
+            {
+                return ((ErrorsWindowController)parent).GetOpenedState(Category);
             }
         }
 

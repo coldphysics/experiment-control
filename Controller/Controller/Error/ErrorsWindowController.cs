@@ -50,26 +50,25 @@ namespace Controller.Error
 
         public void OpenCategory(ErrorCategory category)
         {
-            openedState[category] = true;
-            UpdateErrorList();
+            SetOpenedState(category, true);
         }
 
         public void CloseCategory(ErrorCategory category)
         {
-            openedState[category] = false;
-            UpdateErrorList();
+            SetOpenedState(category, false);
         }
 
-        public void SetOpenedState(ErrorCategory category, bool state)
+        private void SetOpenedState(ErrorCategory category, bool state)
         {
             if (openedState[category] != state)
             {
                 openedState[category] = state;
-                ErrorHeaderController controller = Errors
-                    .Where(item => item is ErrorHeaderController && ((ErrorHeaderController)item).Category == category)
-                    .Cast<ErrorHeaderController>()
-                    .FirstOrDefault(null);
-                controller.NotifyPropertyChanged("IsExpanded");
+                List<AbstractErrorItemController> controllers = Errors
+                    .Where(item => item.Category == category)
+                    .ToList();
+
+                foreach(AbstractErrorItemController controller in controllers)
+                    controller.NotifyPropertyChanged("IsExpanded");
             }
         }
 
@@ -102,25 +101,37 @@ namespace Controller.Error
         private void UpdateErrorList()
         {
             List<ConcreteErrorItem> errorsCopy = ErrorCollector.Instance.GetErrorsSnapshot();
-            List<AbstractErrorItemController> _sortedList = new List<AbstractErrorItemController>();
+            var currentErrors = errors
+                .Where(e => e is ConcreteErrorItemController)
+                .Cast<ConcreteErrorItemController>()
+                .Select(e => e.ConcreteErrorItem).ToList();
 
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Basic);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.MainHardware);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Pulseblaster);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Variables);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Python);
+            int newErrorsCount = errorsCopy.Except(currentErrors).Count();
+            int deletedErrorsCount = currentErrors.Except(errorsCopy).Count();
 
-            if (_sortedList.Count != 0)
+            // only update views if there are some changes in errors
+            if (newErrorsCount > 0 || deletedErrorsCount > 0)
             {
-                BlinkManager.GetInstance().BlinkErrorAsync();
+                List<AbstractErrorItemController> _sortedList = new List<AbstractErrorItemController>();
+
+                CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Basic);
+                CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.MainHardware);
+                CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Pulseblaster);
+                CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Variables);
+                CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorCategory.Python);
+                Errors = new ObservableCollection<AbstractErrorItemController>(_sortedList);
+            }
+
+            if (errorsCopy.Count != 0)
+            {
+                // only blink again if we have new errors!
+                if (newErrorsCount > 0)
+                    BlinkManager.GetInstance().BlinkErrorAsync();
             }
             else
             {
                 BlinkManager.GetInstance().StopBlinkingAsync();
             }
-
-
-            Errors = new ObservableCollection<AbstractErrorItemController>(_sortedList);
         }
 
         private void CreateErrorListForSingleCategory(List<ConcreteErrorItem> newErrors, List<AbstractErrorItemController> _sortedList, ErrorCategory category)

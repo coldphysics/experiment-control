@@ -11,7 +11,16 @@
     <UserControl.Resources>
         <local:BoolToBorderWidthConverter x:Key="theConverter" />
     </UserControl.Resources>
-
+    <UserControl.Style>
+        <Style TargetType="UserControl">
+            <Setter Property="Visibility" Value="Visible" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsExpanded}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
     <Border BorderBrush="Red" BorderThickness="1">
         <Border BorderBrush="Black" BorderThickness="{Binding Path=StayOnDelete, Converter={StaticResource theConverter}}">
             <Border BorderBrush="Red" BorderThickness="{Binding Path=StayOnDelete, Converter={StaticResource theConverter}}">
