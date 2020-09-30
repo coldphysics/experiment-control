@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Errors.Error.ErrorItems;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,50 +9,50 @@ using System.Threading;
 
 namespace Errors.Error
 {
-    // ******************** enums ********************
-    public enum ErrorWindow
-    {
-        Pulseblaster,
-        MainHardware,
-        Variables,
-        Basic,
-        Python,
-        Messages
-    };
-
-    public enum ErrorTypes
-    {
-        ProgramError,
-        OutOfRange,
-        NegativeTime,
-        DynamicCompileError,
-        StrangeStephanError,
-        FileNameEmpty,
-        FileNotFound,
-        ExternalError,
-        Other
-    };
-
     /// <summary>
-    /// Error Class responsible for the whole error handling
+    /// A singleton class that manages the collection of errors emitted by the various parts of the application
     /// </summary>
     public sealed class ErrorCollector : INotifyPropertyChanged
     {
-        private Errors.ErrorWindow _parent;
         /// <summary>
         /// a list containing all errors as ErrorItems
         /// </summary>
-        private List<ErrorItem> errors = new List<ErrorItem>();
-        private bool _blinkstate = false;
-        private bool showEmptyCategories = false;
-        private bool _showBasic = true;
-        private bool _showPulseblaster = true;
-        private bool _showMainHardware = true;
-        private bool _showVariables = true;
-        private bool _showPython = true;
+        private List<ConcreteErrorItem> errors = new List<ConcreteErrorItem>();
+        /// <summary>
+        /// A flag that indicates whether changing the contents of the error list causes properychanged events to be emitted or not
+        /// </summary>
+        private bool _notificationsEnabled = true;
+        /// <summary>
+        /// A flag to indicate that the error list has changed during the period in which notifications were disabled
+        /// </summary>
+        private bool _pendingNotifications = false;
+        /// <summary>
+        /// A lock that ensures that only the first invoker of the StartBulkUpdate can reenable notifications via the EndBulkUpdate method
+        /// </summary>
+        private object notificationLock;
+
+        /// <summary>
+        /// The port at which this class listens for incoming status messages over TCP
+        /// </summary>
+        private static readonly int PORT_FOR_NETWORK_STATUS_MESSAGES = 7205;
+        /// <summary>
+        /// The port at which this class listens for incoming error messages over TCP
+        /// </summary>
+        private static readonly int PORT_FOR_NETWORK_ERROR_MESSAGES = 7200;
+        /// <summary>
+        /// A string all network status messages MUST start with
+        /// </summary>
+        private static readonly string STATUS = "STATUS";
+        /// <summary>
+        /// A string all network error messages MUST start with
+        /// </summary>
+        private static readonly string ERROR = "ERROR";
 
         // ******************** events ********************
 
+        /// <summary>
+        /// Indicates when the errors list or status list have changed
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         // ******************** lock stuff ********************
@@ -59,77 +60,30 @@ namespace Errors.Error
         /// lock variable
         /// </summary>
         private static readonly object _singletonLockObj = new object();
-
+        /// <summary>
+        /// A synchronization object that ensures that invocations to this class methods are thread-safe
+        /// </summary>
         private readonly object _lockObj = new object();
 
         // ******************** properties ********************
-        public Dictionary<string, string> Status { get; set; } = new Dictionary<string, string>();
+        /// <summary>
+        /// Maps an error category to an status message
+        /// </summary>
+        public Dictionary<ErrorCategory, string> Status { get; set; } = new Dictionary<ErrorCategory, string>();
 
+        /// <summary>
+        /// The latest known value for the global counter (setting the value here does not really change the actual global counter!)
+        /// </summary>
         public int GlobalCounter { get; set; } = 0;
-
-        public bool ShowBasic
-        {
-            get { return _showBasic; }
-            set
-            {
-                _showBasic = value;
-                OnUpdateErrorList();
-            }
-        }
-
-        public bool ShowPulseblaster
-        {
-            get { return _showPulseblaster; }
-            set
-            {
-                _showPulseblaster = value;
-                OnUpdateErrorList();
-            }
-        }
-
-        public bool ShowMainHardware
-        {
-            get { return _showMainHardware; }
-            set
-            {
-                _showMainHardware = value;
-                OnUpdateErrorList();
-            }
-        }
-
-        public bool ShowVariables
-        {
-            get { return _showVariables; }
-            set
-            {
-                _showVariables = value;
-                OnUpdateErrorList();
-            }
-        }
-
-        public bool ShowPython
-        {
-            get { return _showPython; }
-            set
-            {
-                _showPython = value;
-                OnUpdateErrorList();
-            }
-        }
-
-        public List<ErrorItem> SortedList
-        {
-            get { return CreateErrorList(); }
-        }
 
         // ******************** constructor and instance constructor ********************
         /// <summary>
-        /// the instance return value for creating a new ErrorClass instance
+        /// the singleton instance of this class
         /// </summary>
         private static volatile ErrorCollector _instance;
 
         /// <summary>
-        /// instance Constructor, for this being a Singleton Class (thread-safe)
+        /// the singleton instance of this class (thread-safe)
         /// </summary>
         public static ErrorCollector Instance
         {
@@ -149,7 +103,9 @@ namespace Errors.Error
             }
         }
 
-
+        /// <summary>
+        /// Instantiate a new instance of this class. Private to force callers to use the Instance property
+        /// </summary>
         private ErrorCollector()
         {
             Thread waitForNetworkErrors = new Thread(AwaitNetworkErrors);
@@ -161,164 +117,167 @@ namespace Errors.Error
             waitForNetworkStatusReports.Start();
         }
 
-        public void SetParent(Errors.ErrorWindow parentWindow)
+        /// <summary>
+        /// Called when the contents of the error list get changed
+        /// Will not emit an event if the _notificationsEnabled flag is false. In this case it well set the _pendingNotifications flag to true.
+        /// </summary>
+        private void OnUpdateErrorList()
         {
-            _parent = parentWindow;
-        }
-
-        private void Blink()
-        {
-            if (_blinkstate == false)
+            lock (_lockObj)
             {
-                _blinkstate = true;
-                _parent.blink();
-            }
-        }
-
-        private void StopBlink()
-        {
-            if (_blinkstate == true)
-            {
-                _blinkstate = false;
-                _parent.stopBlink();
-            }
-        }
-
-        private void CreateErrorListForSingleCategory(List<ErrorItem> newErrors, List<ErrorItem> _sortedList, ErrorWindow errorWindow, string errorWindowName, bool showThisCategory)
-        {
-            bool isHeaderAdded = false;
-            ErrorItem header;
-
-            for (int i = 0; i < newErrors.Count(); i++)
-            {
-                if (newErrors[i].ErrorWindow == errorWindow)
+                if (_notificationsEnabled)
                 {
-                    if (!isHeaderAdded)
-                    {
-                        header = new ErrorItem();
-                        header.DataTime = "";
-                        header.ErrorMessage = "--- " + errorWindowName + " ---";
-                        header.isHeader = true;
-                        header.ErrorWindow = errorWindow;
-                        _sortedList.Add(header);
-                        isHeaderAdded = true;
-                    }
-                    if (showThisCategory)
-                    {
-                        _sortedList.Add(newErrors[i]);
-                    }
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Errors"));
+                }
+                else
+                {
+                    _pendingNotifications = true;
                 }
             }
-            if (!isHeaderAdded && showEmptyCategories)
-            {
-                header = new ErrorItem();
-                header.DataTime = "";
-                header.ErrorMessage = errorWindowName + " OK";
-                header.isHeader = true;
-                header.ErrorWindow = errorWindow;
-                _sortedList.Add(header);
-            }
+
         }
 
         /// <summary>
-        /// a method returning an error list
+        /// Blocks the notifications emitted from this class regarding changes in the error list. Useful before starting an operation known for the ability to detect
+        /// multiple errors at once, e.g., RootModel.Verify()
         /// </summary>
-        /// <returns>an ErrorItem list containing all errors</returns>
-        private List<ErrorItem> CreateErrorList()
+        /// <returns>An object that can be used to unblock the notifications (only if the caller is the caller actually causing the blocking to happen)</returns>
+        public object StartBulkUpdate()
         {
-            List<ErrorItem> errorsCopy;
-            //Lock, deepClone of "newErrors"
+            object candidateLock = new object();
+
             lock (_lockObj)
             {
-                errorsCopy = new List<ErrorItem>(errors);
+                if (notificationLock == null)
+                {
+                    notificationLock = candidateLock;
+                }
+
+                _notificationsEnabled = false;
             }
 
-            List<ErrorItem> _sortedList = new List<ErrorItem>();
-
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Basic, "Basic", ShowBasic);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.MainHardware, "Main Hardware", ShowMainHardware);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Pulseblaster, "Pulseblaster", ShowPulseblaster);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Variables, "Variables", ShowVariables);
-            CreateErrorListForSingleCategory(errorsCopy, _sortedList, ErrorWindow.Python, "Python / External", ShowPython);
-
-            if (_sortedList.Count != 0)
-            {
-                Blink();
-            }
-            else
-            {
-                StopBlink();
-            }
-
-            return _sortedList;
+            return candidateLock;
         }
 
-        private void OnUpdateErrorList()
+        /// <summary>
+        /// Unblocks the notifications emitted from this class regarding changes in the error list.
+        /// </summary>
+        /// <param name="candidateLock">The lock returned from the corresponding StartBulkUpdate method call</param>
+        /// <returns>true if the notifications were unblocked, false otherwise (either not the first blocker, or wrong lock object)</returns>
+        public bool EndBulkUpdate(object candidateLock)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SortedList"));
+            lock (_lockObj)
+            {
+                if (candidateLock == notificationLock)
+                {
+                    notificationLock = null;
+                    _notificationsEnabled = true;
+
+                    if (_pendingNotifications)
+                    {
+                        _pendingNotifications = false;
+                        OnUpdateErrorList();
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // ******************** delete Errors ********************
-        public void RemoveSingleError(ErrorItem error)
+        /// <summary>
+        /// Deletes a specifc concrete error item (forcefully)
+        /// </summary>
+        /// <param name="error"></param>
+        public void RemoveSingleError(ConcreteErrorItem error)
         {
+            bool removed = false;
+
             lock (_lockObj)
             {
                 if (errors.Contains(error))
                 {
                     errors.Remove(error);
+                    removed = true;
                 }
             }
+
+            if (removed)
+                OnUpdateErrorList();
         }
 
         /// <summary>
-        /// Deletes all Errors of the specified Window and Type without the StayOnDeleteErrors
+        /// Deletes all Errors of the specified Window and Type without the errors with the StayOnDeleteErrors flag 
+        /// or the <see cref="StickyErrorItem"/> errors
         /// </summary>
         /// <param name="errorWindow">Window the errors belong to</param>
         /// <param name="errorType">Type of the errors to delete</param>
-        public void RemoveErrorsOfWindowAndType(ErrorWindow errorWindow, ErrorTypes errorType)
+        public void RemoveErrorsOfWindowAndType(ErrorCategory errorWindow, ErrorTypes errorType)
         {
+            int removed;
+
             lock (_lockObj)
             {
-                errors.RemoveAll(error => {
-                    return error.ErrorWindow == errorWindow && !error.StayOnDelete && error.ErrorType == errorType && !(error is StickyErrorItem);
+                removed = errors.RemoveAll(error =>
+                {
+                    return error.ErrorCategory == errorWindow && !error.StayOnDelete && error.ErrorType == errorType && !(error is StickyErrorItem);
                 });
             }
-            OnUpdateErrorList();
+
+            if (removed > 0)
+                OnUpdateErrorList();
         }
 
         /// <summary>
-        /// Deletes all Errors of the specified Window without the StayOnDeleteErrors
+        /// Deletes all Errors of the specified Window without the errors with the StayOnDeleteErrors flag 
+        /// or the <see cref="StickyErrorItem"/> errors
         /// </summary>
-        /// <param name="errorWindow">Window the errors belong to</param>
-        public void RemoveErrorsOfWindow(ErrorWindow errorWindow)
+        /// <param name="errorCategory">Category the errors belong to</param>
+        public void RemoveErrorsOfWindow(ErrorCategory errorCategory)
         {
+            int removed;
+
             lock (_lockObj)
             {
-                errors.RemoveAll(error => {
-                    return error.ErrorWindow == errorWindow && !error.StayOnDelete && !(error is StickyErrorItem);
+                removed = errors.RemoveAll(error =>
+                {
+                    return error.ErrorCategory == errorCategory && !error.StayOnDelete && !(error is StickyErrorItem);
                 });
             }
-            OnUpdateErrorList();
+
+            if (removed > 0)
+                OnUpdateErrorList();
         }
 
         /// <summary>
-        /// Deletes all Errors of the specified Window, even the StayOnDeleteErrors
+        /// Deletes all Errors of the specified category, even the StayOnDeleteErrors
         /// </summary>
-        /// <param name="errorWindow">Window the errors belong to</param>
-        public void RemoveErrorsOfWindowEvenStayOnDelete(ErrorWindow errorWindow)
+        /// <param name="errorCategory">Category the errors belong to</param>
+        public void RemoveErrorsOfWindowEvenStayOnDelete(ErrorCategory errorCategory)
         {
+            int removed;
+
             lock (_lockObj)
             {
-                errors.RemoveAll(error => {
-                    return error.ErrorWindow == errorWindow && !(error is StickyErrorItem);
+                removed = errors.RemoveAll(error =>
+                {
+                    return error.ErrorCategory == errorCategory && !(error is StickyErrorItem);
                 });
 
             }
-            OnUpdateErrorList();
+
+            if (removed > 0)
+                OnUpdateErrorList();
         }
 
-        // ******************** add Errors ********************
-
+        // ******************** Networking ********************
+        /// <summary>
+        /// Waits for a TCP message at a specific port, and executes an action that processes it
+        /// </summary>
+        /// <param name="port">The port at which the message will be received</param>
+        /// <param name="action">The action that will process the message</param>
         private void AwaitNetworkMessages(int port, Action<string> action)
         {
             TcpListener serverSocket = new TcpListener(IPAddress.Any, port);
@@ -341,7 +300,6 @@ namespace Errors.Error
                     }
 
                 }
-
             }
         }
 
@@ -352,29 +310,14 @@ namespace Errors.Error
         /// </summary>
         private void AwaitNetworkErrors()
         {
-            AwaitNetworkMessages(7200, (dataFromClient) =>
+            AwaitNetworkMessages(PORT_FOR_NETWORK_ERROR_MESSAGES, (dataFromClient) =>
             {
-                if (dataFromClient.Length > 5)
+                if (dataFromClient.Length > ERROR.Length)
                 {
-                    if (dataFromClient.Substring(0, 5).Equals("ERROR"))
+                    if (dataFromClient.Substring(0, ERROR.Length).Equals(ERROR))
                     {
-                        ErrorCollector errorCollector = ErrorCollector.Instance;
-                        errorCollector.AddError(dataFromClient.Substring(5, dataFromClient.Length - 5), ErrorWindow.Python, true, ErrorTypes.ExternalError);
-                    }
-                }
-            });
-
-        }
-
-        private void AwaitNetworkStatusReports()
-        {
-            AwaitNetworkMessages(7205, (dataFromClient) =>
-            {
-                if (dataFromClient.Length > 6)
-                {
-                    if (dataFromClient.Substring(0, 6).Equals("STATUS"))
-                    {
-                        SetStatus(dataFromClient.Substring(6, dataFromClient.Length - 6), "Python");
+                        string message = dataFromClient.Substring(ERROR.Length, dataFromClient.Length - ERROR.Length);
+                        AddError(message, ErrorCategory.Python, true, ErrorTypes.ExternalError);
                     }
                 }
             });
@@ -382,40 +325,59 @@ namespace Errors.Error
         }
 
         /// <summary>
-        /// a function adding an error to the errorList
+        /// The usage of status reports over the network is not clear??
         /// </summary>
-        /// <param name="errorMsg">string error message</param>
-        /// <param name="errorCard">ErrorCards enum</param>
-        /// <param name="stayOnDelete">true if error should stay even if the category is cleaned up</param>
-        /// <param name="errorType">ErrorTypes enum</param>
-        public ErrorItem AddError(string errorMsg, ErrorWindow errorCard, bool stayOnDelete, ErrorTypes errorType)
+        private void AwaitNetworkStatusReports()
         {
-            return AddError(errorMsg, errorCard, stayOnDelete, errorType, false);
+            AwaitNetworkMessages(PORT_FOR_NETWORK_STATUS_MESSAGES, (dataFromClient) =>
+            {
+                if (dataFromClient.Length > STATUS.Length)
+                {
+                    if (dataFromClient.Substring(0, STATUS.Length).Equals(STATUS))
+                    {
+                        SetStatus(dataFromClient.Substring(STATUS.Length, dataFromClient.Length - STATUS.Length), ErrorCategory.Python);
+                    }
+                }
+            });
+
         }
 
-        public StickyErrorItem AddStickyError(string errorMsg, ErrorWindow errorCard, bool stayOnDelete, ErrorTypes errorType)
+        // ******************** add Errors ********************
+        /// <summary>
+        /// Adds an error to the errorList (if an error with the same message exists, it is replaced)
+        /// </summary>
+        /// <param name="errorMsg">string error message</param>
+        /// <param name="errorCategory">category of error</param>
+        /// <param name="stayOnDelete">true if error should stay even if the category is cleaned up</param>
+        /// <param name="errorType">specific error type</param>
+        public ConcreteErrorItem AddError(string errorMsg, ErrorCategory errorCategory, bool stayOnDelete, ErrorTypes errorType)
+        {
+            return AddError(errorMsg, errorCategory, stayOnDelete, errorType, false);
+        }
+
+        public StickyErrorItem AddStickyError(string errorMsg, ErrorCategory errorCard, bool stayOnDelete, ErrorTypes errorType)
         {
             return (StickyErrorItem)AddError(errorMsg, errorCard, stayOnDelete, errorType, true);
         }
 
-        private ErrorItem AddError(string errorMsg, ErrorWindow errorCard, bool stayOnDelete, ErrorTypes errorType, bool isSticky)
+        private ConcreteErrorItem AddError(string errorMsg, ErrorCategory errorCard, bool stayOnDelete, ErrorTypes errorType, bool isSticky)
         {
-            ErrorItem error = null;
+            ConcreteErrorItem error = null;
 
             if (errorMsg != null)
             {
-                ErrorItem alreadyExistingError = errors.Where(param => param.ErrorMessage.Equals(errorMsg)).FirstOrDefault();
+                ConcreteErrorItem alreadyExistingError = errors.Where(param => param.Message.Equals(errorMsg)).FirstOrDefault();
 
                 if (alreadyExistingError != null)
                     RemoveSingleError(alreadyExistingError);//This guarantees a new datetime information for the error
 
                 if (!isSticky)
                 {
-                    error = new ErrorItem
+                    error = new ConcreteErrorItem
                     {
                         DataTime = "GC " + GlobalCounter + " " + DateTime.Now.ToString("ddd, dd.MM., HH:mm:ss"),
-                        ErrorMessage = errorMsg,
-                        ErrorWindow = errorCard,
+                        Message = errorMsg,
+                        ErrorCategory = errorCard,
                         StayOnDelete = stayOnDelete,
                         ErrorType = errorType
                     };
@@ -425,8 +387,8 @@ namespace Errors.Error
                     error = new StickyErrorItem
                     {
                         DataTime = "GC " + GlobalCounter + " " + DateTime.Now.ToString("ddd, dd.MM., HH:mm:ss"),
-                        ErrorMessage = errorMsg,
-                        ErrorWindow = errorCard,
+                        Message = errorMsg,
+                        ErrorCategory = errorCard,
                         StayOnDelete = stayOnDelete,
                         ErrorType = errorType
                     };
@@ -434,10 +396,12 @@ namespace Errors.Error
 
                 lock (_lockObj)
                 {
-                    if (Status.ContainsKey("Python"))
+                    if (Status.ContainsKey(errorCard))
                     {
-                        error.ErrorMessage += " at " + Status["Python"];
+                        // mostly used for external python errors
+                        error.Message += " at " + Status[errorCard];
                     }
+
                     errors.Add(error);
                 }
             }
@@ -447,7 +411,7 @@ namespace Errors.Error
             return error;
         }
 
-        public void SetStatus(string statusMessage, string Group)
+        public void SetStatus(string statusMessage, ErrorCategory category)
         {
             if (statusMessage != null)
             {
@@ -456,132 +420,35 @@ namespace Errors.Error
 
                 lock (_lockObj)
                 {
-                    if (Status.ContainsKey(Group))
+                    if (Status.ContainsKey(category))
                     {
-                        Status[Group] = outString;
+                        Status[category] = outString;
                     }
                     else
                     {
-                        Status.Add(Group, outString);
+                        Status.Add(category, outString);
                     }
                 }
             }
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Status"));
         }
 
         /// <summary>
-        /// sets a List of strings as errors
+        /// Gets a snapshot of the current state of the error list
         /// </summary>
-        /// <param name="errorMsg">string List error message</param>
-        /// <param name="errorCard">ErrorCards enum</param>
-        /// <param name="stayOnDelete">true if error should stay even if setError or reset is called on this errorType</param>
-        /// <param name="errorType">ErrorTypes enum</param>
-        /*public void SetError(List<string> errorMsg, ErrorWindow errorCard, bool stayOnDelete, ErrorTypes errorType)
+        /// <returns></returns>
+        public List<ConcreteErrorItem> GetErrorsSnapshot()
         {
-            ErrorItem error;
-            lock (_lockObj)
-            {
-                if (Errors != null)
-                {
-                    for (int i = 0; i < Errors.Count; i++)
-                    {
-                        if (Errors[i].ErrorWindow == errorCard && !Errors[i].StayOnDelete && Errors[i].ErrorType == errorType)
-                        {
-                            Errors.Remove(Errors[i]);
-                            i = -1;
-                        }
-                    }
-                }
-            }
-            if (errorMsg != null)
-            {
-                for (int i = 0; i < errorMsg.Count(); i++)
-                {
-                    error = new ErrorItem();
-                    error.DataTime = DateTime.Now.ToString("ddd, dd.MM.yyyy HH:mm:ss UTCK");
-                    error.ErrorMessage = errorMsg[i];
-                    error.ErrorWindow = errorCard;
-                    error.StayOnDelete = stayOnDelete;
-                    error.ErrorType = errorType;
-                    lock (_lockObj)
-                    {
-                        Errors.Add(error);
-                    }
-                }
-            }
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-            }
-            //this._parent.blink();
-        }*/
+            List<ConcreteErrorItem> errorsCopy;
 
-        /// <summary>
-        /// Deletes all Errors of the specified Window and Type, even the StayOnDeleteErrors
-        /// </summary>
-        /// <param name="errorWindow">Window the errors belong to</param>
-        /// <param name="errorType">Type of the errors to delete</param>
-        /*public void ResetEvenStayOnDelete(ErrorWindow errorWindow, ErrorTypes errorType)
-        {
             lock (_lockObj)
             {
-                for (int i = 0; i < Errors.Count; i++)
-                {
-                    if (Errors[i].ErrorWindow == errorWindow && Errors[i].ErrorType == errorType)
-                    {
-                        Errors.Remove(Errors[i]);
-                        i = -1;
-                    }
-                }
+                errorsCopy = new List<ConcreteErrorItem>(errors);
             }
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-            }
-        }*/
 
-        /// <summary>
-        /// Sets an error (and deletes all other errors of this window and type)
-        /// </summary>
-        /// <param name="errorMsg">string List error message</param>
-        /// <param name="errorWindow">ErrorWindow enum</param>
-        /// <param name="stayOnDelete">true if error should stay even if setError or reset is called on this errorType</param>
-        /// <param name="errorType">ErrorTypes enum</param>
-        /*public void SetSingleError(string errorMsg, ErrorWindow errorWindow, bool stayOnDelete, ErrorTypes errorType)
-        {
-            ErrorItem error;
-            lock (_lockObj)
-            {
-                if (Errors != null)
-                {
-                    for (int i = 0; i < Errors.Count; i++)
-                    {
-                        if (Errors[i].ErrorWindow == errorWindow && !Errors[i].StayOnDelete && Errors[i].ErrorType == errorType)
-                        {
-                            Errors.Remove(Errors[i]);
-                            i = -1;
-                        }
-                    }
-                }
-            }
-            if (errorMsg != null)
-            {
-                    error = new ErrorItem();
-                    error.DataTime = DateTime.Now.ToString("ddd, dd.MM.yyyy HH:mm:ss UTCK");
-                    error.ErrorMessage = errorMsg;
-                    error.ErrorWindow = errorWindow;
-                    error.StayOnDelete = stayOnDelete;
-                    error.ErrorType = errorType;
-                    lock (_lockObj)
-                    {
-                        Errors.Add(error);
-                    }
-            }
-            if (null != this.PropertyChanged)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("SortedList"));
-            }
-            //this._parent.blink();
-        }*/
+            return errorsCopy;
+        }
+
     }
 }

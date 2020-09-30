@@ -122,18 +122,15 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="ErrorWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="ErrorWindow.xaml.cs">
-      <DependentUpon>ErrorWindow.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Error\ErrorCategory.cs" />
     <Compile Include="Error\ErrorCollector.cs" />
-    <Compile Include="Error\ErrorItem.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Error\StickyErrorItem.cs" />
+    <Compile Include="Error\ErrorItems\AbstractErrorItem.cs" />
+    <Compile Include="Error\ErrorItems\ErrorHeader.cs" />
+    <Compile Include="Error\ErrorItems\ConcreteErrorItem.cs" />
+    <Compile Include="Error\ErrorTypes.cs" />
+    <Compile Include="Error\ErrorItems\StickyErrorItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -158,19 +155,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ErrorIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="button_cancel.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="dropdown_arrow.png" />
-    <Resource Include="dropdown_arrow_up.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="clear.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CustomElements\CustomElements\CustomElements.csproj">

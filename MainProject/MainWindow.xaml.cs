@@ -9,6 +9,7 @@ using Controller.Settings;
 using MainProject.Builders;
 using Model.Properties;
 using Model.Settings;
+using System.Linq;
 
 
 namespace MainProject
@@ -92,19 +93,26 @@ namespace MainProject
             builder.Build();
             MainWindowController controller = builder.GetMainController();
             controller.OnCreatingWindow();
+
+            MainWindowController
+                .WindowsList
+                .Where(w=>w.Name == "Errors")
+                .First()
+                .window
+                .Icon = new BitmapImage(new Uri("pack://application:,,,/View;component/Resources/errorIcon.png", UriKind.Absolute));
+
             Window mainWindow = WindowsHelper.CreateWindowToHostViewModel(controller, true, false, true, false);
 
-            if (controller.Icon != null && File.Exists(controller.Icon))
+            if (controller.Icon != null )
             {
-                mainWindow.Icon = new BitmapImage(new Uri(controller.Icon, UriKind.Relative));
+                mainWindow.Icon = new BitmapImage(new Uri("pack://application:,,," + controller.Icon, UriKind.Absolute));
             }
 
             mainWindow.Width = 850;
             mainWindow.Height = 750;
             mainWindow.Title = "Experiment Control";
             mainWindow.Closing += (sender, args) => controller.ShutdownApplication(args);
-            Errors.ErrorWindow.MainWindow = mainWindow;
-
+            BlinkManager.Initialize(mainWindow);
             mainWindow.Show();
 
             InitializeComponent();

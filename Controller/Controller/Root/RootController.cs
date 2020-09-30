@@ -77,6 +77,7 @@ namespace Controller.Root
         public void EnableCopyToBufferAndCopyChanges()
         {
             _enableCopyToBuffer = true;
+
             if (_pendingChanges)
             {
                 CopyToBuffer();
@@ -97,7 +98,9 @@ namespace Controller.Root
         public void CopyToBuffer()
         {
             ErrorCollector errorCollector = ErrorCollector.Instance;
-            errorCollector.RemoveErrorsOfWindow(ErrorWindow.MainHardware);
+            object token = errorCollector.StartBulkUpdate();
+
+            errorCollector.RemoveErrorsOfWindow(ErrorCategory.MainHardware);
 
             if (Model.Verify())
             {
@@ -113,10 +116,9 @@ namespace Controller.Root
                     _pendingChanges = true;
                 }
             }
-            else
-            {
-                //errorCollector.blink();                
-            }
+
+            errorCollector.EndBulkUpdate(token);
+            
         }
     }
 }

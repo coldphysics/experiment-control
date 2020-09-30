@@ -36,10 +36,6 @@ https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/LICENCE
 License: Custom License
 https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/LICENCE
 
-### Control.Draggable
-License: MIT
-https://github.com/intrueder/Control.Draggable/blob/master/LICENSE
-
 ### LumenWorks.Framework.IO
 License: MIT
 http://www.opensource.org/licenses/mit-license.php
@@ -63,3 +59,7 @@ https://www.nuget.org/packages/MSTest.TestFramework/2.1.1/license
 License: Microsoft Public License (MS-PL), Apache License, Version 2.0
 https://opensource.org/licenses/MS-PL
 https://opensource.org/licenses/Apache-2.0
+
+### Microsoft.Xaml.Behaviors.Wpf
+License: MIT
+https://licenses.nuget.org/MIT

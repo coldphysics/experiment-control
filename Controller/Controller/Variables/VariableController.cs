@@ -13,6 +13,7 @@ using Model.Data.Steps;
 using System.Windows;
 using PythonUtils.ScriptExecution;
 using Controller.Helper;
+using Errors.Error;
 
 namespace Controller.Variables
 {
@@ -250,8 +251,9 @@ namespace Controller.Variables
                 }
 
                 // prevent inconsistencies and multiple updates on the buffer
-                object lockObject = _parent.VariableUpdateStart();
-
+                object notificationLock = ErrorCollector.Instance.StartBulkUpdate();
+                object copyLock = _parent.GetRootController().BulkUpdateStart();
+              
                 System.Console.Write("variable {0}: {1}\n", _model.VariableName, value);
                 _model.VariableValue = value;
                 _parent.DoVariablesValueChanged(this);
@@ -263,7 +265,7 @@ namespace Controller.Variables
                     _parent.Evaluate(null);
                 }
                 // re-enable the Buffer updateVariablesListFromParent
-                _parent.VariableUpdateDone(lockObject);
+                _parent.VariableUpdateDone(copyLock, notificationLock);
             }
         }
 
@@ -343,10 +345,11 @@ namespace Controller.Variables
             get { return _model.VariableCode; }
             set
             {
-                Object bufferUpdateLock = _parent.VariableUpdateStart();
+                object errorNotificationsLock = ErrorCollector.Instance.StartBulkUpdate();
+                object bufferUpdateLock = _parent.GetRootController().BulkUpdateStart();
                 _model.VariableCode = value;
                 _parent.Evaluate(null);
-                _parent.VariableUpdateDone(bufferUpdateLock);
+                _parent.VariableUpdateDone(bufferUpdateLock, errorNotificationsLock);
             }
         }
 
@@ -358,7 +361,8 @@ namespace Controller.Variables
             get { return _model.TypeOfVariable; }
             set
             {
-                Object bufferUpdateLock = _parent.VariableUpdateStart();
+                object errorNotificationsLock = ErrorCollector.Instance.StartBulkUpdate();
+                object bufferUpdateLock = _parent.GetRootController().BulkUpdateStart();
                 VariableType oldType = _model.TypeOfVariable;
                 _model.TypeOfVariable = value;
                 // we need to newly calculate the number of iterations when we have a new iterator, or we remove one
@@ -378,7 +382,7 @@ namespace Controller.Variables
                         }
                     }
                 }
-                _parent.VariableUpdateDone(bufferUpdateLock);
+                _parent.VariableUpdateDone(bufferUpdateLock, errorNotificationsLock);
             }
         }
 

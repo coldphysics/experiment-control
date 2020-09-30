@@ -65,13 +65,13 @@ namespace Model.Data.Steps
             if (FileName == "")
             {
                 flag = false;
-                errorCollector.AddError("FileName == \"\" at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.MainHardware, false, ErrorTypes.FileNameEmpty);
+                errorCollector.AddError("FileName == \"\" at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.MainHardware, false, ErrorTypes.FileNameEmpty);
             }
 
             if (!File.Exists(FileName))
             {
                 flag = false;
-                errorCollector.AddError("FileName not found at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.MainHardware, false, ErrorTypes.FileNotFound);
+                errorCollector.AddError("FileName not found at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.MainHardware, false, ErrorTypes.FileNotFound);
             }
 
             return flag & base.Verify();

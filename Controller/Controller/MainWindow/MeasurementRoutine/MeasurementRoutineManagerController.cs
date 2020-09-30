@@ -13,6 +13,7 @@ using Model.Settings;
 using System.Linq;
 using System.Threading.Tasks;
 using Controller.Helper;
+using Errors.Error;
 
 namespace Controller.MainWindow.MeasurementRoutine
 {
@@ -317,6 +318,8 @@ namespace Controller.MainWindow.MeasurementRoutine
         public async Task<RootModel> LoadModelAsync(string filePath, bool isPrimaryModel, bool isSilent = false)
         {
             Parent.BlockUI("Loading Model...");
+            object token = ErrorCollector.Instance.StartBulkUpdate();
+            RootModel result = null;
 
             try
             {
@@ -329,8 +332,11 @@ namespace Controller.MainWindow.MeasurementRoutine
                 }
                 else
                 {
+                    
+                    bool verificationResult = model.Verify();
+
                     //RECO: a hard check for errors might be necessary by creating a generator and trying to generate the sequence and verifying it afterwards.
-                    if (model.Verify())//'Soft' check for errors
+                    if (verificationResult)//'Soft' check for errors
                     {
                         RoutineBasedRootModel toAdd = new RoutineBasedRootModel() { ActualModel = model, FilePath = filePath, TimesToReplicate = 1 };
                         RoutineModelController controllerToAdd = new RoutineModelController(toAdd);
@@ -349,7 +355,8 @@ namespace Controller.MainWindow.MeasurementRoutine
                     }
 
                 }
-                return model;
+
+                result = model;
 
             }
             catch (Exception e)
@@ -361,9 +368,11 @@ namespace Controller.MainWindow.MeasurementRoutine
                     MessageBox.Show("Failed to load the specified model, a conversion error might exist. Reason: " + reason, "Model Has Errors", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                return null;
             }
 
+            ErrorCollector.Instance.EndBulkUpdate(token);
+
+            return result;
         }
 
         private async Task<RootModel> DoLoadModel(string filePath, bool isSilent)
@@ -682,7 +691,7 @@ namespace Controller.MainWindow.MeasurementRoutine
                 {
                     //We have an error in the script!
                     string errorMessage = string.Format("The measurement routine script is trying to set the next model to the index {0} which does not exist! The primary model is loaded instead.", newIndex + 1);
-                    Errors.Error.ErrorCollector.Instance.AddError(errorMessage, Errors.Error.ErrorWindow.MainHardware, true, Errors.Error.ErrorTypes.DynamicCompileError);
+                    ErrorCollector.Instance.AddError(errorMessage, ErrorCategory.MainHardware, true, ErrorTypes.DynamicCompileError);
                     newRoutineModel = PrimaryModel;
                 }
             }

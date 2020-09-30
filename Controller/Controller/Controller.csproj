@@ -166,9 +166,14 @@
     <Compile Include="Data\WindowGroups\WindowGroupController.cs" />
     <Compile Include="Data\Cookbook\WindowGroupControllerRecipe.cs" />
     <Compile Include="Data\Windows\DigitalWindowController.cs" />
+    <Compile Include="Error\ErrorItems\AbstractErrorItemController.cs" />
+    <Compile Include="Error\ErrorItems\ConcreteErrorItemController.cs" />
+    <Compile Include="Error\ErrorItems\ErrorHeaderController.cs" />
+    <Compile Include="Error\ErrorsWindowController.cs" />
     <Compile Include="Helper\FileHelper.cs" />
     <Compile Include="Helper\ViewsHelper.cs" />
     <Compile Include="Helper\WindowGenerator.cs" />
+    <Compile Include="MainWindow\BlinkManager.cs" />
     <Compile Include="MainWindow\ChildController.cs" />
     <Compile Include="MainWindow\IterationManagerController.cs" />
     <Compile Include="MainWindow\MeasurementRoutine\MeasurementRoutineLoader.cs" />

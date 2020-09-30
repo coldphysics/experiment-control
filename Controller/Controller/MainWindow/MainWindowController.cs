@@ -46,6 +46,8 @@ using Controller.Control.Compare;
 using System.Linq;
 using Model.Utilities;
 using Controller.Helper;
+using Controller.Error;
+using Errors.Error;
 
 namespace Controller.MainWindow
 {
@@ -63,6 +65,7 @@ namespace Controller.MainWindow
                                        IWindowGenerator windows, VariablesController variables)
         {
             _variables = variables;
+            _errorsController = new ErrorsWindowController(this);
             _variables.RefreshWindows += ControlWindowController_RefreshWindows;
             _model = model;
             _buffer = buffer;
@@ -108,15 +111,6 @@ namespace Controller.MainWindow
         /// Indicates whether the fifo debug window is open
         /// </summary>
         private bool isFifoDebugWindowOpen;
-        //look
-        public static Window visualizationWindow;
-        //look
-        private static bool isVisualizationWindowOpen = false;
-
-        private Window variablesComparisonWindow;
-
-
-
         #endregion
 
         // ********************* Properties ****************************************
@@ -191,6 +185,9 @@ namespace Controller.MainWindow
         /// </summary>
         private Window fifoDebugWindow;
 
+        private Window variablesComparisonWindow;
+
+
         #endregion
 
         // ******************** Child Controllers (View Models) ********************
@@ -199,6 +196,8 @@ namespace Controller.MainWindow
         /// The controller for the variables window
         /// </summary>
         private readonly VariablesController _variables;
+
+        private readonly ErrorsWindowController _errorsController;
 
         /// <summary>
         /// Gets the step batch adder controller.
@@ -320,6 +319,7 @@ namespace Controller.MainWindow
         public IterationManagerController IterationManagerController { private set; get; }
 
         public BaseController CurrentModeController { private set; get; }
+
 
         #endregion
 
@@ -1195,9 +1195,11 @@ namespace Controller.MainWindow
                     foreach (ChannelBasicModel channel in sequence.Channels)
                     {
                         bool restart = true;
+
                         while (restart)
                         {
                             restart = false;
+
                             foreach (StepBasicModel step in channel.Steps)
                             {
                                 if (step.Duration.Value == 0)
@@ -1316,13 +1318,12 @@ namespace Controller.MainWindow
             else
             {
                 MessageBoxResult errorBox = new MessageBoxResult();
-                String error = "Due to errors in the current model, the ouput visualizer can not show the output";
+                string error = "Due to errors in the current model, the ouput visualizer can not show the output";
                 errorBox = MessageBox.Show(error);
             }
 
         }
-
-
+        
         public void ShutdownApplication(object parameter)
         {
             CancelEventArgs e = (CancelEventArgs)parameter;
@@ -1428,6 +1429,7 @@ namespace Controller.MainWindow
 
         public void LoadModel(RootModel model, int timesToReplicate, GenerationFinishedCallback callback = null, bool isSilent = false)
         {
+            object token = ErrorCollector.Instance.StartBulkUpdate();
             _model = model;
             ModelSpecificCounters counters = MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters;
 
@@ -1470,6 +1472,7 @@ namespace Controller.MainWindow
             // Debug.Assert(GetRootController()._enableCopyToBuffer == false);
             GetRootController().CopyToBuffer(); // to ensure copying to the buffer for the first time after start (this sets pending changes to true for the first time).
             GetRootController().EnableCopyToBufferAndCopyChanges();
+            ErrorCollector.Instance.EndBulkUpdate(token);
 
             if (!isSilent)
             {
@@ -1532,7 +1535,7 @@ namespace Controller.MainWindow
             RootController controller = GetRootController();
             Dictionary<string, IWindowController> windowControllers = GenerateWindowControllerCollection(controller);
             windowControllers.Add("Variables", _variables);//adding these two ensures the "generator" creates the corresponding windows if necessary
-            windowControllers.Add("Errors", null);
+            windowControllers.Add("Errors", _errorsController);
 
             Dictionary<string, Window> newWindows = _windowsGenerator.Generate(windowControllers);
 
@@ -1561,6 +1564,7 @@ namespace Controller.MainWindow
 
             WindowsListChanged?.Invoke(null, null);
         }
+
 
         /// <summary>
         /// Loads selected changes made by the user to the UI

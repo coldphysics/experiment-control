@@ -46,7 +46,7 @@ namespace HardwareAdWin.HardwareAdWin //more generic name
                 if (!File.Exists(process))
                 {
                     ErrorCollector errorCollector = ErrorCollector.Instance;
-                    errorCollector.AddError("AdWin executable file could not be found!", ErrorWindow.MainHardware, true, ErrorTypes.Other);
+                    errorCollector.AddError("AdWin executable file could not be found!", ErrorCategory.MainHardware, true, ErrorTypes.Other);
 
                     return;
                 }
@@ -62,7 +62,7 @@ namespace HardwareAdWin.HardwareAdWin //more generic name
                 catch(Exception e)
                 {
                     ErrorCollector errorCollector = ErrorCollector.Instance;
-                    errorCollector.AddError("AdWin Error: " + e.Message, ErrorWindow.MainHardware, true, ErrorTypes.Other);
+                    errorCollector.AddError("AdWin Error: " + e.Message, ErrorCategory.MainHardware, true, ErrorTypes.Other);
                     return;
                 }
             }

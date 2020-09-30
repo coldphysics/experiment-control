@@ -112,7 +112,7 @@ namespace Model.V3.Data.Steps
                 if (Valid != null)
                     Valid(this, new EventArgs());
                 flag = false;
-                errorCollector.AddError("Duration < 0 at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.MainHardware, false, ErrorTypes.NegativeTime);
+                errorCollector.AddError("Duration < 0 at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.MainHardware, false, ErrorTypes.NegativeTime);
             }
 
             if (Math.Abs(steps - Math.Round(steps)) >= 0.00001) //steps = Duration.Value/SmallestStepSize(); , should be an integer, if not, Value is not a multiple of SmallestStepSize
@@ -120,7 +120,7 @@ namespace Model.V3.Data.Steps
                 if (Valid != null)
                     Valid(this, new EventArgs());
                 flag = false;
-                errorCollector.AddError("Duration not a multiple of the SampleRate at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.MainHardware, false, ErrorTypes.StrangeStephanError);
+                errorCollector.AddError("Duration not a multiple of the SampleRate at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " + this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.MainHardware, false, ErrorTypes.StrangeStephanError);
             }
 
             if (MessageState == true)
@@ -129,14 +129,14 @@ namespace Model.V3.Data.Steps
                 {
                     errorCollector.AddError(
                         "Critical state at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " +
-                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.Messages, false,
+                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.Messages, false,
                         ErrorTypes.Other);
                 }
                 else
                 {
                     errorCollector.AddError(
                         "Critical state (" + MessageString + ") at " + this.Parent.Card().Name + ", " + this.Parent.Sequence().Name + ", " +
-                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorWindow.Messages, false,
+                        this.Parent.Setting.Name + ", Step " + this.Index(), ErrorCategory.Messages, false,
                         ErrorTypes.Other);
                 }
             }

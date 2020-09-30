@@ -11,6 +11,7 @@ using Communication.Interfaces.Buffer;
 using Communication.Interfaces.Generator;
 using Communication.Interfaces.Model;
 using Errors.Error;
+using Errors.Error.ErrorItems;
 using Generator.Generator.Step;
 using Model.Root;
 
@@ -266,22 +267,22 @@ namespace Buffer.Basic
                 catch (CalibrationException e)
                 {
                     ErrorCollector.Instance.AddError(e.Message /*+ "\nThe last valid model is used instead!"*/,
-                        ErrorWindow.MainHardware, false, ErrorTypes.DynamicCompileError);
+                        ErrorCategory.MainHardware, false, ErrorTypes.DynamicCompileError);
                 }
                 catch (ValidationException e)
                 {
                     ErrorCollector.Instance.AddError(e.Message /*+ "\nThe last valid model is used instead!"*/,
-                        ErrorWindow.Basic, false, ErrorTypes.OutOfRange);
+                        ErrorCategory.Basic, false, ErrorTypes.OutOfRange);
                 }
                 catch (OutOfMemoryException)
                 {
                     ErrorCollector.Instance.AddError(
                         "Cannot allocate the amount of RAM required for the generation of the model!",
-                        ErrorWindow.Basic, false, ErrorTypes.ProgramError);
+                        ErrorCategory.Basic, false, ErrorTypes.ProgramError);
                 }
                 catch (PythonStepException e)
                 {
-                    ErrorCollector.Instance.AddError(e.Message, ErrorWindow.MainHardware, false,
+                    ErrorCollector.Instance.AddError(e.Message, ErrorCategory.MainHardware, false,
                         ErrorTypes.DynamicCompileError);
                 }
                 catch (Exception e)
@@ -293,7 +294,7 @@ namespace Buffer.Basic
                 {
                     outputNotCurrentModelError = ErrorCollector.Instance.AddStickyError(
                         "Due to errors in the current model, it is not used for Output. The last valid model is used instead!",
-                        ErrorWindow.Basic, true, ErrorTypes.Other);
+                        ErrorCategory.Basic, true, ErrorTypes.Other);
                     ModelIsWrong = true;
                 }
                 else if (lastValidOutput.IsCurrentModel && outputNotCurrentModelError != null)

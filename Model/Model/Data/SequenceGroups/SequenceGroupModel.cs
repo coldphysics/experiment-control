@@ -42,15 +42,16 @@ namespace Model.Data.SequenceGroups
         /// <returns><c>true</c> if the <see cref=" SequenceGroupModel"/> is valid, <c>false</c> otherwise</returns>
         public bool Verify()
         {
-            
-
+            bool valid = true;
+            // we do not interrupt the verification of cards when one card produces an error, since we the verify method accumulates error reports 
+            // in the error widnow.
             foreach (CardBasicModel card in Cards)
             {
                 if (!card.Verify())
-                    return false;
+                    valid = false;
             }
-            return true;
-            
+
+            return valid;      
         }
 
         

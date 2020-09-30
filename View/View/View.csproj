@@ -85,9 +85,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Control.Draggable, Version=1.0.5049.269, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\MainProject\packages\Control.Draggable.1.0.5049.269\lib\net35-Client\Control.Draggable.dll</HintPath>
-    </Reference>
     <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\MainProject\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
@@ -204,6 +201,16 @@
     </Compile>
     <Compile Include="Data\Windows\WindowDigitalView.xaml.cs">
       <DependentUpon>WindowDigitalView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Error\ErrorItems\BoolToBorderWidthConverter.cs" />
+    <Compile Include="Error\ErrorItems\ConcreteErrorItemView.xaml.cs">
+      <DependentUpon>ConcreteErrorItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Error\ErrorItems\ErrorHeaderView.xaml.cs">
+      <DependentUpon>ErrorHeaderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Error\ErrorWindowView.xaml.cs">
+      <DependentUpon>ErrorWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Main\BooleanToVisibilityConverter.cs" />
     <Compile Include="Main\IterationManagerView.xaml.cs">
@@ -385,6 +392,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Data\Windows\WindowDigitalView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Error\ErrorItems\ConcreteErrorItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Error\ErrorItems\ErrorHeaderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Error\ErrorWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -588,6 +607,17 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\info-icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\errorIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\arrow_down.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\arrow_up.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

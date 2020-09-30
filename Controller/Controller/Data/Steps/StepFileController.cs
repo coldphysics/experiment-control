@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using Communication.Commands;
 using Controller.Data.Channels;
+using Errors.Error;
 using Microsoft.Win32;
 using Model.Data.Cards;
 using Model.Data.Steps;
@@ -48,7 +49,10 @@ namespace Controller.Data.Steps
             }
             set
             {
+                object errorNotificationLock = ErrorCollector.Instance.StartBulkUpdate();
+                object token = _rootController.BulkUpdateStart();
                 StepFileModel.StoreType store;
+
                 if (Enum.TryParse(value.ToString(), out store))
                 {
                     Model.Store = store;
@@ -57,7 +61,10 @@ namespace Controller.Data.Steps
                 {
                     ((ChannelBasicController)Parent).ChangeStep(this, value.ToString());
                 }
+
                 ((ChannelBasicController)Parent).CopyToBuffer();
+                _rootController.BulkUpdateEnd(token);
+                ErrorCollector.Instance.EndBulkUpdate(errorNotificationLock);
             }
         }
 
@@ -78,6 +85,9 @@ namespace Controller.Data.Steps
             set
             {
                 StepFileModel.StoreType store;
+                object errorNotificationLock = ErrorCollector.Instance.StartBulkUpdate();
+                object token = _rootController.BulkUpdateStart();
+
                 if (Enum.TryParse(value.ToString(), out store))
                 {
                     Model.Store = store;
@@ -86,7 +96,10 @@ namespace Controller.Data.Steps
                 {
                     ((ChannelBasicController)Parent).ChangeStep(this, value.ToString());
                 }
+
                 ((ChannelBasicController)Parent).CopyToBuffer();
+                _rootController.BulkUpdateEnd(token);
+                ErrorCollector.Instance.EndBulkUpdate(errorNotificationLock);
             }
         }
 

@@ -1079,17 +1079,20 @@ namespace Controller.Data.Steps
         /// <param name="duration">The duration.</param>
         protected void SetDuration(double duration)
         {
+
             if (duration == _model.Duration.Value)
             {
                 return;
             }
 
+            object token = _rootController.BulkUpdateStart();
             _model.Duration.Value = duration;
 
             var parent = ((ChannelBasicController)Parent);
             parent.CopyToBuffer();
             UpdateGroupDuration();
             parent.UpdateSteps(this);
+            _rootController.BulkUpdateEnd(token);
 
         }
 
@@ -1244,8 +1247,10 @@ namespace Controller.Data.Steps
         private void Remove(object delete)
         {
             System.Console.WriteLine("Remove!");
+            object token = _rootController.BulkUpdateStart();
             ((ChannelBasicController)Parent).RemoveStep(this);
             UpdateGroupDuration();
+            _rootController.BulkUpdateEnd(token);
         }
 
         /// <summary>
