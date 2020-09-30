@@ -39,6 +39,7 @@ namespace Controller.Error.ErrorItems
             ClearCategoryCommand = new RelayCommand(ClearCategoryClick);
         }
 
+        /// <param name="parameter"></param>
         private void ClearCategoryClick(object parameter)
         {
             ErrorCollector.Instance.RemoveErrorsOfWindow(ErrorItem.ErrorCategory);

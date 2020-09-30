@@ -60,12 +60,20 @@ namespace Controller.Error.ErrorItems
             get => ConcreteErrorItem.StayOnDelete;
         }
 
-
+        /// <summary>
+        /// Creates a new instance of this class
+        /// </summary>
+        /// <param name="errorController">The parent controller</param>
+        /// <param name="errorItem">The underlying error item</param>
         public ConcreteErrorItemController(ErrorsWindowController errorController, ConcreteErrorItem errorItem) 
             : base(errorController, errorItem)
         {
         }
 
+        /// <summary>
+        /// Handles clicking on the delete button
+        /// </summary>
+        /// <param name="parameter"></param>
         protected override void DeleteThisErrorClicked(object parameter)
         {
             ErrorCollector.Instance.RemoveSingleError(ConcreteErrorItem);
