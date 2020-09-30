@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Linq;
 
 namespace Controller.MainWindow
 {
@@ -47,7 +48,7 @@ namespace Controller.MainWindow
                     ProgressValue = 100
                 };
                 mainWindow.TaskbarItemInfo = taskInfo;
-                mainWindow.Activate();
+                MainWindowController.WindowsList.Where(w => w.Name == "Errors").First().window.Activate();
             }));
 
             Task.Run(() =>

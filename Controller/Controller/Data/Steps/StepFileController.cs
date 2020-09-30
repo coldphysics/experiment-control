@@ -48,7 +48,9 @@ namespace Controller.Data.Steps
             }
             set
             {
+                object token = _rootController.BulkUpdateStart();
                 StepFileModel.StoreType store;
+
                 if (Enum.TryParse(value.ToString(), out store))
                 {
                     Model.Store = store;
@@ -57,7 +59,9 @@ namespace Controller.Data.Steps
                 {
                     ((ChannelBasicController)Parent).ChangeStep(this, value.ToString());
                 }
+
                 ((ChannelBasicController)Parent).CopyToBuffer();
+                _rootController.BulkUpdateEnd(token);
             }
         }
 
@@ -78,6 +82,8 @@ namespace Controller.Data.Steps
             set
             {
                 StepFileModel.StoreType store;
+                object token = _rootController.BulkUpdateStart();
+
                 if (Enum.TryParse(value.ToString(), out store))
                 {
                     Model.Store = store;
@@ -86,7 +92,9 @@ namespace Controller.Data.Steps
                 {
                     ((ChannelBasicController)Parent).ChangeStep(this, value.ToString());
                 }
+
                 ((ChannelBasicController)Parent).CopyToBuffer();
+                _rootController.BulkUpdateEnd(token);
             }
         }
 

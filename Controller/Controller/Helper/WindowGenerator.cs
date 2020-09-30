@@ -45,11 +45,8 @@ namespace Controller.Helper
                         errorsWindow = WindowsHelper.CreateWindowToHostViewModel(window.Value, true, false, true, true);
                         errorsWindow.Title = "Errors";
                         errorsWindow.ShowInTaskbar = false;
-                        //errorsWindow.Icon = new BitmapImage(new Uri("/View;component/Resources/errorIcon.png", UriKind.Relative));
-
                     }
                         
-
                     output.Add(window.Key, errorsWindow);
                 }
                 else if (window.Key.Equals("Variables"))

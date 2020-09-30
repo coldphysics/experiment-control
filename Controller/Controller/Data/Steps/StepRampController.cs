@@ -42,6 +42,8 @@ namespace Controller.Data.Steps
             set
             {
                 StepRampModel.StoreType store;
+                object token = _rootController.BulkUpdateStart();
+
                 if (Enum.TryParse(value.ToString(), out store))
                 {
                     Model.Store = store;
@@ -50,7 +52,9 @@ namespace Controller.Data.Steps
                 {
                     ((ChannelBasicController)Parent).ChangeStep(this, value.ToString());
                 }
+
                 ((ChannelBasicController)Parent).CopyToBuffer();
+                _rootController.BulkUpdateEnd(token);
             }
         }
 

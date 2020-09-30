@@ -77,6 +77,7 @@ namespace Controller.Root
         public void EnableCopyToBufferAndCopyChanges()
         {
             _enableCopyToBuffer = true;
+            ErrorCollector.Instance.NotificationsEnabled = true;
             if (_pendingChanges)
             {
                 CopyToBuffer();
@@ -89,6 +90,7 @@ namespace Controller.Root
         public void DisableCopyToBuffer()
         {
             _enableCopyToBuffer = false;
+            ErrorCollector.Instance.NotificationsEnabled = false;
         }
 
         /// <summary>
@@ -98,11 +100,8 @@ namespace Controller.Root
         {
             ErrorCollector errorCollector = ErrorCollector.Instance;
             errorCollector.RemoveErrorsOfWindow(ErrorCategory.MainHardware);
-            errorCollector.NotificationsEnabled = false;
-            bool verificationResult = Model.Verify();
-            errorCollector.NotificationsEnabled = true;
 
-            if (verificationResult)
+            if (Model.Verify())
             {
                 //errorCollector.stopBlink();
 

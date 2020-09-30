@@ -106,6 +106,7 @@ namespace Controller.Error
                 .Cast<ConcreteErrorItemController>()
                 .Select(e => e.ConcreteErrorItem).ToList();
 
+            // this includes the same error with a new date/GC...
             int newErrorsCount = errorsCopy.Except(currentErrors).Count();
             int deletedErrorsCount = currentErrors.Except(errorsCopy).Count();
 
