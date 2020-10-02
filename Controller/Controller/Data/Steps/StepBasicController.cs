@@ -270,7 +270,7 @@ namespace Controller.Data.Steps
                 //System.Console.Write("Duration, Get\n");
                 if (_durationVariable == null && GetDurationVariableName() != null)
                 {
-                    if (GetDurationVariableName().Equals(VariableController.NOVARIABLE))
+                    if (GetDurationVariableName().Equals(VariableController.NO_VARIABLE))
                     {
 
                     }
@@ -653,7 +653,7 @@ namespace Controller.Data.Steps
                 //System.Console.Write("Value, Get\n");
                 if (_valueVariable == null && GetValueVariableName() != null)
                 {
-                    if (GetValueVariableName().Equals(VariableController.NOVARIABLE))
+                    if (GetValueVariableName().Equals(VariableController.NO_VARIABLE))
                     {
 
                     }
@@ -821,7 +821,7 @@ namespace Controller.Data.Steps
             VariableController variable;
             if (GetValueVariableName() != null)
             {
-                if (GetValueVariableName().Equals(VariableController.NOVARIABLE))
+                if (GetValueVariableName().Equals(VariableController.NO_VARIABLE))
                 {
 
                 }
@@ -846,7 +846,7 @@ namespace Controller.Data.Steps
             }
             if (GetDurationVariableName() != null)
             {
-                if (GetDurationVariableName().Equals(VariableController.NOVARIABLE))
+                if (GetDurationVariableName().Equals(VariableController.NO_VARIABLE))
                 {
 
                 }
@@ -877,7 +877,7 @@ namespace Controller.Data.Steps
         /// <param name="parameter">The parameter.</param>
         public void SetUserInputDuration(object parameter)
         {
-            SetDurationVariableName(VariableController.NOVARIABLE);
+            SetDurationVariableName(VariableController.NO_VARIABLE);
             DurationVariable = null;
             if (null != this.PropertyChanged)
             {
@@ -892,7 +892,7 @@ namespace Controller.Data.Steps
         /// <param name="parameter">The parameter.</param>
         public void SetUserInputValue(object parameter)
         {
-            SetValueVariableName(VariableController.NOVARIABLE);
+            SetValueVariableName(VariableController.NO_VARIABLE);
             ValueVariable = null;
             if (null != this.PropertyChanged)
             {

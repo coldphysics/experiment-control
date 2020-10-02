@@ -134,7 +134,6 @@ namespace Controller.Variables
             set { _variablesModel.GroupNames = value; }
         }
 
-
         public Dictionary<int, bool> GroupsExpandState
         {
             get
@@ -257,13 +256,9 @@ namespace Controller.Variables
         public void AddDynamic(object parameter)
         {
             VariableModel variableModel = _variablesModel.addVariable();
-
-            VariableController variable = new VariableDynamicController(variableModel, this)
-            {
-                TypeOfVariable = VariableType.VariableTypeDynamic
-            };
+            VariableController variable = new VariableDynamicController(variableModel, this);
+            SetVariableType(variable, VariableType.VariableTypeDynamic);
             Variables.Add(variable);
-            //UpdateSpecificVarialbesCollection(VariableType.VariableTypeDynamic);
             UpdateVariablesList();
         }
 
@@ -274,15 +269,10 @@ namespace Controller.Variables
         public void AddIterator(object parameter)
         {
             VariableModel variableModel = _variablesModel.addVariable();
-
-            VariableController variable = new VariableIteratorController(variableModel, this)
-            {
-                TypeOfVariable = VariableType.VariableTypeIterator
-            };
+            VariableController variable = new VariableIteratorController(variableModel, this);
+            SetVariableType(variable, VariableType.VariableTypeIterator);
             Variables.Add(variable);
-            //UpdateSpecificVarialbesCollection(VariableType.VariableTypeIterator);
             UpdateVariablesList();
-
             CountTotalNumberOfIterations();
         }
 
@@ -293,10 +283,8 @@ namespace Controller.Variables
         public void AddStatic(object parameter)
         {
             VariableModel variableModel = _variablesModel.addVariable();
-            VariableController variable = new VariableStaticController(variableModel, this)
-            {
-                TypeOfVariable = VariableType.VariableTypeStatic
-            };
+            VariableController variable = new VariableStaticController(variableModel, this);
+            SetVariableType(variable, VariableType.VariableTypeStatic);
             Variables.Add(variable);
 
             if (!GroupNames.ContainsKey(0))
@@ -306,7 +294,7 @@ namespace Controller.Variables
                 if (!GroupsExpandState.ContainsKey(0))
                     GroupsExpandState.Add(0, true);
             }
-            //UpdateSpecificVarialbesCollection(VariableType.VariableTypeStatic);
+
             UpdateVariablesList();
         }
 
@@ -582,7 +570,6 @@ namespace Controller.Variables
             throw new Exception("Variable not found! Name: " + name);
             //return null;
         }
-
 
         public Root.RootController GetRootController()
         {
@@ -1020,6 +1007,36 @@ namespace Controller.Variables
             _parentController = parentController;
         }
 
+
+        public void SetVariableType(VariableController variableController, VariableType newType)
+        {
+            object errorNotificationsLock = ErrorCollector.Instance.StartBulkUpdate();
+            object bufferUpdateLock = GetRootController().BulkUpdateStart();
+            VariableType oldType = variableController.TypeOfVariable;
+            variableController._model.TypeOfVariable = newType;
+            // we need to newly calculate the number of iterations when we have a new iterator, or we remove one
+            if (newType == VariableType.VariableTypeIterator || oldType == VariableType.VariableTypeIterator)
+            {
+                CountTotalNumberOfIterations();
+            }
+
+            DoVariablesValueChanged(variableController);
+
+            if (variableController.VariableName != VariableController.NO_VARIABLE)
+            {
+                foreach (VariableController variable in VariablesDynamic)
+                {
+                    if (PythonScriptVariablesAnalyzer.IsVariableUsedInScript(variableController.VariableName, variable.VariableCode))
+                    {
+                        Console.Write("{0} depends on {1}\n", variable.VariableName, variableController.VariableName);
+                        DoVariablesValueChanged(variable);
+                    }
+                }
+            }
+
+            VariableUpdateDone(bufferUpdateLock, errorNotificationsLock);
+
+        }
         // ******************** Private Methods ********************
         /// <summary>
         /// avoid inconsistency the data should not be copied to the buffer until all updates are done. In _variableUpdateLockObject the very first lock object is stored, all objects from sub updates are not stored. The updateVariablesListFromParent is prevented until the lock is released.

@@ -22,11 +22,11 @@ namespace Controller.Variables
     /// </summary>
     public abstract class VariableController : BaseController
     {
+
+        public readonly static string NO_VARIABLE = "";
+
         // ******************** variables ********************
         private VariablesController _parent;
-
-
-
         public VariableModel _model;
         /// <summary>
         /// A list of string representations of the locations in which this variable is being used.
@@ -154,10 +154,7 @@ namespace Controller.Variables
             }
         }
 
-        public static string NOVARIABLE
-        {
-            get { return ""; }
-        }
+
 
         public int GroupIndex
         {
@@ -358,33 +355,6 @@ namespace Controller.Variables
         public VariableType TypeOfVariable
         {
             get { return _model.TypeOfVariable; }
-            set
-            {
-                object errorNotificationsLock = ErrorCollector.Instance.StartBulkUpdate();
-                object bufferUpdateLock = _parent.GetRootController().BulkUpdateStart();
-                VariableType oldType = _model.TypeOfVariable;
-                _model.TypeOfVariable = value;
-                // we need to newly calculate the number of iterations when we have a new iterator, or we remove one
-                if (value == VariableType.VariableTypeIterator || oldType == VariableType.VariableTypeIterator)
-                {
-                    _parent.CountTotalNumberOfIterations();
-                }
-
-                _parent.DoVariablesValueChanged(this);
-
-                if (VariableName != NOVARIABLE)
-                {
-                    foreach (VariableController variable in _parent.VariablesDynamic)
-                    {
-                        if (PythonScriptVariablesAnalyzer.IsVariableUsedInScript(VariableName, variable.VariableCode))
-                        {
-                            Console.Write("{0} depends on {1}\n", variable.VariableName, this.VariableName);
-                            _parent.DoVariablesValueChanged(variable);
-                        }
-                    }
-                }
-                _parent.VariableUpdateDone(bufferUpdateLock, errorNotificationsLock);
-            }
         }
 
         /// <summary>
@@ -489,7 +459,7 @@ namespace Controller.Variables
         /// <param name="parameter"></param>
         public void SwitchToStatic(object parameter)
         {
-            this.TypeOfVariable = VariableType.VariableTypeStatic;
+            _parent.SetVariableType(this, VariableType.VariableTypeStatic);
             UpdateVariablesListFromParent();
         }
 
@@ -499,7 +469,7 @@ namespace Controller.Variables
         /// <param name="parameter"></param>
         public void SwitchToIterator(object parameter)
         {
-            this.TypeOfVariable = VariableType.VariableTypeIterator;
+            _parent.SetVariableType(this, VariableType.VariableTypeIterator);
             UpdateVariablesListFromParent();
         }
 
@@ -509,7 +479,7 @@ namespace Controller.Variables
         /// <param name="parameter"></param>
         public void SwitchToDynamic(object parameter)
         {
-            this.TypeOfVariable = VariableType.VariableTypeDynamic;
+            _parent.SetVariableType(this, VariableType.VariableTypeDynamic);
             UpdateVariablesListFromParent();
         }
 
