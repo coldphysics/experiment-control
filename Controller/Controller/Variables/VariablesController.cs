@@ -77,12 +77,12 @@ namespace Controller.Variables
             SetNewVariablesModel(variablesModel);
             _outputHandler.LockIterators += LockIterators;
             _outputHandler.UnlockIterators += UnlockIterators;
-            AddStatic = new RelayCommand(addStatic);
-            AddIterator = new RelayCommand(addIterator);
-            AddDynamic = new RelayCommand(addDynamic);
+            AddStaticCommand = new RelayCommand(AddStatic);
+            AddIteratorCommand = new RelayCommand(AddIterator);
+            AddDynamicCommand = new RelayCommand(AddDynamic);
             EvaluateCommand = new RelayCommand(Evaluate);
-            Iterate = new RelayCommand(iterate);
-            Check = new RelayCommand(CheckAllVariablesUsage);
+            IterateCommand = new RelayCommand(Iterate);
+            CheckCommand = new RelayCommand(CheckAllVariablesUsage);
             StaticGroupSelect = new RelayCommand(DoStaticGroupSelect);
             MoveVariableToNewGroupCommand = new RelayCommand(MoveVariableToNewGroup);
             KeyDownOnIteratorCommand = new RelayCommand(VariablesIteratorsControl_PreviewKeyDown);
@@ -108,21 +108,32 @@ namespace Controller.Variables
         public event VariablesValueChangedEventHandler VariablesValueChanged;
 
         // ******************** Properties ********************
-        public ICommand AddDynamic { get; private set; }
+        public ICommand AddDynamicCommand { get; private set; }
 
-        public ICommand AddIterator { get; private set; }
+        public ICommand AddIteratorCommand { get; private set; }
 
-        public ICommand AddStatic { get; private set; }
+        public ICommand AddStaticCommand { get; private set; }
 
-        public ICommand Check { get; private set; }
+        public ICommand CheckCommand { get; private set; }
 
         public ICommand EvaluateCommand { get; private set; }
+
+        public ICommand IterateCommand { get; private set; }
+
+        private ICommand MoveVariableToNewGroupCommand { set; get; }
+
+        public ICommand KeyDownOnIteratorCommand { private set; get; }
+
+        public ICommand KeyDownOnDynamicCommand { private set; get; }
+
+        public ICommand StaticGroupSelect { get; set; }
 
         public Dictionary<int, string> GroupNames
         {
             get { return _variablesModel.GroupNames; }
             set { _variablesModel.GroupNames = value; }
         }
+
 
         public Dictionary<int, bool> GroupsExpandState
         {
@@ -140,8 +151,6 @@ namespace Controller.Variables
             }
         }
 
-        public ICommand Iterate { get; private set; }
-
         /// <summary>
         /// Gets the maximum height of a static variables group measured in pixels
         /// </summary>
@@ -156,7 +165,6 @@ namespace Controller.Variables
             }
         }
 
-        public ICommand StaticGroupSelect { get; set; }
 
         /// <summary>
         /// Gets or sets the static variables per group column.
@@ -174,6 +182,7 @@ namespace Controller.Variables
                 OnPropertyChanged("StaticGroupHeight");
             }
         }
+
         public ObservableCollection<VariableController> VariablesDynamic
         {
             set; get;
@@ -227,11 +236,6 @@ namespace Controller.Variables
             }
         }
 
-        private ICommand MoveVariableToNewGroupCommand { set; get; }
-
-        public ICommand KeyDownOnIteratorCommand { private set; get; }
-
-        public ICommand KeyDownOnDynamicCommand { private set; get; }
 
         public VariableController SelectedIterator
         {
@@ -250,12 +254,14 @@ namespace Controller.Variables
         /// Adds a dynamic variable
         /// </summary>
         /// <param name="parameter">unused</param>
-        public void addDynamic(object parameter)
+        public void AddDynamic(object parameter)
         {
             VariableModel variableModel = _variablesModel.addVariable();
 
-            VariableController variable = new VariableDynamicController(variableModel, this);
-            variable.TypeOfVariable = VariableType.VariableTypeDynamic;
+            VariableController variable = new VariableDynamicController(variableModel, this)
+            {
+                TypeOfVariable = VariableType.VariableTypeDynamic
+            };
             Variables.Add(variable);
             //UpdateSpecificVarialbesCollection(VariableType.VariableTypeDynamic);
             UpdateVariablesList();
@@ -265,28 +271,32 @@ namespace Controller.Variables
         /// Adds an iterator variable
         /// </summary>
         /// <param name="parameter">unused</param>
-        public void addIterator(object parameter)
+        public void AddIterator(object parameter)
         {
             VariableModel variableModel = _variablesModel.addVariable();
 
-            VariableController variable = new VariableIteratorController(variableModel, this);
-            variable.TypeOfVariable = VariableType.VariableTypeIterator;
+            VariableController variable = new VariableIteratorController(variableModel, this)
+            {
+                TypeOfVariable = VariableType.VariableTypeIterator
+            };
             Variables.Add(variable);
             //UpdateSpecificVarialbesCollection(VariableType.VariableTypeIterator);
             UpdateVariablesList();
 
-            countTotalNumberOfIterations();
+            CountTotalNumberOfIterations();
         }
 
         /// <summary>
         /// Adds a static Variable
         /// </summary>
         /// <param name="parameter">unused</param>
-        public void addStatic(object parameter)
+        public void AddStatic(object parameter)
         {
             VariableModel variableModel = _variablesModel.addVariable();
-            VariableController variable = new VariableStaticController(variableModel, this);
-            variable.TypeOfVariable = VariableType.VariableTypeStatic;
+            VariableController variable = new VariableStaticController(variableModel, this)
+            {
+                TypeOfVariable = VariableType.VariableTypeStatic
+            };
             Variables.Add(variable);
 
             if (!GroupNames.ContainsKey(0))
@@ -330,11 +340,11 @@ namespace Controller.Variables
                             break;
 
                         case VariableUsageType.DynamicVariable:
-                            currentUsage = String.Format("Dynamic Variable at ({0})", usage.ScriptLocation.GetLocationAsString());
+                            currentUsage = string.Format("Dynamic Variable at ({0})", usage.ScriptLocation.GetLocationAsString());
                             break;
 
                         case VariableUsageType.PythonStep:
-                            currentUsage = String.Format("Python Step at ({0})", usage.ScriptLocation.GetLocationAsString());
+                            currentUsage = string.Format("Python Step at ({0})", usage.ScriptLocation.GetLocationAsString());
                             break;
                     }
 
@@ -343,7 +353,7 @@ namespace Controller.Variables
             }
         }
 
-        public List<MenuItem> constructStaticGroups(VariableController variable)
+        public List<MenuItem> ConstructStaticGroups(VariableController variable)
         {
             List<MenuItem> menuList = new List<MenuItem>();
             MenuItem item;
@@ -357,19 +367,23 @@ namespace Controller.Variables
 
             foreach (KeyValuePair<int, string> group in dictionaryAsList)
             {
-                item = new MenuItem();
-                item.Header = group.Value;
-                item.Command = StaticGroupSelect;
-                item.CommandParameter = new Tuple<VariableController, int>(variable, group.Key);
+                item = new MenuItem
+                {
+                    Header = group.Value,
+                    Command = StaticGroupSelect,
+                    CommandParameter = new Tuple<VariableController, int>(variable, group.Key)
+                };
                 menuList.Add(item);
             }
 
-            item = new MenuItem();
-            item.Header = "Create New Group ...";
-            item.Command = MoveVariableToNewGroupCommand;
-            item.CommandParameter = variable;
-            item.Background = SystemColors.HighlightBrush;
-            item.Foreground = SystemColors.HighlightTextBrush;
+            item = new MenuItem
+            {
+                Header = "Create New Group ...",
+                Command = MoveVariableToNewGroupCommand,
+                CommandParameter = variable,
+                Background = SystemColors.HighlightBrush,
+                Foreground = SystemColors.HighlightTextBrush
+            };
             menuList.Add(item);
 
             return menuList;
@@ -383,7 +397,7 @@ namespace Controller.Variables
             _parentController.CopyToBuffer();
         }
 
-        public void countTotalNumberOfIterations()
+        public void CountTotalNumberOfIterations()
         {
             int count = 1;
             foreach (var variable in VariablesIterator)
@@ -405,7 +419,7 @@ namespace Controller.Variables
             _outputHandler.NumberOfIterations = count;
         }
 
-        public void createIterationPattern()
+        public void CreateIterationPattern()
         {
             List<VariableModel> localIterators = new List<VariableModel>();
             iterationPattern = new List<List<VariableModel>>();
@@ -464,25 +478,19 @@ namespace Controller.Variables
 
         public void DoRefreshWindows()
         {
-            if (RefreshWindows != null)
-            {
-                RefreshWindows(this, new EventArgs());
-            }
+            RefreshWindows?.Invoke(this, new EventArgs());
         }
 
         public void DoStaticGroupSelect(object parameter)
         {
             Tuple<VariableController, int> realPar = parameter as Tuple<VariableController, int>;
             realPar.Item1.GroupIndex = realPar.Item2;
-            updateStatics();
+            UpdateStatics();
         }
 
         public void DoVariablesValueChanged(VariableController variable)
         {
-            if (VariablesValueChanged != null)
-            {
-                VariablesValueChanged(this, variable);
-            }
+            VariablesValueChanged?.Invoke(this, variable);
             _parentController.CopyToBuffer();
         }
 
@@ -603,7 +611,7 @@ namespace Controller.Variables
         /// Iterates the variables
         /// </summary>
         /// <param name="parameter">null</param>
-        public void iterate(object parameter)
+        public void Iterate(object parameter)
         {
             // prevent inconsistencies and multiple updates on the buffer
             object errorNotificationLock = ErrorCollector.Instance.StartBulkUpdate();
@@ -616,7 +624,7 @@ namespace Controller.Variables
             }
             if (shuffleIterationsCounter == 0 && _outputHandler.shuffleIterations)
             {
-                createIterationPattern();
+                CreateIterationPattern();
             }
 
             if (_outputHandler.shuffleIterations)
@@ -687,10 +695,10 @@ namespace Controller.Variables
         /// <param name="e">unused</param>
         public void IterateVariablesFromBuffer(object sender, EventArgs e)
         {
-            iterate(null);
+            Iterate(null);
         }
 
-        public void moveDown(VariableController variableController)
+        public void MoveDown(VariableController variableController)
         {
             if (variableController.TypeOfVariable == VariableType.VariableTypeIterator && _iteratorsLocked)
                 return;
@@ -733,18 +741,18 @@ namespace Controller.Variables
                             controllerIndex = VariablesIterator.IndexOf(variableController);
                             VariablesIterator.Move(controllerIndex, controllerIndex + 1);
                         }
-                        countTotalNumberOfIterations();
+                        CountTotalNumberOfIterations();
                     }
                 }
             }
             if (variableController.TypeOfVariable == VariableType.VariableTypeStatic)
             {
                 variableController.GroupIndex++;
-                updateStatics();
+                UpdateStatics();
             }
         }
 
-        public void moveUp(VariableController variableController)
+        public void MoveUp(VariableController variableController)
         {
             if (variableController.TypeOfVariable == VariableType.VariableTypeIterator && _iteratorsLocked)
                 return;
@@ -787,7 +795,7 @@ namespace Controller.Variables
                             VariablesIterator.Move(controllerIndex, controllerIndex - 1);
                         }
 
-                        countTotalNumberOfIterations();
+                        CountTotalNumberOfIterations();
                     }
                 }
             }
@@ -796,7 +804,7 @@ namespace Controller.Variables
                 if (variableController.GroupIndex > 0)
                 {
                     variableController.GroupIndex--;
-                    updateStatics();
+                    UpdateStatics();
                 }
             }
         }
@@ -815,8 +823,7 @@ namespace Controller.Variables
         /// <param name="propertyName">Name of the property.</param>
         public void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void RefreshVariableValuesInGUI(bool refreshStatics, bool refreshIterators, bool refreshDynamics)
@@ -835,7 +842,7 @@ namespace Controller.Variables
             {
                 GroupNames.Remove(groupKey);
                 GroupsExpandState.Remove(groupKey);
-                updateStatics();
+                UpdateStatics();
             }
         }
 
@@ -850,6 +857,7 @@ namespace Controller.Variables
             else
             {
                 MessageBoxResult result = MessageBox.Show("Do you really want to delete this Variable?\n" + variable.VariableName, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
                 if (result == MessageBoxResult.Yes)
                 {
                     VariableModel localModel = variable._model;
@@ -877,7 +885,7 @@ namespace Controller.Variables
             else
             {
                 GroupNames[groupKey] = groupName;
-                updateStatics();
+                UpdateStatics();
             }
         }
 
@@ -915,7 +923,7 @@ namespace Controller.Variables
         /// <param name="variablesModel">the model which will replace the old one</param>
         public void SetNewVariablesModel(VariablesModel variablesModel)
         {
-            this._variablesModel = variablesModel;
+            _variablesModel = variablesModel;
             Variables.Clear();
 
             foreach (VariableModel variable in variablesModel.VariablesList)
@@ -935,7 +943,7 @@ namespace Controller.Variables
             }
 
             UpdateVariablesList();
-            countTotalNumberOfIterations();
+            CountTotalNumberOfIterations();
         }
 
         public List<TValue> Shuffle<TValue>(
@@ -946,7 +954,7 @@ namespace Controller.Variables
                .ToList();
         }
 
-        public void updateDynamics()
+        public void UpdateDynamics()
         {
             VariablesDynamic = new ObservableCollection<VariableController>(
                 from varCtrl in new ObservableCollection<VariableController>(
@@ -956,7 +964,7 @@ namespace Controller.Variables
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesDynamic"));
         }
 
-        public void updateStatics()
+        public void UpdateStatics()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesStatic"));
         }
@@ -972,9 +980,9 @@ namespace Controller.Variables
 
         public void UpdateVariablesListNoValues()//This function deletes the focus of an input field
         {
-            updateStatics();
-            updatIterators();
-            updateDynamics();
+            UpdateStatics();
+            UpdatIterators();
+            UpdateDynamics();
         }
 
         public void UpdateWindowsList()
@@ -982,9 +990,9 @@ namespace Controller.Variables
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("WindowsList"));
         }
 
-        public void updatIterators()
+        public void UpdatIterators()
         {
-            this.VariablesIterator = new ObservableCollection<VariableController>(
+            VariablesIterator = new ObservableCollection<VariableController>(
                 from varCtrl in new ObservableCollection<VariableController>(
                     Variables.Where(w => w.TypeOfVariable.Equals(VariableType.VariableTypeIterator)))
                 orderby varCtrl.getModelIndex ascending
@@ -1045,7 +1053,7 @@ namespace Controller.Variables
             GroupNames.Add(groupKey, "New Group " + groupKey);
             GroupsExpandState.Add(groupKey, true);
             variable.GroupIndex = groupKey;
-            updateStatics();
+            UpdateStatics();
         }
 
 
@@ -1073,13 +1081,13 @@ namespace Controller.Variables
             {
                 if (e.Key == Key.Up)
                 {
-                    controller.moveUp(null);
+                    controller.MoveUp(null);
                     e.Handled = true;
                     return true;
                 }
                 else if (e.Key == Key.Down)
                 {
-                    controller.moveDown(null);
+                    controller.MoveDown(null);
                     e.Handled = true;
                     return true;
                 }

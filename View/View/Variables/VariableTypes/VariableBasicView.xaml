@@ -17,27 +17,27 @@
                 <ContextMenu>
                     <MenuItem
                         Name="Static"
-                        Command="{Binding SwitchToStatic}"
+                        Command="{Binding SwitchToStaticCommand}"
                         Header="Static" />
                     <MenuItem
                         Name="Iterator"
-                        Command="{Binding SwitchToIterator}"
+                        Command="{Binding SwitchToIteratorCommand}"
                         Header="Iterator" />
                     <MenuItem
                         Name="Dynamic"
-                        Command="{Binding SwitchToDynamic}"
+                        Command="{Binding SwitchToDynamicCommand}"
                         Header="Dynamic" />
                     <MenuItem
                         Name="DeleteVariable"
-                        Command="{Binding DeleteVariable}"
+                        Command="{Binding DeleteVariableCommand}"
                         Header="Delete This Variable" />
                     <MenuItem
                         Name="MoveUp"
-                        Command="{Binding MoveUp}"
+                        Command="{Binding MoveUpCommand}"
                         Header="Move Up" />
                     <MenuItem
                         Name="MoveDown"
-                        Command="{Binding MoveDown}"
+                        Command="{Binding MoveDownCommand}"
                         Header="Move Down" />
                     <MenuItem
                         Name="MoveToGroup"

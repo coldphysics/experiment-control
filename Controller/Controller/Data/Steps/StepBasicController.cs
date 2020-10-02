@@ -26,20 +26,13 @@ namespace Controller.Data.Steps
     public abstract class StepBasicController : AbstractStepController, INotifyPropertyChanged
     {
 
-        // ******************** Events ******************** 
-        // ************************************************
-        /// <summary>
-        /// Occurs when a property value changes.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
         // ******************** Fields ******************** 
         // ************************************************
         /// <summary>
         /// The model of this step
         /// </summary>
         internal readonly StepBasicModel _model;
-       
+
         /// <summary>
         /// The controller for the channel that contains this step
         /// </summary>
@@ -74,19 +67,24 @@ namespace Controller.Data.Steps
             _model = model;
             RemoveItem = new RelayCommand(Remove);
             DigitalButton = new RelayCommand(SetDigitalValue);
-
             UserInputValue = new RelayCommand(SetUserInputValue);
             UserInputDuration = new RelayCommand(SetUserInputDuration);
             VariableInputValue = new RelayCommand(SetVariableInputValue);
             VariableInputDuration = new RelayCommand(SetVariableInputDuration);
-            Insert = new RelayCommand(DoInsert);
-            MoveLeft = new RelayCommand(DoMoveLeft);
-            MoveRight = new RelayCommand(DoMoveRight);
+            InsertCommand = new RelayCommand(DoInsert);
+            MoveLeftCommand = new RelayCommand(DoMoveLeft);
+            MoveRightCommand = new RelayCommand(DoMoveRight);
             SetMessage = new RelayCommand(DoSetMessage);
             KeyDownPressedCommand = new RelayCommand(OnPreviewKeyDown);
 
         }
 
+        // ******************** Events ******************** 
+        // ************************************************
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
         // ******************* Properties **********************
         // *****************************************************
         /// <summary>
@@ -352,13 +350,14 @@ namespace Controller.Data.Steps
             }
         }
 
+
         /// <summary>
         /// Gets or sets the command that is triggered when the insert button is clicked
         /// </summary>
         /// <value>
         /// The insert command.
         /// </value>
-        public ICommand Insert { get; set; }
+        public ICommand InsertCommand { get; set; }
 
         /// <summary>
         /// Gets the names of all iterator variables which can be used as durations for steps
@@ -387,6 +386,10 @@ namespace Controller.Data.Steps
                 return ConstructVariableMenuItems(VariableInputValue, Variables.VariablesIterator);
             }
         }
+        /// <summary>
+        /// This command is triggered is triggered when the user presses a keyboard button while the control is in focus
+        /// </summary>
+        public ICommand KeyDownPressedCommand { private set; get; }
 
         /// <summary>
         /// Gets or sets the command that is triggered when the move left button is clicked
@@ -394,7 +397,7 @@ namespace Controller.Data.Steps
         /// <value>
         /// The move left command.
         /// </value>
-        public ICommand MoveLeft { get; private set; }
+        public ICommand MoveLeftCommand { get; private set; }
 
         /// <summary>
         /// Gets or sets the command that is triggered when the move right button is clicked
@@ -402,7 +405,7 @@ namespace Controller.Data.Steps
         /// <value>
         /// The move right command.
         /// </value>
-        public ICommand MoveRight { get; private set; }
+        public ICommand MoveRightCommand { get; private set; }
     
         /// <summary>
         /// Gets or sets the command that is triggered when the remove item button is clicked
@@ -419,43 +422,6 @@ namespace Controller.Data.Steps
         /// The set message command.
         /// </value>
         public ICommand SetMessage { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the command that is triggered when the duration of the step is associated to a variable
-        /// </summary>
-        /// <value>
-        /// The variable input value command.
-        /// </value>
-        public ICommand VariableInputDuration { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the command that is triggered when the value of the step is associated to a variable
-        /// </summary>
-        /// <value>
-        /// The variable input value command.
-        /// </value>
-        public ICommand VariableInputValue { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the command that is triggered when the user sets the duration manually
-        /// </summary>
-        /// <value>
-        /// The duration of the user input command.
-        /// </value>
-        public ICommand UserInputDuration { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the command that is triggered when the user sets the value manually
-        /// </summary>
-        /// <value>
-        /// The user input value command.
-        /// </value>
-        public ICommand UserInputValue { get; private set; }
-
-        /// <summary>
-        /// This command is triggered is triggered when the user presses a keyboard button while the control is in focus
-        /// </summary>
-        public ICommand KeyDownPressedCommand { private set; get; }
 
         /// <summary>
         /// Gets the color of the set message button.
@@ -577,6 +543,22 @@ namespace Controller.Data.Steps
         {
             get { return TimeSettingsInfo.GetInstance().TimeUnit; }
         }
+
+        /// <summary>
+        /// Gets or sets the command that is triggered when the user sets the duration manually
+        /// </summary>
+        /// <value>
+        /// The duration of the user input command.
+        /// </value>
+        public ICommand UserInputDuration { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the command that is triggered when the user sets the value manually
+        /// </summary>
+        /// <value>
+        /// The user input value command.
+        /// </value>
+        public ICommand UserInputValue { get; private set; }
 
         /// <summary>
         /// Gets or sets the value of the step
@@ -704,7 +686,22 @@ namespace Controller.Data.Steps
                 return GetValueVariableName();
             }
         }
-      
+
+        /// <summary>
+        /// Gets or sets the command that is triggered when the duration of the step is associated to a variable
+        /// </summary>
+        /// <value>
+        /// The variable input value command.
+        /// </value>
+        public ICommand VariableInputDuration { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the command that is triggered when the value of the step is associated to a variable
+        /// </summary>
+        /// <value>
+        /// The variable input value command.
+        /// </value>
+        public ICommand VariableInputValue { get; private set; }
         /// <summary>
         /// Gets the variables' controller.
         /// </summary>
@@ -934,11 +931,13 @@ namespace Controller.Data.Steps
             SetValueVariableName(variable.VariableName);
             ValueVariable = variable;
             Value = ValueVariable.VariableValue;
+
             if (null != this.PropertyChanged)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs("ValueColor"));
                 PropertyChanged(this, new PropertyChangedEventArgs("ValueIsReadOnly"));
             }
+
             UpdateProperty("ValueVariableName");
         }
 
@@ -1268,8 +1267,8 @@ namespace Controller.Data.Steps
                 if (Math.Abs(GetValue()) < 0.001)
                     SetValue(1);
             }
-            UpdateProperty("ButtonColor");
 
+            UpdateProperty("ButtonColor");
         }
 
     }

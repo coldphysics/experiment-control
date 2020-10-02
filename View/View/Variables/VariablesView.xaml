@@ -53,7 +53,7 @@
                 Name="addStatic"
                 Grid.Row="3"
                 Grid.Column="0"
-                Command="{Binding AddStatic}">
+                Command="{Binding AddStaticCommand}">
                 Add Static
             </Button>
             <Grid Grid.Row="1" Grid.Column="0">
@@ -106,7 +106,7 @@
                 Name="addIterator"
                 Grid.Row="3"
                 Grid.Column="1"
-                Command="{Binding AddIterator}">
+                Command="{Binding AddIteratorCommand}">
                 Add Iterator
             </Button>
             <Grid Grid.Row="1" Grid.Column="1">
@@ -175,7 +175,7 @@
                 Name="addDynamic"
                 Grid.Row="3"
                 Grid.Column="2"
-                Command="{Binding AddDynamic}">
+                Command="{Binding AddDynamicCommand}">
                 Add Dynamic
             </Button>
             <Grid Grid.Row="1" Grid.Column="2">
@@ -226,8 +226,8 @@
                 <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
             <Button Command="{Binding EvaluateCommand}">Evaluate</Button>
-            <Button Grid.Column="1" Command="{Binding Iterate}">Iterate</Button>
-            <Button Grid.Column="2" Command="{Binding Check}">Check Usage</Button>
+            <Button Grid.Column="1" Command="{Binding IterateCommand}">Iterate</Button>
+            <Button Grid.Column="2" Command="{Binding CheckCommand}">Check Usage</Button>
         </Grid>
     </Grid>
 </UserControl>
