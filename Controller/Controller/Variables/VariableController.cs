@@ -22,7 +22,6 @@ namespace Controller.Variables
     /// </summary>
     public abstract class VariableController : BaseController
     {
-
         public readonly static string NO_VARIABLE = "";
 
         // ******************** variables ********************
@@ -32,6 +31,8 @@ namespace Controller.Variables
         /// A list of string representations of the locations in which this variable is being used.
         /// </summary>
         private List<string> usages = new List<string>();
+
+        private bool _variableLocked = false;
 
         public ICommand DeleteVariableCommand { get; private set; }
         public ICommand SwitchToStaticCommand { get; private set; }
@@ -70,7 +71,6 @@ namespace Controller.Variables
                 return false;
             }
         }
-
 
         /// <summary>
         /// Gets the list of usages of this variable as a single string
@@ -154,8 +154,6 @@ namespace Controller.Variables
             }
         }
 
-
-
         public int GroupIndex
         {
             get { return _model.groupIndex; }
@@ -218,20 +216,7 @@ namespace Controller.Variables
             }
         }
 
-        public void ClearUsages()
-        {
-            usages.Clear();
 
-            OnPropertyChanged("UsagesAsString");
-            OnPropertyChanged("VariableUsage");
-        }
-        public void AddUsage(string usage)
-        {
-            usages.Add(usage);
-            OnPropertyChanged("UsagesAsString");
-            OnPropertyChanged("VariableUsage");
-
-        }
 
         /// <summary>
         /// Value of the variable
@@ -289,7 +274,7 @@ namespace Controller.Variables
                 OnPropertyChanged("VariableLockedColor");
             }
         }
-        private bool _variableLocked = false;
+
 
         public SolidColorBrush VariableLockedColor
         {
@@ -418,6 +403,33 @@ namespace Controller.Variables
         }
 
         /// <summary>
+        /// Creates a new instance of this class based on an exiting instance;
+        /// </summary>
+        /// <param name="controller">The controller on whihc we want to base the new instance</param>
+        public VariableController(VariableController controller)
+            : this(controller._model, controller._parent)
+        {
+            IsGroupHeader = controller.IsGroupHeader;
+            VariableLocked = controller.VariableLocked;
+        }
+
+        public void ClearUsages()
+        {
+            usages.Clear();
+
+            OnPropertyChanged("UsagesAsString");
+            OnPropertyChanged("VariableUsage");
+        }
+
+        public void AddUsage(string usage)
+        {
+            usages.Add(usage);
+            OnPropertyChanged("UsagesAsString");
+            OnPropertyChanged("VariableUsage");
+
+        }
+
+        /// <summary>
         /// Determines whether this instance can move up or down.
         /// </summary>
         /// <param name="parameter">not used</param>
@@ -459,8 +471,7 @@ namespace Controller.Variables
         /// <param name="parameter"></param>
         public void SwitchToStatic(object parameter)
         {
-            _parent.SetVariableType(this, VariableType.VariableTypeStatic);
-            UpdateVariablesListFromParent();
+            _parent.ChangeVariableType(this, VariableType.VariableTypeStatic);
         }
 
         /// <summary>
@@ -469,8 +480,7 @@ namespace Controller.Variables
         /// <param name="parameter"></param>
         public void SwitchToIterator(object parameter)
         {
-            _parent.SetVariableType(this, VariableType.VariableTypeIterator);
-            UpdateVariablesListFromParent();
+            _parent.ChangeVariableType(this, VariableType.VariableTypeIterator);
         }
 
         /// <summary>
@@ -479,8 +489,7 @@ namespace Controller.Variables
         /// <param name="parameter"></param>
         public void SwitchToDynamic(object parameter)
         {
-            _parent.SetVariableType(this, VariableType.VariableTypeDynamic);
-            UpdateVariablesListFromParent();
+            _parent.ChangeVariableType(this, VariableType.VariableTypeDynamic);
         }
 
         /// <summary>

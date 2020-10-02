@@ -107,6 +107,11 @@ namespace Controller.Variables
         // Events that occur when the Variables are changed (Values) or the order and Variable Types are changed (List).
         public event VariablesValueChangedEventHandler VariablesValueChanged;
 
+        /// <summary>
+        /// Occurs when the type of a variable changes.
+        /// </summary>
+        public event VariablesValueChangedEventHandler VariableTypeChanged;
+
         // ******************** Properties ********************
         public ICommand AddDynamicCommand { get; private set; }
 
@@ -257,9 +262,10 @@ namespace Controller.Variables
         {
             VariableModel variableModel = _variablesModel.addVariable();
             VariableController variable = new VariableDynamicController(variableModel, this);
-            SetVariableType(variable, VariableType.VariableTypeDynamic);
             Variables.Add(variable);
-            UpdateVariablesList();
+            SetVariableType(variable, VariableType.VariableTypeDynamic);
+
+
         }
 
         /// <summary>
@@ -270,8 +276,8 @@ namespace Controller.Variables
         {
             VariableModel variableModel = _variablesModel.addVariable();
             VariableController variable = new VariableIteratorController(variableModel, this);
-            SetVariableType(variable, VariableType.VariableTypeIterator);
             Variables.Add(variable);
+            SetVariableType(variable, VariableType.VariableTypeIterator);    
             UpdateVariablesList();
             CountTotalNumberOfIterations();
         }
@@ -284,7 +290,7 @@ namespace Controller.Variables
         {
             VariableModel variableModel = _variablesModel.addVariable();
             VariableController variable = new VariableStaticController(variableModel, this);
-            SetVariableType(variable, VariableType.VariableTypeStatic);
+
             Variables.Add(variable);
 
             if (!GroupNames.ContainsKey(0))
@@ -295,6 +301,7 @@ namespace Controller.Variables
                     GroupsExpandState.Add(0, true);
             }
 
+            SetVariableType(variable, VariableType.VariableTypeStatic);
             UpdateVariablesList();
         }
 
@@ -488,8 +495,6 @@ namespace Controller.Variables
             {
                 if (var.VariableName == name)
                 {
-                    PropertyChanged?.Invoke(var, new PropertyChangedEventArgs("VariableValue"));
-                    PropertyChanged?.Invoke(var, new PropertyChangedEventArgs("VariableCode"));
                     VariablesValueChanged?.Invoke(this, var);
                     _parentController.CopyToBuffer();
                 }
@@ -1007,8 +1012,34 @@ namespace Controller.Variables
             _parentController = parentController;
         }
 
+        public VariableController ChangeVariableType(VariableController variableController, VariableType newType)
+        {
+            object token = ErrorCollector.Instance.StartBulkUpdate();
+            VariableController result = null;
 
-        public void SetVariableType(VariableController variableController, VariableType newType)
+            switch (newType)
+            {
+                case VariableType.VariableTypeDynamic:
+                    result = new VariableDynamicController(variableController);
+                    break;
+                case VariableType.VariableTypeIterator:
+                    result = new VariableIteratorController(variableController);
+                    break;
+                case VariableType.VariableTypeStatic:
+                    result = new VariableStaticController(variableController);
+                    break;
+            }
+
+            Variables.Remove(variableController);
+            Variables.Add(result);
+            SetVariableType(result, newType);
+            VariableTypeChanged?.Invoke(this, result);
+            ErrorCollector.Instance.EndBulkUpdate(token);
+
+            return result;
+        }
+
+        private void SetVariableType(VariableController variableController, VariableType newType)
         {
             object errorNotificationsLock = ErrorCollector.Instance.StartBulkUpdate();
             object bufferUpdateLock = GetRootController().BulkUpdateStart();
@@ -1035,6 +1066,7 @@ namespace Controller.Variables
             }
 
             VariableUpdateDone(bufferUpdateLock, errorNotificationsLock);
+            UpdateVariablesList();
 
         }
         // ******************** Private Methods ********************

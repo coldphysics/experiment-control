@@ -194,22 +194,15 @@ namespace Controller.Data.Steps
             }
             set
             {
-
-                //                System.Console.Write("SET Duration!\n");
                 if (GetDurationVariableName() == "" || GetDurationVariableName() == null)
                 {
                     SetDuration(value);
                 }
                 else
                 {
-                    //System.Console.Write("SET!\n");
                     SetDuration(DurationVariable.VariableValue);
-                    if (null != this.PropertyChanged)
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs("Duration"));
-                    }
+                    UpdateProperty("Duration");
                 }
-                //System.Console.Write("set duration: {0}\n", value);
             }
         }
 
@@ -267,23 +260,14 @@ namespace Controller.Data.Steps
         {
             get
             {
-                //System.Console.Write("Duration, Get\n");
                 if (_durationVariable == null && GetDurationVariableName() != null)
                 {
-                    if (GetDurationVariableName().Equals(VariableController.NO_VARIABLE))
+                    if (!GetDurationVariableName().Equals(VariableController.NO_VARIABLE))
                     {
-
-                    }
-                    else
-                    {
-                        //System.Console.Write("Duration, Reattach\n");
                         ReattachVariable();
                     }
                 }
-                //if (_DurationVariable == null)
-                //{
-                //    throw new Exception("Variable is null");
-                //}
+
                 return _durationVariable;
             }
             set { _durationVariable = value; }
@@ -406,7 +390,7 @@ namespace Controller.Data.Steps
         /// The move right command.
         /// </value>
         public ICommand MoveRightCommand { get; private set; }
-    
+
         /// <summary>
         /// Gets or sets the command that is triggered when the remove item button is clicked
         /// </summary>
@@ -589,10 +573,7 @@ namespace Controller.Data.Steps
                 else
                 {
                     SetValue(ValueVariable.VariableValue);
-                    if (null != this.PropertyChanged)
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs("Value"));
-                    }
+                    UpdateProperty("Value");
                 }
             }
         }
@@ -650,23 +631,14 @@ namespace Controller.Data.Steps
         {
             get
             {
-                //System.Console.Write("Value, Get\n");
                 if (_valueVariable == null && GetValueVariableName() != null)
                 {
-                    if (GetValueVariableName().Equals(VariableController.NO_VARIABLE))
+                    if (!GetValueVariableName().Equals(VariableController.NO_VARIABLE))
                     {
-
-                    }
-                    else
-                    {
-                        //System.Console.Write("Value, Reattach\n");
                         ReattachVariable();
                     }
                 }
-                //if (_ValueVariable == null)
-                //{
-                //    throw new Exception("Variable is null");
-                //}
+
                 return _valueVariable;
             }
             set { _valueVariable = value; }
@@ -722,9 +694,10 @@ namespace Controller.Data.Steps
                     {
                         throw new Exception("Variables == null!?!");
                     }
- 
+
                     _variables.VariablesListChanged += VariablesListChanged;
                     _variables.VariablesValueChanged += VariablesValueChanged;
+                    _variables.VariableTypeChanged += VariableTypeChanged;
                 }
 
                 return _variables;
@@ -783,6 +756,7 @@ namespace Controller.Data.Steps
                 if (controller.Message != GetMessageString())
                 {
                     SetMessageString(controller.Message);
+
                     if (null != this.PropertyChanged)
                     {
                         PropertyChanged(this, new PropertyChangedEventArgs("SetMessageMessage"));
@@ -813,24 +787,14 @@ namespace Controller.Data.Steps
         /// </exception>
         public void ReattachVariable()
         {
-            /*if (_rootController.Variables == null || _variables != null) 
-            {
-                return;
-            }*/
-
             VariableController variable;
+
             if (GetValueVariableName() != null)
             {
-                if (GetValueVariableName().Equals(VariableController.NO_VARIABLE))
+                if (!GetValueVariableName().Equals(VariableController.NO_VARIABLE))
                 {
-
-                }
-                else
-                {
-                    //checkVariablesDefined();
-                    //string str = GetValueVariableName();
-                    //System.Console.Write("str1: {0}\n", str);
                     variable = Variables.GetByName(GetValueVariableName());
+
                     if (variable != null)
                     {
                         SetValueVariableName(variable.VariableName);
@@ -840,22 +804,16 @@ namespace Controller.Data.Steps
                     else
                     {
                         throw new Exception("Variable is null");
-                        //SetValueVariableName(VariableController.NOVARIABLE);
                     }
                 }
             }
+
             if (GetDurationVariableName() != null)
             {
-                if (GetDurationVariableName().Equals(VariableController.NO_VARIABLE))
+                if (!GetDurationVariableName().Equals(VariableController.NO_VARIABLE))
                 {
-
-                }
-                else
-                {
-                    //checkVariablesDefined();
-                    //string str = GetDurationVariableName();
-                    //System.Console.Write("str2: {0}\n", str);
                     variable = Variables.GetByName(GetDurationVariableName());
+
                     if (variable != null)
                     {
                         SetDurationVariableName(variable.VariableName);
@@ -865,7 +823,6 @@ namespace Controller.Data.Steps
                     else
                     {
                         throw new Exception("Variable is null");
-                        //SetDurationVariableName(VariableController.NOVARIABLE);
                     }
                 }
             }
@@ -912,6 +869,7 @@ namespace Controller.Data.Steps
             SetDurationVariableName(variable.VariableName);
             DurationVariable = variable;
             Duration = DurationVariable.VariableValue;
+
             if (null != this.PropertyChanged)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs("DurationColor"));
@@ -985,7 +943,7 @@ namespace Controller.Data.Steps
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="changedVariable">The changed variable information.</param>
-        public void VariablesValueChanged(object sender, VariableController changedVariable)
+        private void VariablesValueChanged(object sender, VariableController changedVariable)
         {
 
             if (changedVariable.Equals(ValueVariable))
@@ -1003,6 +961,33 @@ namespace Controller.Data.Steps
                 SetDurationVariableName(DurationVariable.VariableName);
                 UpdateProperty("DurationVariableName");
                 UpdateProperty("DurationColor");
+            }
+        }
+
+        /// <summary>
+        /// Handles the evet that a variable has changed its type
+        /// </summary>
+        /// <param name="sender">The VariablesController</param>
+        /// <param name="newController">The VariableController created after the change (it is differet from the current one!)</param>
+        private void VariableTypeChanged(object sender, VariableController newController)
+        {
+            if (newController.VariableName == VariableController.NO_VARIABLE)
+                throw new Exception("Changing the type of a variable that has no name is not supported!");
+
+            if ((ValueVariable != null && newController.VariableName == ValueVariable.VariableName) ||
+                (DurationVariable != null && newController.VariableName == DurationVariable.VariableName))
+            {
+                ReattachVariable();
+
+                if (newController == ValueVariable)
+                {
+                    UpdateProperty("ValueColor");
+                }
+
+                if (newController == DurationVariable)
+                {
+                    UpdateProperty("DurationColor");
+                }
             }
         }
 
@@ -1161,9 +1146,9 @@ namespace Controller.Data.Steps
             List<MenuItem> result = new List<MenuItem>();
             List<MenuItem> currentSubList;
             MenuItem current;
-            List<KeyValuePair<int, string>> dictionaryAsList = new List<KeyValuePair<int,string>>(Variables.GroupNames);
+            List<KeyValuePair<int, string>> dictionaryAsList = new List<KeyValuePair<int, string>>(Variables.GroupNames);
             dictionaryAsList.Sort(
-                (item1, item2)=>
+                (item1, item2) =>
                 {
                     return item1.Value.CompareTo(item2.Value);
                 }
