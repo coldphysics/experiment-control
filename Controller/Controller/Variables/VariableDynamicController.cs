@@ -8,5 +8,9 @@ namespace Controller.Variables
         public VariableDynamicController(VariableModel variableModel, VariablesController parent) : base(variableModel, parent)
         {
         }
+
+        public VariableDynamicController(VariableController basis)
+            : base(basis)
+        { }
     }
 }

@@ -22,24 +22,25 @@ namespace Controller.Variables
     /// </summary>
     public abstract class VariableController : BaseController
     {
+        public readonly static string NO_VARIABLE = "";
+
         // ******************** variables ********************
         private VariablesController _parent;
-
-
-
         public VariableModel _model;
         /// <summary>
         /// A list of string representations of the locations in which this variable is being used.
         /// </summary>
         private List<string> usages = new List<string>();
 
-        public ICommand DeleteVariable { get; private set; }
-        public ICommand SwitchToStatic { get; private set; }
-        public ICommand SwitchToIterator { get; private set; }
-        public ICommand SwitchToDynamic { get; private set; }
-        public ICommand MoveUp { get; private set; }
-        public ICommand MoveDown { get; private set; }
-        public ICommand RemoveGroup { get; private set; }
+        private bool _variableLocked = false;
+
+        public ICommand DeleteVariableCommand { get; private set; }
+        public ICommand SwitchToStaticCommand { get; private set; }
+        public ICommand SwitchToIteratorCommand { get; private set; }
+        public ICommand SwitchToDynamicCommand { get; private set; }
+        public ICommand MoveUpCommand { get; private set; }
+        public ICommand MoveDownCommand { get; private set; }
+        public ICommand RemoveGroupCommand { get; private set; }
         public ICommand MouseDownCommand { get; private set; }
         // ******************** properties ********************
 
@@ -71,7 +72,6 @@ namespace Controller.Variables
             }
         }
 
-
         /// <summary>
         /// Gets the list of usages of this variable as a single string
         /// </summary>
@@ -102,12 +102,10 @@ namespace Controller.Variables
 
         }
 
-        private bool _isGroupHeader = false;
-
         public bool IsGroupHeader
         {
-            get { return _isGroupHeader; }
-            set { _isGroupHeader = value; }
+            get;
+            set;
         }
 
         public int getModelIndex
@@ -156,11 +154,6 @@ namespace Controller.Variables
             }
         }
 
-        public static string NOVARIABLE
-        {
-            get { return ""; }
-        }
-
         public int GroupIndex
         {
             get { return _model.groupIndex; }
@@ -186,7 +179,7 @@ namespace Controller.Variables
         /// <summary>
         /// Name of the variable
         /// </summary>
-        public String VariableName
+        public string VariableName
         {
             get { return _model.VariableName; }
             set
@@ -198,6 +191,7 @@ namespace Controller.Variables
                 else
                 {
                     _parent.CheckAllVariablesUsage(null);
+
                     if (Used)
                     {
                         MessageBoxResult result = MessageBox.Show("The variable is used in the following places:\n" + UsagesAsString + "\nIf you continue, it will be renamed everywhere?", "Rename Confirmation", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
@@ -207,7 +201,7 @@ namespace Controller.Variables
                             RenameVariableInPythonScripts(value);
 
                             _model.VariableName = value;
-                            updateVariablesListFromParent();
+                            UpdateVariablesListFromParent();
                             _parent.DoVariablesValueChanged(this);
                         }
 
@@ -215,27 +209,14 @@ namespace Controller.Variables
                     else
                     {
                         _model.VariableName = value;
-                        updateVariablesListFromParent();
+                        UpdateVariablesListFromParent();
                         _parent.DoVariablesValueChanged(this);
                     }
                 }
             }
         }
 
-        public void ClearUsages()
-        {
-            usages.Clear();
 
-            OnPropertyChanged("UsagesAsString");
-            OnPropertyChanged("VariableUsage");
-        }
-        public void AddUsage(string usage)
-        {
-            usages.Add(usage);
-            OnPropertyChanged("UsagesAsString");
-            OnPropertyChanged("VariableUsage");
-
-        }
 
         /// <summary>
         /// Value of the variable
@@ -279,7 +260,7 @@ namespace Controller.Variables
             {
                 _model.VariableStartValue = value;
                 _parent.ResetIteratorValues();
-                _parent.countTotalNumberOfIterations();
+                _parent.CountTotalNumberOfIterations();
             }
         }
 
@@ -293,7 +274,7 @@ namespace Controller.Variables
                 OnPropertyChanged("VariableLockedColor");
             }
         }
-        private bool _variableLocked = false;
+
 
         public SolidColorBrush VariableLockedColor
         {
@@ -318,7 +299,7 @@ namespace Controller.Variables
 
                 _model.VariableEndValue = value;
                 _parent.DoVariablesValueChanged(this);
-                _parent.countTotalNumberOfIterations();
+                _parent.CountTotalNumberOfIterations();
             }
         }
 
@@ -333,7 +314,7 @@ namespace Controller.Variables
 
                 _model.VariableStepValue = value;
                 _parent.DoVariablesValueChanged(this);
-                _parent.countTotalNumberOfIterations();
+                _parent.CountTotalNumberOfIterations();
             }
         }
 
@@ -359,31 +340,6 @@ namespace Controller.Variables
         public VariableType TypeOfVariable
         {
             get { return _model.TypeOfVariable; }
-            set
-            {
-                object errorNotificationsLock = ErrorCollector.Instance.StartBulkUpdate();
-                object bufferUpdateLock = _parent.GetRootController().BulkUpdateStart();
-                VariableType oldType = _model.TypeOfVariable;
-                _model.TypeOfVariable = value;
-                // we need to newly calculate the number of iterations when we have a new iterator, or we remove one
-                if (value == VariableType.VariableTypeIterator || oldType == VariableType.VariableTypeIterator)
-                {
-                    _parent.countTotalNumberOfIterations();
-                }
-                _parent.DoVariablesValueChanged(this);
-                if (this.VariableName != NOVARIABLE)
-                {
-                    foreach (VariableController variable in _parent.VariablesDynamic)
-                    {
-                        if (variable.VariableCode.Contains(this.VariableName))
-                        {
-                            System.Console.Write("{0} depends on {1}\n", variable.VariableName, this.VariableName);
-                            _parent.DoVariablesValueChanged(variable);
-                        }
-                    }
-                }
-                _parent.VariableUpdateDone(bufferUpdateLock, errorNotificationsLock);
-            }
         }
 
         /// <summary>
@@ -422,7 +378,7 @@ namespace Controller.Variables
 
         public List<MenuItem> staticGroups
         {
-            get { return _parent.constructStaticGroups(this); }
+            get { return _parent.ConstructStaticGroups(this); }
         }
 
 
@@ -436,14 +392,41 @@ namespace Controller.Variables
         {
             _model = variableModel;
             _parent = parent;
-            SwitchToStatic = new RelayCommand(switchToStatic);
-            SwitchToIterator = new RelayCommand(switchToIterator);
-            SwitchToDynamic = new RelayCommand(switchToDynamic);
-            DeleteVariable = new RelayCommand(deleteVariable);
-            MoveUp = new RelayCommand(moveUp, CanMoveUpOrDown);
-            MoveDown = new RelayCommand(moveDown, CanMoveUpOrDown);
-            RemoveGroup = new RelayCommand(DoRemoveGroup);
+            SwitchToStaticCommand = new RelayCommand(SwitchToStatic);
+            SwitchToIteratorCommand = new RelayCommand(SwitchToIterator);
+            SwitchToDynamicCommand = new RelayCommand(SwitchToDynamic);
+            DeleteVariableCommand = new RelayCommand(DeleteVariable);
+            MoveUpCommand = new RelayCommand(MoveUp, CanMoveUpOrDown);
+            MoveDownCommand = new RelayCommand(MoveDown, CanMoveUpOrDown);
+            RemoveGroupCommand = new RelayCommand(DoRemoveGroup);
             MouseDownCommand = new RelayCommand(OnMouseDown);
+        }
+
+        /// <summary>
+        /// Creates a new instance of this class based on an exiting instance;
+        /// </summary>
+        /// <param name="controller">The controller on whihc we want to base the new instance</param>
+        public VariableController(VariableController controller)
+            : this(controller._model, controller._parent)
+        {
+            IsGroupHeader = controller.IsGroupHeader;
+            VariableLocked = controller.VariableLocked;
+        }
+
+        public void ClearUsages()
+        {
+            usages.Clear();
+
+            OnPropertyChanged("UsagesAsString");
+            OnPropertyChanged("VariableUsage");
+        }
+
+        public void AddUsage(string usage)
+        {
+            usages.Add(usage);
+            OnPropertyChanged("UsagesAsString");
+            OnPropertyChanged("VariableUsage");
+
         }
 
         /// <summary>
@@ -477,7 +460,7 @@ namespace Controller.Variables
         /// Deletes the current variable.
         /// </summary>
         /// <param name="parameter">not used</param>
-        public void deleteVariable(object parameter)
+        public void DeleteVariable(object parameter)
         {
             _parent.RemoveVariable(this);
         }
@@ -486,57 +469,54 @@ namespace Controller.Variables
         /// Switches the type of this variable to static
         /// </summary>
         /// <param name="parameter"></param>
-        public void switchToStatic(object parameter)
+        public void SwitchToStatic(object parameter)
         {
-            this.TypeOfVariable = VariableType.VariableTypeStatic;
-            updateVariablesListFromParent();
+            _parent.ChangeVariableType(this, VariableType.VariableTypeStatic);
         }
 
         /// <summary>
         /// Switches the type of this variable to iterator
         /// </summary>
         /// <param name="parameter"></param>
-        public void switchToIterator(object parameter)
+        public void SwitchToIterator(object parameter)
         {
-            this.TypeOfVariable = VariableType.VariableTypeIterator;
-            updateVariablesListFromParent();
+            _parent.ChangeVariableType(this, VariableType.VariableTypeIterator);
         }
 
         /// <summary>
         /// Switches the variable to dynamic
         /// </summary>
         /// <param name="parameter"></param>
-        public void switchToDynamic(object parameter)
+        public void SwitchToDynamic(object parameter)
         {
-            this.TypeOfVariable = VariableType.VariableTypeDynamic;
-            updateVariablesListFromParent();
+            _parent.ChangeVariableType(this, VariableType.VariableTypeDynamic);
         }
 
         /// <summary>
         /// Move the Variable 1 up
         /// </summary>
         /// <param name="parameter"></param>
-        public void moveUp(object parameter)
+        public void MoveUp(object parameter)
         {
-            _parent.moveUp(this);
+            _parent.MoveUp(this);
         }
 
         /// <summary>
         /// Move the Variable 1 down
         /// </summary>
         /// <param name="parameter"></param>
-        public void moveDown(object parameter)
+        public void MoveDown(object parameter)
         {
-            _parent.moveDown(this);
+            _parent.MoveDown(this);
         }
 
 
         /// <summary>
-        /// Calls an updateVariablesListFromParent of the variable List (e.g. if the type of this variable is changed so it will be assigned to another variable type list.
+        /// Calls an updateVariablesListFromParent of the variable List (e.g. if the type of this variable is changed so it will be assigned to another variable type list.)
         /// </summary>
-        public void updateVariablesListFromParent()
+        public void UpdateVariablesListFromParent()
         {
-            System.Console.WriteLine("Update variable list");
+            Console.WriteLine("Update variable list");
             _parent.UpdateVariablesList();
         }
 

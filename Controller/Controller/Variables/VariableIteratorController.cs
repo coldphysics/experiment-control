@@ -7,5 +7,9 @@ namespace Controller.Variables
         public VariableIteratorController(VariableModel variableModel, VariablesController parent) : base(variableModel, parent)
         {
         }
+
+        public VariableIteratorController(VariableController basis)
+            : base(basis)
+        { }
     }
 }

@@ -29,9 +29,9 @@
             TextAlignment="Right">
             <TextBlock.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Command="{Binding Insert}" Header="Insert" />
-                    <MenuItem Command="{Binding MoveLeft}" Header="Move left" />
-                    <MenuItem Command="{Binding MoveRight}" Header="Move right" />
+                    <MenuItem Command="{Binding InsertCommand}" Header="Insert" />
+                    <MenuItem Command="{Binding MoveLeftCommand}" Header="Move left" />
+                    <MenuItem Command="{Binding MoveRightCommand}" Header="Move right" />
                 </ContextMenu>
             </TextBlock.ContextMenu>
         </TextBlock>
