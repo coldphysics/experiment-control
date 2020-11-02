@@ -264,8 +264,6 @@ namespace Controller.Variables
             VariableController variable = new VariableDynamicController(variableModel, this);
             Variables.Add(variable);
             SetVariableType(variable, VariableType.VariableTypeDynamic);
-
-
         }
 
         /// <summary>
@@ -1012,6 +1010,13 @@ namespace Controller.Variables
             _parentController = parentController;
         }
 
+        /// <summary>
+        /// Changes the type of the specified variable to the specified VariableType.
+        /// This is done by creating a new VariableController for the variable and replacing the old controller with it.
+        /// </summary>
+        /// <param name="variableController">The controller of the variable to be replaced</param>
+        /// <param name="newType">the new type of the variable</param>
+        /// <returns>A newly created variables controller that represents the variable with its new type.</returns>
         public VariableController ChangeVariableType(VariableController variableController, VariableType newType)
         {
             object token = ErrorCollector.Instance.StartBulkUpdate();
@@ -1039,6 +1044,12 @@ namespace Controller.Variables
             return result;
         }
 
+        /// <summary>
+        /// Associates a type to a (new or existing) variable. This triggers side effects if the type of the variable is iterator (since total number of iterations
+        /// might change), or if the variable is being used within other dynamic variables.
+        /// </summary>
+        /// <param name="variableController"></param>
+        /// <param name="newType"></param>
         private void SetVariableType(VariableController variableController, VariableType newType)
         {
             object errorNotificationsLock = ErrorCollector.Instance.StartBulkUpdate();
