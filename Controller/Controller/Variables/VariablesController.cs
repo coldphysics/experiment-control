@@ -35,8 +35,6 @@ namespace Controller.Variables
 
         public VariablesModel _variablesModel;
 
-        public int numberOfIterations;
-
         //ObservableCollections containing all Variables and only show specified Variables if needed.
         public ObservableCollection<VariableController> Variables = new ObservableCollection<VariableController>();
 
@@ -123,16 +121,6 @@ namespace Controller.Variables
 
         public ICommand EvaluateCommand { get; private set; }
 
-        public ICommand IterateCommand { get; private set; }
-
-        private ICommand MoveVariableToNewGroupCommand { set; get; }
-
-        public ICommand KeyDownOnIteratorCommand { private set; get; }
-
-        public ICommand KeyDownOnDynamicCommand { private set; get; }
-
-        public ICommand StaticGroupSelect { get; set; }
-
         public Dictionary<int, string> GroupNames
         {
             get { return _variablesModel.GroupNames; }
@@ -155,6 +143,30 @@ namespace Controller.Variables
             }
         }
 
+        public ICommand IterateCommand { get; private set; }
+
+        public ICommand KeyDownOnDynamicCommand { private set; get; }
+
+        public ICommand KeyDownOnIteratorCommand { private set; get; }
+
+        public ICommand StaticGroupSelect { get; private set; }
+
+        private ICommand MoveVariableToNewGroupCommand { set; get; }
+
+        public int NumberOfIterations { private set; get; }
+
+        public VariableController SelectedDynamic
+        {
+            set;
+            get;
+        }
+
+        public VariableController SelectedIterator
+        {
+            set;
+            get;
+        }
+
         /// <summary>
         /// Gets the maximum height of a static variables group measured in pixels
         /// </summary>
@@ -168,7 +180,6 @@ namespace Controller.Variables
                 return (double)VARIABLE_HEIGHT * StaticVariablesPerGroupColumn;
             }
         }
-
 
         /// <summary>
         /// Gets or sets the static variables per group column.
@@ -240,67 +251,43 @@ namespace Controller.Variables
             }
         }
 
-
-        public VariableController SelectedIterator
-        {
-            set;
-            get;
-        }
-
-        public VariableController SelectedDynamic
-        {
-            set;
-            get;
-        }
-
         // ******************** Public Methods ********************
-        /// <summary>
-        /// Adds a dynamic variable
-        /// </summary>
-        /// <param name="parameter">unused</param>
-        public void AddDynamic(object parameter)
-        {
-            VariableModel variableModel = _variablesModel.addVariable();
-            VariableController variable = new VariableDynamicController(variableModel, this);
-            Variables.Add(variable);
-            SetVariableType(variable, VariableType.VariableTypeDynamic);
-        }
+        // ********************************************************
 
         /// <summary>
-        /// Adds an iterator variable
+        /// Changes the type of the specified variable to the specified VariableType.
+        /// This is done by creating a new VariableController for the variable and replacing the old controller with it.
         /// </summary>
-        /// <param name="parameter">unused</param>
-        public void AddIterator(object parameter)
+        /// <param name="variableController">The controller of the variable to be replaced</param>
+        /// <param name="newType">the new type of the variable</param>
+        /// <returns>A newly created variables controller that represents the variable with its new type.</returns>
+        public VariableController ChangeVariableType(VariableController variableController, VariableType newType)
         {
-            VariableModel variableModel = _variablesModel.addVariable();
-            VariableController variable = new VariableIteratorController(variableModel, this);
-            Variables.Add(variable);
-            SetVariableType(variable, VariableType.VariableTypeIterator);    
-            UpdateVariablesList();
-            CountTotalNumberOfIterations();
-        }
+            object token = ErrorCollector.Instance.StartBulkUpdate();
+            VariableController result = null;
 
-        /// <summary>
-        /// Adds a static Variable
-        /// </summary>
-        /// <param name="parameter">unused</param>
-        public void AddStatic(object parameter)
-        {
-            VariableModel variableModel = _variablesModel.addVariable();
-            VariableController variable = new VariableStaticController(variableModel, this);
-
-            Variables.Add(variable);
-
-            if (!GroupNames.ContainsKey(0))
+            switch (newType)
             {
-                GroupNames.Add(0, "Default Group");
+                case VariableType.VariableTypeDynamic:
+                    result = new VariableDynamicController(variableController);
+                    break;
 
-                if (!GroupsExpandState.ContainsKey(0))
-                    GroupsExpandState.Add(0, true);
+                case VariableType.VariableTypeIterator:
+                    result = new VariableIteratorController(variableController);
+                    break;
+
+                case VariableType.VariableTypeStatic:
+                    result = new VariableStaticController(variableController);
+                    break;
             }
 
-            SetVariableType(variable, VariableType.VariableTypeStatic);
-            UpdateVariablesList();
+            Variables.Remove(variableController);
+            Variables.Add(result);
+            SetVariableType(result, newType);
+            VariableTypeChanged?.Invoke(this, result);
+            ErrorCollector.Instance.EndBulkUpdate(token);
+
+            return result;
         }
 
         /// <summary>
@@ -393,6 +380,7 @@ namespace Controller.Variables
         public void CountTotalNumberOfIterations()
         {
             int count = 1;
+
             foreach (var variable in VariablesIterator)
             {
                 double currentVal = variable.VariableStartValue;
@@ -400,85 +388,25 @@ namespace Controller.Variables
                 while (true)
                 {
                     currentVal += variable.VariableStepValue;
+
                     if (((currentVal > variable.VariableEndValue + FLOATMARGIN && variable.VariableStepValue >= 0) || (currentVal < variable.VariableEndValue - FLOATMARGIN && variable.VariableStepValue < 0)) || variable.VariableStepValue == 0)
                     {
                         break;
                     }
+
                     localCount++;
                 }
+
                 count = count * localCount;
             }
-            numberOfIterations = count;
+
+            NumberOfIterations = count;
             _outputHandler.NumberOfIterations = count;
-        }
-
-        public void CreateIterationPattern()
-        {
-            List<VariableModel> localIterators = new List<VariableModel>();
-            iterationPattern = new List<List<VariableModel>>();
-
-            foreach (VariableController ctrl in VariablesIterator)
-            {
-                localIterators.Add(ctrl._model.DeepClone());
-            }
-
-            int ctr = 0;
-            bool lastVariableOverflowed = false;
-            while (!lastVariableOverflowed)
-            {
-                List<VariableModel> toAddIterators = new List<VariableModel>();
-
-                foreach (VariableModel ctrl in localIterators)
-                {
-                    toAddIterators.Add(ctrl.DeepClone());
-                }
-
-                iterationPattern.Add(new List<VariableModel>(new List<VariableModel>(toAddIterators)));
-                ctr++;
-                lastVariableOverflowed = true;
-                foreach (VariableModel iterator in localIterators)
-                {
-                    // only increase variable if the one before had an overflow
-                    if (lastVariableOverflowed)
-                    {
-                        // first CheckAllVariablesUsage whether is this variable is not changing at all
-                        if (iterator.VariableStepValue == 0)
-                        {
-                            lastVariableOverflowed = true;
-                            iterator.VariableValue = iterator.VariableStartValue;
-                            continue;
-                        }
-
-                        double nextValue = iterator.VariableValue + iterator.VariableStepValue;
-                        const double FLOATMARGIN = 1E-7;
-                        if ((nextValue <= iterator.VariableEndValue + FLOATMARGIN && iterator.VariableStepValue > 0) ||
-                            (nextValue >= iterator.VariableEndValue - FLOATMARGIN && iterator.VariableStepValue < 0))
-                        {
-                            lastVariableOverflowed = false;
-                            iterator.VariableValue = nextValue;
-                        }
-                        else
-                        {
-                            lastVariableOverflowed = true;
-                            iterator.VariableValue = iterator.VariableStartValue;
-                        }
-                    }
-                }
-            }
-            iterationPattern = Shuffle(iterationPattern);
-            System.Console.Write("Everything should be saved into localIterators and localDynamics\n");
         }
 
         public void DoRefreshWindows()
         {
             RefreshWindows?.Invoke(this, new EventArgs());
-        }
-
-        public void DoStaticGroupSelect(object parameter)
-        {
-            Tuple<VariableController, int> realPar = parameter as Tuple<VariableController, int>;
-            realPar.Item1.GroupIndex = realPar.Item2;
-            UpdateStatics();
         }
 
         public void DoVariablesValueChanged(VariableController variable)
@@ -546,16 +474,6 @@ namespace Controller.Variables
         }
 
         /// <summary>
-        /// A function that will be called if the Buffer wants to evaluate the Variables
-        /// </summary>
-        /// <param name="sender">unused</param>
-        /// <param name="e">unused</param>
-        public void EvaluateVariablesFromBuffer(object sender, EventArgs e)
-        {
-            Evaluate(null);
-        }
-
-        /// <summary>
         /// Returns a variable by its name.
         /// </summary>
         /// <param name="name">Name of the variable to find</param>
@@ -571,7 +489,6 @@ namespace Controller.Variables
             }
 
             throw new Exception("Variable not found! Name: " + name);
-            //return null;
         }
 
         public Root.RootController GetRootController()
@@ -590,92 +507,6 @@ namespace Controller.Variables
             }
 
             return result;
-        }
-
-        public bool IsIteratorsLocked()
-        {
-            return _iteratorsLocked;
-        }
-
-        /// <summary>
-        /// Iterates the variables
-        /// </summary>
-        /// <param name="parameter">null</param>
-        public void Iterate(object parameter)
-        {
-            // prevent inconsistencies and multiple updates on the buffer
-            object errorNotificationLock = ErrorCollector.Instance.StartBulkUpdate();
-            object bufferUpdateLock = GetRootController().BulkUpdateStart();
-
-            //createIterationPattern();
-            if (!_outputHandler.shuffleIterations)
-            {
-                shuffleIterationsCounter = 0;
-            }
-            if (shuffleIterationsCounter == 0 && _outputHandler.shuffleIterations)
-            {
-                CreateIterationPattern();
-            }
-
-            if (_outputHandler.shuffleIterations)
-            {
-                if (shuffleIterationsCounter >= iterationPattern.Count)
-                {
-                    shuffleIterationsCounter = 0;
-                }
-                for (int i = 0; i < VariablesIterator.Count; i++)
-                {
-                    VariablesIterator[i].VariableValue = iterationPattern[shuffleIterationsCounter][i].VariableValue;
-                }
-                shuffleIterationsCounter++;
-            }
-
-            if (!_outputHandler.shuffleIterations)
-            {
-                bool lastVariableOverflowed = true;
-
-                foreach (VariableController iterator in VariablesIterator)
-                {
-                    //  to be deleted
-                    //  VariableModel VariableModelToBeReset = _outputHandler.Model.Data.variablesModel.VariablesList.Find(x => x.VariableName == iterator._model.VariableName);
-                    // only increase variable if the one before had an overflow
-                    if (lastVariableOverflowed)
-                    {
-                        // first CheckAllVariablesUsage whether is this variable is not changing at all
-                        if (iterator.VariableStepValue == 0)
-                        {
-                            lastVariableOverflowed = true;
-                            iterator.VariableValue = iterator.VariableStartValue;
-                            //to be deleted
-                            //  VariableModelToBeReset.VariableValue = VariableModelToBeReset.VariableStartValue;
-                            continue;
-                        }
-
-                        double nextValue = iterator.VariableValue + iterator.VariableStepValue;
-                        //to be deleted
-                        //  nextValue = VariableModelToBeReset.VariableValue + VariableModelToBeReset.VariableStepValue;
-                        const double FLOATMARGIN = 1E-7;
-
-                        if ((nextValue <= iterator.VariableEndValue + FLOATMARGIN && iterator.VariableStepValue > 0) ||
-                            (nextValue >= iterator.VariableEndValue - FLOATMARGIN && iterator.VariableStepValue < 0))
-                        {
-                            lastVariableOverflowed = false;
-                            iterator.VariableValue = nextValue;
-                        }
-                        else
-                        {
-                            lastVariableOverflowed = true;
-                            iterator.VariableValue = iterator.VariableStartValue;
-                        }
-                    }
-                }
-                // RefreshVariableValuesInGUI(); not required -> done in evaluate
-            }
-
-            Evaluate(null);
-
-            // reenable buffer updates
-            VariableUpdateDone(bufferUpdateLock, errorNotificationLock);
         }
 
         /// <summary>
@@ -807,20 +638,6 @@ namespace Controller.Variables
             ReadOptions();
         }
 
-        /// <summary>
-        /// Called when [property changed].
-        /// </summary>
-        /// <param name="propertyName">Name of the property.</param>
-        public void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void RefreshVariableValuesInGUI(bool refreshStatics, bool refreshIterators, bool refreshDynamics)
-        {
-            VariablesListChanged?.Invoke(this, new VariablesChangedEventArgs() { RefreshDynamics = refreshDynamics, RefreshIterators = refreshIterators, RefreshStatics = refreshStatics });
-        }
-
         public void RemoveGroup(int groupKey)
         {
             if (GetVariablesOfGroup(groupKey).Count > 0)
@@ -923,9 +740,11 @@ namespace Controller.Variables
                     case VariableType.VariableTypeDynamic:
                         Variables.Add(new VariableDynamicController(variable, this));
                         break;
+
                     case VariableType.VariableTypeIterator:
                         Variables.Add(new VariableIteratorController(variable, this));
                         break;
+
                     case VariableType.VariableTypeStatic:
                         Variables.Add(new VariableStaticController(variable, this));
                         break;
@@ -934,29 +753,6 @@ namespace Controller.Variables
 
             UpdateVariablesList();
             CountTotalNumberOfIterations();
-        }
-
-        public List<TValue> Shuffle<TValue>(
-                   List<TValue> source)
-        {
-            Random r = new Random();
-            return source.OrderBy(x => r.Next())
-               .ToList();
-        }
-
-        public void UpdateDynamics()
-        {
-            VariablesDynamic = new ObservableCollection<VariableController>(
-                from varCtrl in new ObservableCollection<VariableController>(
-                    Variables.Where(w => w.TypeOfVariable.Equals(VariableType.VariableTypeDynamic)))
-                orderby varCtrl.getModelIndex ascending
-                select varCtrl);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesDynamic"));
-        }
-
-        public void UpdateStatics()
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesStatic"));
         }
 
         /// <summary>
@@ -968,26 +764,9 @@ namespace Controller.Variables
             VariablesListChanged?.Invoke(this, new VariablesChangedEventArgs() { RefreshStatics = true, RefreshIterators = true, RefreshDynamics = true });
         }
 
-        public void UpdateVariablesListNoValues()//This function deletes the focus of an input field
-        {
-            UpdateStatics();
-            UpdatIterators();
-            UpdateDynamics();
-        }
-
         public void UpdateWindowsList()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("WindowsList"));
-        }
-
-        public void UpdatIterators()
-        {
-            VariablesIterator = new ObservableCollection<VariableController>(
-                from varCtrl in new ObservableCollection<VariableController>(
-                    Variables.Where(w => w.TypeOfVariable.Equals(VariableType.VariableTypeIterator)))
-                orderby varCtrl.getModelIndex ascending
-                select varCtrl);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesIterator"));
         }
 
         /// <summary>
@@ -1001,6 +780,10 @@ namespace Controller.Variables
         }
 
 
+
+        // ******************** Private Methods ********************
+        // ********************************************************
+
         /// <summary>
         /// Sets the parent controller.
         /// </summary>
@@ -1010,38 +793,277 @@ namespace Controller.Variables
             _parentController = parentController;
         }
 
-        /// <summary>
-        /// Changes the type of the specified variable to the specified VariableType.
-        /// This is done by creating a new VariableController for the variable and replacing the old controller with it.
-        /// </summary>
-        /// <param name="variableController">The controller of the variable to be replaced</param>
-        /// <param name="newType">the new type of the variable</param>
-        /// <returns>A newly created variables controller that represents the variable with its new type.</returns>
-        public VariableController ChangeVariableType(VariableController variableController, VariableType newType)
+        private static bool MoveVariableWithArrowsIfNecessary(VariableController controller, KeyEventArgs e)
         {
-            object token = ErrorCollector.Instance.StartBulkUpdate();
-            VariableController result = null;
-
-            switch (newType)
+            if (Keyboard.Modifiers == ModifierKeys.Control)
             {
-                case VariableType.VariableTypeDynamic:
-                    result = new VariableDynamicController(variableController);
-                    break;
-                case VariableType.VariableTypeIterator:
-                    result = new VariableIteratorController(variableController);
-                    break;
-                case VariableType.VariableTypeStatic:
-                    result = new VariableStaticController(variableController);
-                    break;
+                if (e.Key == Key.Up)
+                {
+                    controller.MoveUp(null);
+                    e.Handled = true;
+                    return true;
+                }
+                else if (e.Key == Key.Down)
+                {
+                    controller.MoveDown(null);
+                    e.Handled = true;
+                    return true;
+                }
             }
 
-            Variables.Remove(variableController);
-            Variables.Add(result);
-            SetVariableType(result, newType);
-            VariableTypeChanged?.Invoke(this, result);
-            ErrorCollector.Instance.EndBulkUpdate(token);
+            return false;
+        }
 
-            return result;
+
+        /// <summary>
+        /// Adds a dynamic variable
+        /// </summary>
+        /// <param name="parameter">unused</param>
+        private void AddDynamic(object parameter)
+        {
+            VariableModel variableModel = _variablesModel.addVariable();
+            VariableController variable = new VariableDynamicController(variableModel, this);
+            Variables.Add(variable);
+            SetVariableType(variable, VariableType.VariableTypeDynamic);
+        }
+
+        /// <summary>
+        /// Adds an iterator variable
+        /// </summary>
+        /// <param name="parameter">unused</param>
+        private void AddIterator(object parameter)
+        {
+            VariableModel variableModel = _variablesModel.addVariable();
+            VariableController variable = new VariableIteratorController(variableModel, this);
+            Variables.Add(variable);
+            SetVariableType(variable, VariableType.VariableTypeIterator);
+            UpdateVariablesList();
+            CountTotalNumberOfIterations();
+        }
+
+        /// <summary>
+        /// Adds a static Variable
+        /// </summary>
+        /// <param name="parameter">unused</param>
+        private void AddStatic(object parameter)
+        {
+            VariableModel variableModel = _variablesModel.addVariable();
+            VariableController variable = new VariableStaticController(variableModel, this);
+
+            Variables.Add(variable);
+
+            if (!GroupNames.ContainsKey(0))
+            {
+                GroupNames.Add(0, "Default Group");
+
+                if (!GroupsExpandState.ContainsKey(0))
+                    GroupsExpandState.Add(0, true);
+            }
+
+            SetVariableType(variable, VariableType.VariableTypeStatic);
+            UpdateVariablesList();
+        }
+
+        private void CreateIterationPattern()
+        {
+            List<VariableModel> localIterators = new List<VariableModel>();
+            iterationPattern = new List<List<VariableModel>>();
+
+            foreach (VariableController ctrl in VariablesIterator)
+            {
+                localIterators.Add(ctrl._model.DeepClone());
+            }
+
+            int ctr = 0;
+            bool lastVariableOverflowed = false;
+            while (!lastVariableOverflowed)
+            {
+                List<VariableModel> toAddIterators = new List<VariableModel>();
+
+                foreach (VariableModel ctrl in localIterators)
+                {
+                    toAddIterators.Add(ctrl.DeepClone());
+                }
+
+                iterationPattern.Add(new List<VariableModel>(new List<VariableModel>(toAddIterators)));
+                ctr++;
+                lastVariableOverflowed = true;
+                foreach (VariableModel iterator in localIterators)
+                {
+                    // only increase variable if the one before had an overflow
+                    if (lastVariableOverflowed)
+                    {
+                        // first CheckAllVariablesUsage whether is this variable is not changing at all
+                        if (iterator.VariableStepValue == 0)
+                        {
+                            lastVariableOverflowed = true;
+                            iterator.VariableValue = iterator.VariableStartValue;
+                            continue;
+                        }
+
+                        double nextValue = iterator.VariableValue + iterator.VariableStepValue;
+                        const double FLOATMARGIN = 1E-7;
+                        if ((nextValue <= iterator.VariableEndValue + FLOATMARGIN && iterator.VariableStepValue > 0) ||
+                            (nextValue >= iterator.VariableEndValue - FLOATMARGIN && iterator.VariableStepValue < 0))
+                        {
+                            lastVariableOverflowed = false;
+                            iterator.VariableValue = nextValue;
+                        }
+                        else
+                        {
+                            lastVariableOverflowed = true;
+                            iterator.VariableValue = iterator.VariableStartValue;
+                        }
+                    }
+                }
+            }
+            iterationPattern = Shuffle(iterationPattern);
+            System.Console.Write("Everything should be saved into localIterators and localDynamics\n");
+        }
+
+        private void DoStaticGroupSelect(object parameter)
+        {
+            Tuple<VariableController, int> realPar = parameter as Tuple<VariableController, int>;
+            realPar.Item1.GroupIndex = realPar.Item2;
+            UpdateStatics();
+        }
+
+        /// <summary>
+        /// Iterates the variables
+        /// </summary>
+        /// <param name="parameter">null</param>
+        private void Iterate(object parameter)
+        {
+            // prevent inconsistencies and multiple updates on the buffer
+            object errorNotificationLock = ErrorCollector.Instance.StartBulkUpdate();
+            object bufferUpdateLock = GetRootController().BulkUpdateStart();
+
+            //createIterationPattern();
+            if (!_outputHandler.shuffleIterations)
+            {
+                shuffleIterationsCounter = 0;
+            }
+            if (shuffleIterationsCounter == 0 && _outputHandler.shuffleIterations)
+            {
+                CreateIterationPattern();
+            }
+
+            if (_outputHandler.shuffleIterations)
+            {
+                if (shuffleIterationsCounter >= iterationPattern.Count)
+                {
+                    shuffleIterationsCounter = 0;
+                }
+                for (int i = 0; i < VariablesIterator.Count; i++)
+                {
+                    VariablesIterator[i].VariableValue = iterationPattern[shuffleIterationsCounter][i].VariableValue;
+                }
+                shuffleIterationsCounter++;
+            }
+
+            if (!_outputHandler.shuffleIterations)
+            {
+                bool lastVariableOverflowed = true;
+
+                foreach (VariableController iterator in VariablesIterator)
+                {
+                    //  to be deleted
+                    //  VariableModel VariableModelToBeReset = _outputHandler.Model.Data.variablesModel.VariablesList.Find(x => x.VariableName == iterator._model.VariableName);
+                    // only increase variable if the one before had an overflow
+                    if (lastVariableOverflowed)
+                    {
+                        // first CheckAllVariablesUsage whether is this variable is not changing at all
+                        if (iterator.VariableStepValue == 0)
+                        {
+                            lastVariableOverflowed = true;
+                            iterator.VariableValue = iterator.VariableStartValue;
+                            //to be deleted
+                            //  VariableModelToBeReset.VariableValue = VariableModelToBeReset.VariableStartValue;
+                            continue;
+                        }
+
+                        double nextValue = iterator.VariableValue + iterator.VariableStepValue;
+                        //to be deleted
+                        //  nextValue = VariableModelToBeReset.VariableValue + VariableModelToBeReset.VariableStepValue;
+                        const double FLOATMARGIN = 1E-7;
+
+                        if ((nextValue <= iterator.VariableEndValue + FLOATMARGIN && iterator.VariableStepValue > 0) ||
+                            (nextValue >= iterator.VariableEndValue - FLOATMARGIN && iterator.VariableStepValue < 0))
+                        {
+                            lastVariableOverflowed = false;
+                            iterator.VariableValue = nextValue;
+                        }
+                        else
+                        {
+                            lastVariableOverflowed = true;
+                            iterator.VariableValue = iterator.VariableStartValue;
+                        }
+                    }
+                }
+                // RefreshVariableValuesInGUI(); not required -> done in evaluate
+            }
+
+            Evaluate(null);
+
+            // reenable buffer updates
+            VariableUpdateDone(bufferUpdateLock, errorNotificationLock);
+        }
+
+        /// <summary>
+        /// avoid inconsistency the data should not be copied to the buffer until all updates are done. In _variableUpdateLockObject the very first lock object is stored, all objects from sub updates are not stored. The updateVariablesListFromParent is prevented until the lock is released.
+        /// </summary>
+        private void LockIterators(object sender, EventArgs e)
+        {
+            Evaluate(null);
+            _iteratorsLocked = true;
+            Console.WriteLine("Locked iterators");
+
+            foreach (VariableController iterator in VariablesIterator)
+            {
+                iterator.VariableLocked = true;
+            }
+        }
+
+        /// <summary>
+        /// Moves the variable to a new group with a default name.
+        /// </summary>
+        /// <param name="parameter">The <see cref=" VariableController"/> of the corresponding variable.</param>
+        private void MoveVariableToNewGroup(object parameter)
+        {
+            VariableController variable = (VariableController)parameter;
+            int groupKey = -1;
+
+            foreach (int key in GroupNames.Keys)
+                if (key > groupKey)
+                    groupKey = key;
+
+            groupKey++;
+            GroupNames.Add(groupKey, "New Group " + groupKey);
+            GroupsExpandState.Add(groupKey, true);
+            variable.GroupIndex = groupKey;
+            UpdateStatics();
+        }
+
+        /// <summary>
+        /// Called when [property changed].
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        /// <summary>
+        /// Reads the related options
+        /// </summary>
+        private void ReadOptions()
+        {
+            StaticVariablesPerGroupColumn = OptionsManager.GetInstance().GetOptionValueByName<int>(OptionNames.VARIABLES_STATIC_GROUP_HEIGHT);
+        }
+
+        private void RefreshVariableValuesInGUI(bool refreshStatics, bool refreshIterators, bool refreshDynamics)
+        {
+            VariablesListChanged?.Invoke(this, new VariablesChangedEventArgs() { RefreshDynamics = refreshDynamics, RefreshIterators = refreshIterators, RefreshStatics = refreshStatics });
         }
 
         /// <summary>
@@ -1078,51 +1100,13 @@ namespace Controller.Variables
 
             VariableUpdateDone(bufferUpdateLock, errorNotificationsLock);
             UpdateVariablesList();
-
-        }
-        // ******************** Private Methods ********************
-        /// <summary>
-        /// avoid inconsistency the data should not be copied to the buffer until all updates are done. In _variableUpdateLockObject the very first lock object is stored, all objects from sub updates are not stored. The updateVariablesListFromParent is prevented until the lock is released.
-        /// </summary>
-        private void LockIterators(object sender, EventArgs e)
-        {
-            Evaluate(null);
-            _iteratorsLocked = true;
-            Console.WriteLine("Locked iterators");
-
-            foreach (VariableController iterator in VariablesIterator)
-            {
-                iterator.VariableLocked = true;
-            }
         }
 
-        /// <summary>
-        /// Moves the variable to a new group with a default name.
-        /// </summary>
-        /// <param name="parameter">The <see cref=" VariableController"/> of the corresponding variable.</param>
-        private void MoveVariableToNewGroup(object parameter)
+        private List<TValue> Shuffle<TValue>(List<TValue> source)
         {
-            VariableController variable = (VariableController)parameter;
-            int groupKey = -1;
-
-            foreach (int key in GroupNames.Keys)
-                if (key > groupKey)
-                    groupKey = key;
-
-            groupKey++;
-            GroupNames.Add(groupKey, "New Group " + groupKey);
-            GroupsExpandState.Add(groupKey, true);
-            variable.GroupIndex = groupKey;
-            UpdateStatics();
-        }
-
-
-        /// <summary>
-        /// Reads the related options
-        /// </summary>
-        private void ReadOptions()
-        {
-            StaticVariablesPerGroupColumn = OptionsManager.GetInstance().GetOptionValueByName<int>(OptionNames.VARIABLES_STATIC_GROUP_HEIGHT);
+            Random r = new Random();
+            return source.OrderBy(x => r.Next())
+               .ToList();
         }
 
         private void UnlockIterators(object sender, EventArgs e)
@@ -1135,35 +1119,36 @@ namespace Controller.Variables
             System.Console.WriteLine("Unlocked iterators");
         }
 
-        private static bool MoveVariableWithArrowsIfNecessary(VariableController controller, KeyEventArgs e)
+        private void UpdateDynamics()
         {
-            if (Keyboard.Modifiers == ModifierKeys.Control)
-            {
-                if (e.Key == Key.Up)
-                {
-                    controller.MoveUp(null);
-                    e.Handled = true;
-                    return true;
-                }
-                else if (e.Key == Key.Down)
-                {
-                    controller.MoveDown(null);
-                    e.Handled = true;
-                    return true;
-                }
-            }
-
-            return false;
+            VariablesDynamic = new ObservableCollection<VariableController>(
+                from varCtrl in new ObservableCollection<VariableController>(
+                    Variables.Where(w => w.TypeOfVariable.Equals(VariableType.VariableTypeDynamic)))
+                orderby varCtrl.getModelIndex ascending
+                select varCtrl);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesDynamic"));
         }
 
-        private void VariablesIteratorsControl_PreviewKeyDown(object parameter)
+        private void UpdateStatics()
         {
-            KeyEventArgs e = (KeyEventArgs)parameter;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesStatic"));
+        }
 
-            if (SelectedIterator != null)
-            {
-                MoveVariableWithArrowsIfNecessary(SelectedIterator, e);
-            }
+        private void UpdateVariablesListNoValues()//This function deletes the focus of an input field
+        {
+            UpdateStatics();
+            UpdatIterators();
+            UpdateDynamics();
+        }
+
+        private void UpdatIterators()
+        {
+            VariablesIterator = new ObservableCollection<VariableController>(
+                from varCtrl in new ObservableCollection<VariableController>(
+                    Variables.Where(w => w.TypeOfVariable.Equals(VariableType.VariableTypeIterator)))
+                orderby varCtrl.getModelIndex ascending
+                select varCtrl);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesIterator"));
         }
 
         private void VariablesDynamicsControl_PreviewKeyDown(object parameter)
@@ -1173,6 +1158,16 @@ namespace Controller.Variables
             if (SelectedDynamic != null)
             {
                 MoveVariableWithArrowsIfNecessary(SelectedDynamic, e);
+            }
+        }
+
+        private void VariablesIteratorsControl_PreviewKeyDown(object parameter)
+        {
+            KeyEventArgs e = (KeyEventArgs)parameter;
+
+            if (SelectedIterator != null)
+            {
+                MoveVariableWithArrowsIfNecessary(SelectedIterator, e);
             }
         }
     }
