@@ -202,7 +202,7 @@ namespace Controller.Variables
 
                             _model.VariableName = value;
                             UpdateVariablesListFromParent();
-                            _parent.DoVariablesValueChanged(this);
+                            _parent.SignalVariableValueChanged(this);
                         }
 
                     }
@@ -210,7 +210,7 @@ namespace Controller.Variables
                     {
                         _model.VariableName = value;
                         UpdateVariablesListFromParent();
-                        _parent.DoVariablesValueChanged(this);
+                        _parent.SignalVariableValueChanged(this);
                     }
                 }
             }
@@ -237,7 +237,7 @@ namespace Controller.Variables
               
                 System.Console.Write("variable {0}: {1}\n", _model.VariableName, value);
                 _model.VariableValue = value;
-                _parent.DoVariablesValueChanged(this);
+                _parent.SignalVariableValueChanged(this);
                 OnPropertyChanged("VariableValue");
 
                 //TODO this could be an error
@@ -298,7 +298,7 @@ namespace Controller.Variables
             {
 
                 _model.VariableEndValue = value;
-                _parent.DoVariablesValueChanged(this);
+                _parent.SignalVariableValueChanged(this);
                 _parent.CountTotalNumberOfIterations();
             }
         }
@@ -313,7 +313,7 @@ namespace Controller.Variables
             {
 
                 _model.VariableStepValue = value;
-                _parent.DoVariablesValueChanged(this);
+                _parent.SignalVariableValueChanged(this);
                 _parent.CountTotalNumberOfIterations();
             }
         }

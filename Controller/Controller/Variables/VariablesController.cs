@@ -64,6 +64,7 @@ namespace Controller.Variables
         private int staticVariablesPerGroupColumn;
 
         // ******************** Constructor ********************
+        // *****************************************************
         /// <summary>
         /// Public constructor for the Variables Controller.
         /// </summary>
@@ -90,6 +91,7 @@ namespace Controller.Variables
         }
 
         // ******************** Delegates and Events ********************
+        // **************************************************************
         public delegate void LoseFocusOnIterators(object sender, EventArgs e);
 
         public delegate void VariablesListChangedEventHandler(object sender, VariablesChangedEventArgs e);
@@ -102,7 +104,9 @@ namespace Controller.Variables
 
         public event VariablesListChangedEventHandler VariablesListChanged;
 
-        // Events that occur when the Variables are changed (Values) or the order and Variable Types are changed (List).
+        /// <summary>
+        /// Occurs when the value of a variable changes.
+        /// </summary>
         public event VariablesValueChangedEventHandler VariablesValueChanged;
 
         /// <summary>
@@ -111,6 +115,7 @@ namespace Controller.Variables
         public event VariablesValueChangedEventHandler VariableTypeChanged;
 
         // ******************** Properties ********************
+        // ****************************************************
         public ICommand AddDynamicCommand { get; private set; }
 
         public ICommand AddIteratorCommand { get; private set; }
@@ -253,7 +258,6 @@ namespace Controller.Variables
 
         // ******************** Public Methods ********************
         // ********************************************************
-
         /// <summary>
         /// Changes the type of the specified variable to the specified VariableType.
         /// This is done by creating a new VariableController for the variable and replacing the old controller with it.
@@ -409,7 +413,11 @@ namespace Controller.Variables
             RefreshWindows?.Invoke(this, new EventArgs());
         }
 
-        public void DoVariablesValueChanged(VariableController variable)
+        /// <summary>
+        /// Emits an event indicating that the value of the specified variable has changed, and triggers copying the model to the buffer.
+        /// </summary>
+        /// <param name="variable">The variable whose value has changed</param>
+        public void SignalVariableValueChanged(VariableController variable)
         {
             VariablesValueChanged?.Invoke(this, variable);
             _parentController.CopyToBuffer();
@@ -509,16 +517,6 @@ namespace Controller.Variables
             return result;
         }
 
-        /// <summary>
-        /// A function that will be called if the Buffer wants to iterate(and evaluate) the Variables
-        /// </summary>
-        /// <param name="sender">unused</param>
-        /// <param name="e">unused</param>
-        public void IterateVariablesFromBuffer(object sender, EventArgs e)
-        {
-            Iterate(null);
-        }
-
         public void MoveDown(VariableController variableController)
         {
             if (variableController.TypeOfVariable == VariableType.VariableTypeIterator && _iteratorsLocked)
@@ -562,10 +560,12 @@ namespace Controller.Variables
                             controllerIndex = VariablesIterator.IndexOf(variableController);
                             VariablesIterator.Move(controllerIndex, controllerIndex + 1);
                         }
+
                         CountTotalNumberOfIterations();
                     }
                 }
             }
+
             if (variableController.TypeOfVariable == VariableType.VariableTypeStatic)
             {
                 variableController.GroupIndex++;
@@ -708,12 +708,6 @@ namespace Controller.Variables
             RefreshVariableValuesInGUI(false, true, true);
         }
 
-        public void ResetIteratorValuesFromBuffer(object sender, EventArgs e)
-        {
-            ResetIteratorValues();
-            Evaluate(null);
-        }
-
         /// <summary>
         /// Sets a new RootModel for the variables
         /// </summary>
@@ -779,7 +773,22 @@ namespace Controller.Variables
             return _parentController.BulkUpdateEnd(copyLock);
         }
 
+        /* Event Handlers */
+        /// <summary>
+        /// A function that will be called if the Buffer wants to iterate(and evaluate) the Variables
+        /// </summary>
+        /// <param name="sender">unused</param>
+        /// <param name="e">unused</param>
+        public void IterateVariablesFromBuffer(object sender, EventArgs e)
+        {
+            Iterate(null);
+        }
 
+        public void ResetIteratorValuesFromBuffer(object sender, EventArgs e)
+        {
+            ResetIteratorValues();
+            Evaluate(null);
+        }
 
         // ******************** Private Methods ********************
         // ********************************************************
@@ -1010,21 +1019,6 @@ namespace Controller.Variables
         }
 
         /// <summary>
-        /// avoid inconsistency the data should not be copied to the buffer until all updates are done. In _variableUpdateLockObject the very first lock object is stored, all objects from sub updates are not stored. The updateVariablesListFromParent is prevented until the lock is released.
-        /// </summary>
-        private void LockIterators(object sender, EventArgs e)
-        {
-            Evaluate(null);
-            _iteratorsLocked = true;
-            Console.WriteLine("Locked iterators");
-
-            foreach (VariableController iterator in VariablesIterator)
-            {
-                iterator.VariableLocked = true;
-            }
-        }
-
-        /// <summary>
         /// Moves the variable to a new group with a default name.
         /// </summary>
         /// <param name="parameter">The <see cref=" VariableController"/> of the corresponding variable.</param>
@@ -1076,15 +1070,18 @@ namespace Controller.Variables
         {
             object errorNotificationsLock = ErrorCollector.Instance.StartBulkUpdate();
             object bufferUpdateLock = GetRootController().BulkUpdateStart();
+
             VariableType oldType = variableController.TypeOfVariable;
             variableController._model.TypeOfVariable = newType;
+            UpdateVariablesList();
+
             // we need to newly calculate the number of iterations when we have a new iterator, or we remove one
             if (newType == VariableType.VariableTypeIterator || oldType == VariableType.VariableTypeIterator)
             {
                 CountTotalNumberOfIterations();
             }
 
-            DoVariablesValueChanged(variableController);
+            SignalVariableValueChanged(variableController);
 
             if (variableController.VariableName != VariableController.NO_VARIABLE)
             {
@@ -1093,13 +1090,13 @@ namespace Controller.Variables
                     if (PythonScriptVariablesAnalyzer.IsVariableUsedInScript(variableController.VariableName, variable.VariableCode))
                     {
                         Console.Write("{0} depends on {1}\n", variable.VariableName, variableController.VariableName);
-                        DoVariablesValueChanged(variable);
+                        SignalVariableValueChanged(variable);
                     }
                 }
             }
 
             VariableUpdateDone(bufferUpdateLock, errorNotificationsLock);
-            UpdateVariablesList();
+
         }
 
         private List<TValue> Shuffle<TValue>(List<TValue> source)
@@ -1109,15 +1106,6 @@ namespace Controller.Variables
                .ToList();
         }
 
-        private void UnlockIterators(object sender, EventArgs e)
-        {
-            _iteratorsLocked = false;
-            foreach (VariableController iterator in VariablesIterator)
-            {
-                iterator.VariableLocked = false;
-            }
-            System.Console.WriteLine("Unlocked iterators");
-        }
 
         private void UpdateDynamics()
         {
@@ -1134,6 +1122,9 @@ namespace Controller.Variables
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesStatic"));
         }
 
+        /// <summary>
+        /// Updates the three variable controller lists and informs the View of this change.
+        /// </summary>
         private void UpdateVariablesListNoValues()//This function deletes the focus of an input field
         {
             UpdateStatics();
@@ -1149,6 +1140,19 @@ namespace Controller.Variables
                 orderby varCtrl.getModelIndex ascending
                 select varCtrl);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("VariablesIterator"));
+        }
+
+
+        /* Event Handlers */
+
+        private void UnlockIterators(object sender, EventArgs e)
+        {
+            _iteratorsLocked = false;
+            foreach (VariableController iterator in VariablesIterator)
+            {
+                iterator.VariableLocked = false;
+            }
+            System.Console.WriteLine("Unlocked iterators");
         }
 
         private void VariablesDynamicsControl_PreviewKeyDown(object parameter)
@@ -1168,6 +1172,21 @@ namespace Controller.Variables
             if (SelectedIterator != null)
             {
                 MoveVariableWithArrowsIfNecessary(SelectedIterator, e);
+            }
+        }
+
+        /// <summary>
+        /// avoid inconsistency the data should not be copied to the buffer until all updates are done. In _variableUpdateLockObject the very first lock object is stored, all objects from sub updates are not stored. The updateVariablesListFromParent is prevented until the lock is released.
+        /// </summary>
+        private void LockIterators(object sender, EventArgs e)
+        {
+            Evaluate(null);
+            _iteratorsLocked = true;
+            Console.WriteLine("Locked iterators");
+
+            foreach (VariableController iterator in VariablesIterator)
+            {
+                iterator.VariableLocked = true;
             }
         }
     }
