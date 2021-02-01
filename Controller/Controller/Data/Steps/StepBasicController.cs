@@ -909,7 +909,7 @@ namespace Controller.Data.Steps
         }
 
         /// <summary>
-        /// Executed when the variables' list changes
+        /// Executed when any of the variable lists change
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>

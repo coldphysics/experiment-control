@@ -677,7 +677,7 @@ namespace Controller.MainWindow
 
         public int NumberOfIterations
         {
-            get { return _variables.numberOfIterations; }
+            get { return _variables.NumberOfIterations; }
         }
 
         /// <summary>
