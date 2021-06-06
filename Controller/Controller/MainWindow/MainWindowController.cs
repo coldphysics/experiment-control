@@ -111,6 +111,7 @@ namespace Controller.MainWindow
         /// Indicates whether the fifo debug window is open
         /// </summary>
         private bool isFifoDebugWindowOpen;
+        private bool _isAlwaysIncreaseEnabled = true;
         #endregion
 
         // ********************* Properties ****************************************
@@ -559,6 +560,16 @@ namespace Controller.MainWindow
         {
             get { return _outputHandler.alwaysIncrease; }
             set { _outputHandler.alwaysIncrease = value; }
+        }
+
+        public bool IsAlwaysIncreaseEnabled
+        {
+            get { return _isAlwaysIncreaseEnabled; }
+            set
+            {
+                _isAlwaysIncreaseEnabled = value;
+                OnPropertyChanged("IsAlwaysIncreaseEnabled");
+            }
         }
 
         public bool IsOnceChecked
@@ -1682,7 +1693,7 @@ namespace Controller.MainWindow
                 IterationManagerController.IsStopAfterScanEnabled = false;
                 IterationManagerController.IsShuffleIterationsEnabled = false;
                 IterationManagerController.IsPauseEnabled = false;
-                IterationManagerController.IsAlwaysIncreaseEnabled = false;
+                IsAlwaysIncreaseEnabled = false;
 
 
             }
@@ -1703,7 +1714,7 @@ namespace Controller.MainWindow
                 IterationManagerController.IsStopAfterScanEnabled = true;
                 IterationManagerController.IsShuffleIterationsEnabled = true;
                 IterationManagerController.IsPauseEnabled = true;
-                IterationManagerController.IsAlwaysIncreaseEnabled = true;
+                IsAlwaysIncreaseEnabled = true;
             }
         }
         #endregion

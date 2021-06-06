@@ -63,14 +63,6 @@
                 IsChecked="{Binding Pause}"
                 IsEnabled="{Binding IsPauseEnabled}" />
 
-            <CheckBox
-                Grid.Row="4"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Stretch"
-                Content="Always Increase"
-                IsChecked="{Binding AlwaysIncrease}"
-                IsEnabled="{Binding IsAlwaysIncreaseEnabled}" />
-
             <!--  Column 2  -->
             <TextBlock
                 Grid.Row="0"

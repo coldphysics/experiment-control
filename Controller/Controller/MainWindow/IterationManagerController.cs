@@ -74,29 +74,7 @@ namespace Controller.MainWindow
                 OnPropertyChanged("IsShuffleIterationsEnabled");
             }
         }
-        public bool AlwaysIncrease
-        {
-            set
-            {
-                Parent.AlwaysIncrease = value;
-            }
 
-            get
-            {
-                return Parent.AlwaysIncrease;
-            }
-        }
-        private bool _isAlwaysIncreaseEnabled = true;
-
-        public bool IsAlwaysIncreaseEnabled
-        {
-            get { return _isAlwaysIncreaseEnabled; }
-            set
-            {
-                _isAlwaysIncreaseEnabled = value;
-                OnPropertyChanged("IsAlwaysIncreaseEnabled");
-            }
-        }
         public bool Pause
         {
             set
@@ -110,7 +88,7 @@ namespace Controller.MainWindow
             }
         }
 
-        private bool _isPauseEnabled;
+        private bool _isPauseEnabled = true;
 
         public bool IsPauseEnabled
         {
@@ -123,12 +101,10 @@ namespace Controller.MainWindow
         }
         public bool IsOnceChecked
         {
-
             get
             {
                 return Parent.IsOnceChecked;
             }
-
         }
 
 
