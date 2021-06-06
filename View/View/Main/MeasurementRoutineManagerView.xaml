@@ -145,7 +145,7 @@
                     HorizontalAlignment="Left"
                     Content="Advanced Mode"
                     IsChecked="{Binding IsAdvancedMode}"
-                    IsEnabled="{Binding Allowed, Mode=OneTime}" />
+                    IsEnabled="{Binding IsAdvancedModeAllowed, Mode=OneTime}" />
 
                 <Grid Grid.Row="5" Visibility="{Binding AdvancedModeVisibility}">
                     <Grid.RowDefinitions>
