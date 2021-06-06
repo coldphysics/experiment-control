@@ -294,36 +294,25 @@ namespace Controller.Settings.Settings
             string table = Table;
             string query = "select globalCounter FROM " + table + "  LIMIT 1;";
 
-            MySqlConnection connection = null;
+            
             string result = "The database connection is valid!";
             isValid = true;
 
             try
             {
-                connection = new MySqlConnection(connectionString);
-                connection.Open();
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                object objectResult = cmd.ExecuteScalar();
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    cmd.ExecuteScalar();
+                }
             }
             catch (Exception e)
             {
                 result = string.Format("The database connection is invalid: {0}", e.Message);
                 isValid = false;
             }
-            finally
-            {
-                if (connection != null)
-                {
-                    try 
-                    { 
-                        connection.Close(); 
-                    }
-                    catch
-                    { }
-                }
-            }
-
-
+            
             return result;
         }
 
