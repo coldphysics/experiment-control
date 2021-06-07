@@ -582,7 +582,7 @@ namespace Controller.MainWindow
 
         public bool IsAlwaysIncreaseEnabled
         {
-            get { return _isAlwaysIncreaseEnabled; }
+            get { return _isAlwaysIncreaseEnabled && !IsIterateAndSaveChecked; }
             set
             {
                 _isAlwaysIncreaseEnabled = value;
@@ -1276,6 +1276,7 @@ namespace Controller.MainWindow
             _iterateAndSave = !_iterateAndSave;
             OnPropertyChanged("IsIterateAndSaveChecked");
             OnPropertyChanged("IsPauseEnabled");
+            OnPropertyChanged("IsAlwaysIncreaseEnabled");
             DetermineCycleState();
         }
 
