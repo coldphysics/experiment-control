@@ -619,9 +619,7 @@ namespace Buffer.Basic
                 //In the first loop no data has been sent to the hardware system yet, so do not wait for the hardware.
                 if (!first)
                 {
-
                     SetOutputLoopThreadState(OutputLoopStates.WaitForHardware);
-
                     /***/
                     //Wait until all output data has been transferred to the hardware system
                     WaitForHardware();
@@ -634,7 +632,6 @@ namespace Buffer.Basic
                     //If this is the first loop, or after being stopped (user clicked on 'Stop')
                     if (first || cycleState == CycleStates.Stopped)
                     {
-
                         //If the user clicked on 'stop', iterator variables are set to their starting values.
                         if (!first)
                             //TODO check if this is necassary.
@@ -876,6 +873,7 @@ namespace Buffer.Basic
                         {
                             /***/
                             GlobalCounter++;
+                            iteratedInLastCycle = true;
                             UpdateIteratorState();
                         }
                     }
