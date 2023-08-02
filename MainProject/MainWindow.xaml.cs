@@ -26,9 +26,6 @@ namespace MainProject
 
         public MainWindow()
         {
-            if (Debugger.IsAttached)
-                Settings.Default.Reset();
-
             ProfilesManager profilesManager = null;
 
             try
