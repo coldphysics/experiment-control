@@ -170,7 +170,7 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             IsEnabled="{Binding IsIterateAndSaveChecked}"
-                            Text="Duration of Scan (h:m):" />
+                            Text="Duration of Scan (m:s):" />
                         <TextBlock
                             Grid.Row="3"
                             Grid.Column="1"

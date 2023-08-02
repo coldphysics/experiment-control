@@ -442,8 +442,8 @@ namespace Controller.MainWindow
         {
             get
             {
-                //System.Console.WriteLine(Math.Floor((DurationTotalInSeconds / 3600)).ToString("00") + ":" + Math.Round(((DurationTotalInSeconds / 60) % 60)).ToString("00"));
-                return Math.Floor((DurationTotalInSeconds / 3600)).ToString("00") + ":" + Math.Round(((DurationTotalInSeconds / 60) % 60)).ToString("00");
+                //System.Console.WriteLine(Math.Floor((DurationTotalInSeconds / 60)).ToString("00") + ":" + Math.Round((DurationTotalInSeconds % 60)).ToString("00"));
+                return Math.Floor((DurationTotalInSeconds / 60)).ToString("00") + ":" + Math.Round((DurationTotalInSeconds % 60)).ToString("00");
             }
         }
 
