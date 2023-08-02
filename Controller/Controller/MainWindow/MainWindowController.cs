@@ -751,6 +751,30 @@ namespace Controller.MainWindow
             }
         }
 
+        private bool _isAlwaysIncreaseEnabled = true;
+
+        public bool IsAlwaysIncreaseEnabled
+        {
+            get { return _isAlwaysIncreaseEnabled; }
+            set
+            {
+                _isAlwaysIncreaseEnabled = value;
+                OnPropertyChanged("IsAlwaysIncreaseEnabled");
+            }
+        }
+
+        private Visibility _isPreviousStartGCOfScansVisible = Visibility.Visible;
+
+        public Visibility IsPreviousStartGCOfScansVisible
+        {
+            get { return _isPreviousStartGCOfScansVisible; }
+            set
+            {
+                _isPreviousStartGCOfScansVisible = value;
+                OnPropertyChanged("IsPreviousStartGCOfScansVisible");
+            }
+        }
+
         #endregion
         #endregion
 
@@ -1708,7 +1732,6 @@ namespace Controller.MainWindow
                 if (IsStarted)
                     ProfileManagerController.IsSaveButtonEnabled = false;
 
-                IterationManagerController.IsPreviousStartGCOfScansVisible = Visibility.Hidden;
                 IterationManagerController.NameOfTheCurrentStartGCOfScans = "Start counter of routine: ";
                 IterationManagerController.IsScanOnlyOnceEnabled = false;
                 IterationManagerController.IsStopAfterScanEnabled = false;
@@ -1730,7 +1753,6 @@ namespace Controller.MainWindow
                 ProfileManagerController.IsSaveButtonEnabled = true;
 
                 IterationManagerController.NameOfTheCurrentStartGCOfScans = "Current Start GC of Scans: ";
-                IterationManagerController.IsPreviousStartGCOfScansVisible = Visibility.Visible;
                 IterationManagerController.IsScanOnlyOnceEnabled = true;
                 IterationManagerController.IsStopAfterScanEnabled = true;
                 IterationManagerController.IsShuffleIterationsEnabled = true;
