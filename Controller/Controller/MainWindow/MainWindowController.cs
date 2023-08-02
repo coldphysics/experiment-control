@@ -350,7 +350,7 @@ namespace Controller.MainWindow
 
         private string _generatorState = "Waiting for Changes";
 
-        private bool _iterateAndSave = true;
+        private bool _iterateAndSave = false;
 
         private bool _once = false;
 
