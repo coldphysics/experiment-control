@@ -138,7 +138,7 @@
             <vwcomparison:SimpleMessageCompareItem />
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type vmchannels:ChannelSettingsController}">
+        <DataTemplate DataType="{x:Type vmchannels:ChannelSettingsController}" x:Key="AnalogSettingsWindowDataTemplate">
             <vwchannels:AnalogSettings />
         </DataTemplate>
 

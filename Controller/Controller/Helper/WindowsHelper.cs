@@ -32,9 +32,14 @@ namespace Controller.Helper
             bool sizeToContent,
             bool isFixedSize,
             bool persistSizeAndPosition,
-            bool disableMinimizeButton) where T : Window, new()
+            bool disableMinimizeButton,
+            DataTemplate contentTemplate) where T : Window, new()
         {
             ContentControl contentUI = new ContentControl();
+            if(contentTemplate != null)
+            {
+                contentUI.ContentTemplate = contentTemplate;
+            }
             contentUI.Content = viewModel;
             DockPanel dockPanel = new DockPanel();
             dockPanel.Children.Add(contentUI);
@@ -63,9 +68,10 @@ namespace Controller.Helper
             bool sizeToContent,
             bool isFixedSize = false,
             bool persistSizeAndPosition = false,
-            bool disableMinimizeButton = false)
+            bool disableMinimizeButton = false,
+            DataTemplate contentTemplate = null)
         {
-            return CreateWindowToHostViewModel<Window>(viewModel, sizeToContent, isFixedSize, persistSizeAndPosition, disableMinimizeButton);
+            return CreateWindowToHostViewModel<Window>(viewModel, sizeToContent, isFixedSize, persistSizeAndPosition, disableMinimizeButton, contentTemplate);
         }
 
         // ********* Helper Methods ************
