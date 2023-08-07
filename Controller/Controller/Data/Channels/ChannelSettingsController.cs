@@ -254,7 +254,8 @@ namespace Controller.Data.Channels
         {
             uiModel = originalModel.ShallowCopy();
             currentModel = uiModel;
-            Window settingsWindow = WindowsHelper.CreateWindowToHostViewModel(this, true, true);
+            DataTemplate contentTemplate = (DataTemplate)Application.Current.FindResource("AnalogSettingsWindowDataTemplate");
+            Window settingsWindow = WindowsHelper.CreateWindowToHostViewModel(this, true, true, contentTemplate: contentTemplate);
             settingsWindow.Title = "Analog Settings";
             settingsWindow.ShowDialog();
         }
