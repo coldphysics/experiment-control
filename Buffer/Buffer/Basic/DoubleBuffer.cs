@@ -419,12 +419,7 @@ namespace Buffer.Basic
         /// </summary>
         private void UpdateGeneratorState()
         {
-            EventHandler update = OnGeneratorStateChange;
-
-            if (null != update)
-            {
-                update(this, null);
-            }
+            OnGeneratorStateChange?.Invoke(this, null);
         }
 
 

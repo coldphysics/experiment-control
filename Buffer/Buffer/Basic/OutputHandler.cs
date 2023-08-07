@@ -19,6 +19,7 @@ using System.Text;
 using Model.MeasurementRoutine.GlobalVariables;
 using Model.MeasurementRoutine;
 using PythonUtils.FileExecution;
+using Buffer.DatabaseAccess;
 
 namespace Buffer.Basic
 {
@@ -215,6 +216,11 @@ namespace Buffer.Basic
         /// The hardware manager that is used to communicate with the hardware.
         /// </summary>
         private readonly IHardwareManager _hardwareManager;
+
+        /// <summary>
+        /// Provides access to the underlying database.
+        /// </summary>
+        private readonly DatabaseManager _databaseManager;
         /// <summary>
         /// The root to the data model hierarchy
         /// </summary>
@@ -575,9 +581,10 @@ namespace Buffer.Basic
             BasicPythonFileExecutorBuilder builder = new BasicPythonFileExecutorBuilder();
             this.pyExecutor = (BasicPythonFileExecutor)builder.Build();
             _hardwareManager = hardwareManager;
-
+            _databaseManager = new DatabaseManager();
+            
             // increase global counter by one so nothing will be overwritten
-            GlobalCounter = LoadGlobalCounter() + 1;
+            GlobalCounter = _databaseManager.LoadGlobalCounter() + 1;
             ModelCounters = new ModelSpecificCounters();
             // the output thread is created once and runs 'till the program stops
             outputThread = new Thread(OutputLoop)
@@ -612,9 +619,7 @@ namespace Buffer.Basic
                 //In the first loop no data has been sent to the hardware system yet, so do not wait for the hardware.
                 if (!first)
                 {
-
                     SetOutputLoopThreadState(OutputLoopStates.WaitForHardware);
-
                     /***/
                     //Wait until all output data has been transferred to the hardware system
                     WaitForHardware();
@@ -627,7 +632,6 @@ namespace Buffer.Basic
                     //If this is the first loop, or after being stopped (user clicked on 'Stop')
                     if (first || cycleState == CycleStates.Stopped)
                     {
-
                         //If the user clicked on 'stop', iterator variables are set to their starting values.
                         if (!first)
                             //TODO check if this is necassary.
@@ -684,12 +688,10 @@ namespace Buffer.Basic
                                                  cycleState == CycleStates.ScanningOnce;
 
 
-
-
                     // everything has to wait until the variables and so on are stored in the database
                     /***/
-
-                    CreateDatabaseEntry(workLoopCopy);
+                    EntryPOCO databaseEntry = GenerateDBEntryPOCO(workLoopCopy);
+                    _databaseManager.CreateDatabaseEntry(databaseEntry);
 
 
                     // start python scripts as a background thread
@@ -871,6 +873,7 @@ namespace Buffer.Basic
                         {
                             /***/
                             GlobalCounter++;
+                            iteratedInLastCycle = true;
                             UpdateIteratorState();
                         }
                     }
@@ -988,8 +991,7 @@ namespace Buffer.Basic
 
         private void DoAfterIteratingVariables()
         {
-            if (AfterIteratingVariables != null)
-                AfterIteratingVariables(this, null);
+            AfterIteratingVariables?.Invoke(this, null);
         }
 
         /// <summary>
@@ -1173,211 +1175,23 @@ namespace Buffer.Basic
         }
 
 
-
-        //  *********************************** database **********************************************************        
-        /// <summary>
-        /// Opens a connection with the MySql database.
-        /// </summary>
-        /// <param name="setting">The setting that holds the connection parameters.</param>
-        /// <returns>An open connection to the database.</returns>
-        public MySqlConnection ConnectDatabase(DatabaseConnectionSetting setting)//TODO probably should use the "using" model of connection; safer!
+        //  *********************************** Database Access **********************************************************
+        private EntryPOCO GenerateDBEntryPOCO(RootModel rootModel)
         {
-            string server = setting.Server;
-            string database = setting.Database;
-            string uid = setting.UserName;
-            string password = setting.Password;
-            string port = setting.Port.ToString();
-
-            string connectionString = "SERVER=" + server + ";PORT=" + port + ";DATABASE=" +
-                                     database + ";UID=" + uid + ";PASSWORD=" + password + ";SslMode=none;";
-            MySqlConnection connection = null;
-
-            try
-            {
-                connection = new MySqlConnection(connectionString);
-                connection.Open();
-            }
-            catch (Exception e)
-            {
-                var errorCollector = ErrorCollector.Instance;
-                errorCollector.AddError("Could not connect to SQL database!" + e, ErrorCategory.Basic, true,
-                    ErrorTypes.FileNameEmpty);
-            }
-
-            return connection;
-        }
-
-        /// <summary>
-        /// Saves the variables and the scan progress/settings to the database
-        /// </summary>
-        /// <param name="model">the model</param>
-        private void CreateDatabaseEntry(RootModel model)
-        {
-            var variablesList = new List<String>();
-            model.VariablesList = variablesList;
-            var iteratorList = new List<String>();
-
-            // create list 
-            foreach (VariableModel variable in model.Data.variablesModel.VariablesList)
-            {
-                if (variable.VariableName.Trim() == "")
-                {
-                    continue;
-                }
-
-                variablesList.Add(variable.VariableName + "\t" + variable.VariableValue.ToString(CultureInfo.InvariantCulture));
-
-                if (variable.IsIterator())
-                {
-                    iteratorList.Add(variable.VariableName + "\t" + variable.VariableValue.ToString(CultureInfo.InvariantCulture) + "\t" + variable.VariableStartValue.ToString(CultureInfo.InvariantCulture) + "\t" + variable.VariableEndValue.ToString(CultureInfo.InvariantCulture) + "\t" + variable.VariableStepValue.ToString(CultureInfo.InvariantCulture));
-
-                }
-            }
-
-
-            // add additional variables
-            variablesList.Add("cntGlobal" + "\t" + model.GlobalCounter);
-            variablesList.Add("StartCounterOfScans" + "\t" + StartCounterOfScansOfCurrentModel);
-            variablesList.Add("StartCounterOfRoutine" + "\t" + StartGlobalCounterOfMeasurementRoutine);
-
-            // variablesList.Add("StartCounterOfScans" + "\t" + StartCounterOfScans);
-            variablesList.Add("IterationOfScan" + "\t" + IterationOfScan);
-            variablesList.Add("CompletedScans" + "\t" + CompletedScans);
-            variablesList.Add("NumberOfIterations" + "\t" + NumberOfIterations);
-            variablesList.Add("CycleDuration" + "\t" + _cycleDuration.ToString(CultureInfo.InvariantCulture));
-
-            //ADDED Ghareeb 05.10.2016 do not try any access to DB if not allowed
-            if (Global.CanAccessDatabase())
-            {
-                DatabaseConnectionSetting setting = (DatabaseConnectionSetting)ProfilesManager.GetInstance().ActiveProfile.GetSettingByName(SettingNames.DATABASE_CONNECTION);
-                //save to sql database
-                string sqlVariables = String.Join("\n", variablesList);
-                string sqlIterators = String.Join("\n", iteratorList);
-                MySqlConnection connection = null;
-
-
-                try
-                {
-                    connection = ConnectDatabase(setting);//TODO the exception is already handled!
-                }
-                catch (Exception e)
-                {
-                    var errorCollector = ErrorCollector.Instance;
-                    errorCollector.AddError("Could not connect to SQL database!" + e, ErrorCategory.Basic, true,
-                        ErrorTypes.FileNameEmpty);
-                }
-
-                string table = setting.Table;
-                DateTime estimatedStartTime = model.EstimatedStartTime;
-                string query = "";
-
-                if (!ProfilesManager.GetInstance().ActiveProfile.GetSettingValueByName<bool>(SettingNames.USE_LEGACY_DATABASE))//We need to use new schema
-                {
-                    OperatingMode currentMode;
-
-                    if (IsMeasurementRoutineMode)
-                    {
-                        currentMode = OperatingMode.MEASUREMENT_ROUTINE;
-                    }
-                    else if (model.IsItererating)
-                        currentMode = OperatingMode.ITERATION;
-                    else
-                        currentMode = OperatingMode.STATIC;
-
-                    int modelNumber = ModelIndex;
-
-                    StringBuilder routineArrayBuilder = new StringBuilder();
-                    List<double> array = GlobalVariablesManager.GetInstance().GetVariableByName<List<double>>(GlobalVariableNames.ROUTINE_ARRAY).VariableValue;
-
-                    for (int i = 0; i < array.Count; i++)
-                    {
-                        routineArrayBuilder.Append(array[i]);
-
-                        if (i < array.Count - 1)
-                            routineArrayBuilder.Append(", ");
-                    }
-
-                    string routineArray = routineArrayBuilder.ToString();
-
-
-                    query = string.Format(
-                        "replace into {0} " +
-                        "(globalCounter, startTime, startCounterOfScans, iterationOfScan, completedScans, numberOfIterations, " +
-                        "Variables, iterators, operatingMode, startCounterOfRoutine, modelNumber, routineArray)" +
-                        "VALUES ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}')",
-                        table, model.GlobalCounter, estimatedStartTime.ToString("yyyy-MM-dd HH:mm:ss"), StartCounterOfScansOfCurrentModel, IterationOfScan,
-                        CompletedScans, NumberOfIterations, sqlVariables, sqlIterators, currentMode.ToString(), StartGlobalCounterOfMeasurementRoutine, modelNumber, routineArray
-                        );
-
-                }
-                else // this should be removed when all experiments start using the new schema.
-                {
-                    query = "replace into " + table +
-                                   " (globalCounter, startTime, startCounterOfScans, iterationOfScan, completedScans, numberOfIterations, Variables, iterators) VALUES('" +
-                                   model.GlobalCounter + "', '" + estimatedStartTime.ToString("yyyy-MM-dd HH:mm:ss") + "', '" +
-                                   StartCounterOfScansOfCurrentModel + "', '" +
-                                   IterationOfScan + "', '" + CompletedScans + "', '" + NumberOfIterations + "', '" + sqlVariables + "', '" + sqlIterators + "')";
-                }
-                try
-                {
-                    var cmd = new MySqlCommand(query, connection);
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception e)
-                {
-                    var errorCollector = ErrorCollector.Instance;
-                    errorCollector.AddError("Could not save to SQL database!" + e, ErrorCategory.Basic, true,
-                        ErrorTypes.FileNameEmpty);
-                    Console.WriteLine(query);
-                    Console.WriteLine(e.ToString());
-                }
-            }
-        }
-
-        /// <summary>
-        /// Queries the database for the last global counter if access to the database is allowed, otherwise returns 1
-        /// </summary>
-        /// <returns>last global counter if access to DB is allowed, 0 otherwise.</returns>
-        public int LoadGlobalCounter()
-        {
-            if (!Global.CanAccessDatabase())
-                return 0;
-
-            int globalCounter = -1;
-            DatabaseConnectionSetting setting = (DatabaseConnectionSetting)ProfilesManager.GetInstance().ActiveProfile.GetSettingByName(SettingNames.DATABASE_CONNECTION);
-            MySqlConnection connection = null;
-
-            try
-            {
-                connection = ConnectDatabase(setting);//TODO exception already handled
-            }
-            catch (Exception e)
-            {
-                var errorCollector = ErrorCollector.Instance;
-                errorCollector.AddError("Could not connect to SQL database!" + e, ErrorCategory.Basic, true,
-                    ErrorTypes.FileNameEmpty);
-            }
-
-            string table = setting.Table;
-            string query = "select globalCounter FROM " + table + " ORDER BY globalCounter DESC LIMIT 0,1";
-
-            try
-            {
-                var cmd = new MySqlCommand(query, connection);
-                globalCounter = int.Parse(cmd.ExecuteScalar() + "");
-                connection.Close();
-            }
-            catch (Exception e)
-            {
-                // FIXME - do some good error handling here
-                ErrorCollector errorCollector = ErrorCollector.Instance;
-                errorCollector.AddError("Could not load the global counter out of the SQL database!", ErrorCategory.Basic,
-                    true, ErrorTypes.FileNameEmpty);
-                Console.WriteLine(query);
-                Console.WriteLine(e.ToString());
-                //Environment.Exit(1);
-            }
-            return globalCounter;
+            return new EntryPOCO {
+                CompletedScans = CompletedScans,
+                CycleDuration = _cycleDuration,
+                EstimatedStartTime = rootModel.EstimatedStartTime,
+                GlobalCounter = rootModel.GlobalCounter,
+                IsIterating = rootModel.IsItererating,
+                IsMeasurementRoutineMode = IsMeasurementRoutineMode,
+                IterationOfScan = IterationOfScan,
+                ModelIndex = ModelIndex,
+                NumberOfIterations = NumberOfIterations,
+                StartCounterOfScansOfCurrentModel = StartCounterOfScansOfCurrentModel,
+                StartGlobalCounterOfMeasurementRoutine = StartGlobalCounterOfMeasurementRoutine,
+                VariableList = rootModel.Data.variablesModel.VariablesList 
+            };
         }
 
 
@@ -1409,12 +1223,22 @@ namespace Buffer.Basic
                         Directory.CreateDirectory(saveFolder);
                     }
 
-                    string varOut = String.Join("\r\n", model.VariablesList);
-
                     bool saveToTxtFile = profilesManager.ActiveProfile.GetSettingValueByName<bool>(SettingNames.SAVE_VARIABLES_TO_TXT);
 
                     if (saveToTxtFile)
                     {
+                        List<string> variablesList = new List<string>();
+
+                        // create list 
+                        foreach (VariableModel variable in model.Data.variablesModel.VariablesList)
+                        {
+                            if (variable.VariableName.Trim() != "")
+                            {
+                                variablesList.Add($"{variable.VariableName}\t{variable.VariableValue.ToString(CultureInfo.InvariantCulture)}");
+                            }
+                        }
+
+                        string varOut = string.Join("\r\n", variablesList);
                         File.WriteAllText(saveFolder + model.GlobalCounter + "_variables.txt", varOut.Replace(',', '.'));
                     }
 

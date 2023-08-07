@@ -86,6 +86,8 @@
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="30" />
                         <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
@@ -208,10 +210,27 @@
                         Content="Control LeCroy"
                         IsChecked="{Binding ControlLecroy}"
                         IsEnabled="{Binding IsControlLecroyPossible}" />
-
+                    <CheckBox
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3"
+                        Margin="2,5,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Stretch"
+                        Content="Always Increase GC"
+                        IsChecked="{Binding AlwaysIncrease}"
+                        IsEnabled="{Binding IsAlwaysIncreaseEnabled}" />
+                    <CheckBox
+                        Grid.Row="3"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Stretch"
+                        Margin="2,5,0,0"
+                        Content="Pause Increasing GC"
+                        IsChecked="{Binding Pause}"
+                        IsEnabled="{Binding IsPauseEnabled}" /> 
                     <CheckBox
                         Name="IterateAndSaveButton"
-                        Grid.Row="2"
+                        Grid.Row="4"
                         Grid.Column="0"
                         Grid.ColumnSpan="3"
                         Margin="2,5,0,0"
@@ -223,7 +242,7 @@
                         IsEnabled="{Binding IncrementIteratorsIsEnabled, Mode=TwoWay}" />
 
                     <ContentControl
-                        Grid.Row="3"
+                        Grid.Row="5"
                         Grid.Column="0"
                         Grid.ColumnSpan="4"
                         Content="{Binding IterationManagerController}"

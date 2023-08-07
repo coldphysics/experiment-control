@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="300"
+    d:DesignHeight="200"
     d:DesignWidth="400"
     mc:Ignorable="d">
     <Border
@@ -55,21 +55,7 @@
                 IsChecked="{Binding ShuffleIterations}"
                 IsEnabled="{Binding IsShuffleIterationsEnabled}" />
 
-            <CheckBox
-                Grid.Row="3"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Stretch"
-                Content="Pause"
-                IsChecked="{Binding Pause}"
-                IsEnabled="{Binding IsPauseEnabled}" />
-
-            <CheckBox
-                Grid.Row="4"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Stretch"
-                Content="Always Increase"
-                IsChecked="{Binding AlwaysIncrease}"
-                IsEnabled="{Binding IsAlwaysIncreaseEnabled}" />
+            
 
             <!--  Column 2  -->
             <TextBlock

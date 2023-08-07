@@ -111,6 +111,8 @@ namespace Controller.MainWindow
         /// Indicates whether the fifo debug window is open
         /// </summary>
         private bool isFifoDebugWindowOpen;
+        private bool _isAlwaysIncreaseEnabled = true;
+        private bool _isPauseEnabled = true;
         #endregion
 
         // ********************* Properties ****************************************
@@ -543,6 +545,19 @@ namespace Controller.MainWindow
             }
         }
 
+        public bool IsPauseEnabled
+        {
+            get
+            {
+                return _isPauseEnabled && (AlwaysIncrease || IsIterateAndSaveChecked);
+            }
+            set
+            {
+                _isPauseEnabled = value;
+                OnPropertyChanged("IsPauseEnabled");
+            }
+        }
+
         public bool ShuffleIterations
         {
             get { return _outputHandler.shuffleIterations; }
@@ -558,7 +573,21 @@ namespace Controller.MainWindow
         public bool AlwaysIncrease
         {
             get { return _outputHandler.alwaysIncrease; }
-            set { _outputHandler.alwaysIncrease = value; }
+            set
+            {
+                _outputHandler.alwaysIncrease = value;
+                OnPropertyChanged("IsPauseEnabled"); 
+            }
+        }
+
+        public bool IsAlwaysIncreaseEnabled
+        {
+            get { return _isAlwaysIncreaseEnabled && !IsIterateAndSaveChecked; }
+            set
+            {
+                _isAlwaysIncreaseEnabled = value;
+                OnPropertyChanged("IsAlwaysIncreaseEnabled");
+            }
         }
 
         public bool IsOnceChecked
@@ -580,6 +609,7 @@ namespace Controller.MainWindow
             {
                 _iterateAndSave = value;
                 OnPropertyChanged("IsIterateAndSaveChecked");
+                OnPropertyChanged("IsPauseEnabled");
             }
         }
 
@@ -1073,8 +1103,8 @@ namespace Controller.MainWindow
                         UnblockUI();
                         OptionsManager.GetInstance().GetValuesFromCopy(controller.OptionsCopy);
                         OptionsManager.GetInstance().SaveOptions();
-                        //We can restart immediately
-                        RestartApplication();
+                    //We can restart immediately
+                    RestartApplication();
 
                     };
                     //set the IsBusy before you start the thread
@@ -1139,8 +1169,8 @@ namespace Controller.MainWindow
                         UnblockUI();
                         ProfilesManager.GetInstance().GetValuesFromSnapshot(controller.SettingsSnapshot);
                         ProfilesManager.GetInstance().SaveAllProfiles();
-                        //We can restart immediately
-                        RestartApplication();
+                    //We can restart immediately
+                    RestartApplication();
 
                     };
                     //set the IsBusy before you start the thread
@@ -1245,6 +1275,8 @@ namespace Controller.MainWindow
         {
             _iterateAndSave = !_iterateAndSave;
             OnPropertyChanged("IsIterateAndSaveChecked");
+            OnPropertyChanged("IsPauseEnabled");
+            OnPropertyChanged("IsAlwaysIncreaseEnabled");
             DetermineCycleState();
         }
 
@@ -1323,7 +1355,7 @@ namespace Controller.MainWindow
             }
 
         }
-        
+
         public void ShutdownApplication(object parameter)
         {
             CancelEventArgs e = (CancelEventArgs)parameter;
@@ -1459,10 +1491,10 @@ namespace Controller.MainWindow
                 handler =
                     new DoubleBuffer.FinishedModelGenerationEventHandler((sender, args) =>
                     {
-                        //trigger the callback
-                        callback(args);
-                        //stop receiving new events
-                        _buffer.FinishedModelGeneration -= handler;
+                    //trigger the callback
+                    callback(args);
+                    //stop receiving new events
+                    _buffer.FinishedModelGeneration -= handler;
                     });
 
                 _buffer.FinishedModelGeneration += handler;
@@ -1681,8 +1713,8 @@ namespace Controller.MainWindow
                 IterationManagerController.IsScanOnlyOnceEnabled = false;
                 IterationManagerController.IsStopAfterScanEnabled = false;
                 IterationManagerController.IsShuffleIterationsEnabled = false;
-                IterationManagerController.IsPauseEnabled = false;
-                IterationManagerController.IsAlwaysIncreaseEnabled = false;
+                IsPauseEnabled = false;
+                IsAlwaysIncreaseEnabled = false;
 
 
             }
@@ -1702,8 +1734,8 @@ namespace Controller.MainWindow
                 IterationManagerController.IsScanOnlyOnceEnabled = true;
                 IterationManagerController.IsStopAfterScanEnabled = true;
                 IterationManagerController.IsShuffleIterationsEnabled = true;
-                IterationManagerController.IsPauseEnabled = true;
-                IterationManagerController.IsAlwaysIncreaseEnabled = true;
+                IsPauseEnabled = true;
+                IsAlwaysIncreaseEnabled = true;
             }
         }
         #endregion

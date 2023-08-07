@@ -94,6 +94,8 @@
   <ItemGroup>
     <Compile Include="Basic\DoubleBuffer.cs" />
     <Compile Include="Basic\OutputHandler.cs" />
+    <Compile Include="DatabaseAccess\DatabaseManager.cs" />
+    <Compile Include="DatabaseAccess\EntryPOCO.cs" />
     <Compile Include="GeneratorWrapper.cs" />
     <Compile Include="HardwareManager\NoOutputHardwareGroup.cs" />
     <Compile Include="OutputProcessors\CalibrationUnit\CalibrationScriptAnalyzer.cs" />

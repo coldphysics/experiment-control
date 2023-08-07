@@ -1,6 +1,7 @@
 ﻿using Communication.Interfaces.Model;
 using Model.Data;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 
@@ -50,7 +51,8 @@ namespace Model.Root
         /// Contains the names and values of all variables used to be written to the database and to a text file.
         /// Is maintained and used by the Buffer.Basic.OutputHandler/>
         /// </summary>
-        public System.Collections.Generic.List<string> VariablesList;
+        [ObsoleteAttribute("This property is obsolete and should never be used", false)]
+        public List<string> VariablesList;
 
 
         //model-specific python scripts

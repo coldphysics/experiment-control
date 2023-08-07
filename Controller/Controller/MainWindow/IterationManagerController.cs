@@ -5,6 +5,18 @@ namespace Controller.MainWindow
 {
     public class IterationManagerController : ChildController
     {
+        private bool _isScanOnlyOnceEnabled = true;
+        private bool _isStopAfterScanEnabled = true;
+        private bool _isShuffleIterationsEnabled = true;
+        private string _nameOfTheCurrentStartGCOfScans = "Current Start GC of Scans:";
+        private Visibility _isPreviousStartGCOfScansVisible = Visibility.Visible;
+
+        public IterationManagerController(MainWindowController parent)
+            : base(parent)
+        {
+        }
+
+
         private MainWindowController Parent
         {
             get
@@ -14,8 +26,6 @@ namespace Controller.MainWindow
         }
 
         public ICommand ScanOnlyOnceCommand { get { return Parent.OnlyOnceCommand; } }
-
-        private bool _isScanOnlyOnceEnabled = true;
 
         public bool IsScanOnlyOnceEnabled
         {
@@ -38,7 +48,7 @@ namespace Controller.MainWindow
             }
         }
 
-        private bool _isStopAfterScanEnabled = true;
+
         public bool IsStopAfterScanEnabled
         {
             get
@@ -63,7 +73,6 @@ namespace Controller.MainWindow
             }
         }
 
-        private bool _isShuffleIterationsEnabled = true;
 
         public bool IsShuffleIterationsEnabled
         {
@@ -74,29 +83,7 @@ namespace Controller.MainWindow
                 OnPropertyChanged("IsShuffleIterationsEnabled");
             }
         }
-        public bool AlwaysIncrease
-        {
-            set
-            {
-                Parent.AlwaysIncrease = value;
-            }
 
-            get
-            {
-                return Parent.AlwaysIncrease;
-            }
-        }
-        private bool _isAlwaysIncreaseEnabled = true;
-
-        public bool IsAlwaysIncreaseEnabled
-        {
-            get { return _isAlwaysIncreaseEnabled; }
-            set
-            {
-                _isAlwaysIncreaseEnabled = value;
-                OnPropertyChanged("IsAlwaysIncreaseEnabled");
-            }
-        }
         public bool Pause
         {
             set
@@ -110,25 +97,12 @@ namespace Controller.MainWindow
             }
         }
 
-        private bool _isPauseEnabled;
-
-        public bool IsPauseEnabled
-        {
-            get { return _isPauseEnabled; }
-            set
-            {
-                _isPauseEnabled = value;
-                OnPropertyChanged("IsPauseEnabled");
-            }
-        }
         public bool IsOnceChecked
         {
-
             get
             {
                 return Parent.IsOnceChecked;
             }
-
         }
 
 
@@ -156,17 +130,12 @@ namespace Controller.MainWindow
             get { return Parent.IterationOfScan; }
         }
 
-        //public int IterationOfScan
-        //{
-        //    get { return Parent.MeasurementRoutineController.CurrentRoutineModel.RoutineModel.Counters.IterationOfScan; }
-        //}
-
         public int CompletedScans
         {
             get { return Parent.CompletedScans; }
         }
 
-        private string _nameOfTheCurrentStartGCOfScans = "Current Start GC of Scans:";
+
         public string NameOfTheCurrentStartGCOfScans
         {
             get { return _nameOfTheCurrentStartGCOfScans; }
@@ -175,20 +144,17 @@ namespace Controller.MainWindow
                 _nameOfTheCurrentStartGCOfScans = value;
                 OnPropertyChanged("NameOfTheCurrentStartGCOfScans");
             }
-    }
+        }
 
-        private Visibility _isPreviousStartGCOfScansVisible=Visibility.Visible;
 
         public Visibility IsPreviousStartGCOfScansVisible
         {
             get { return _isPreviousStartGCOfScansVisible; }
-            set { _isPreviousStartGCOfScansVisible = value;
-            OnPropertyChanged("IsPreviousStartGCOfScansVisible");
+            set
+            {
+                _isPreviousStartGCOfScansVisible = value;
+                OnPropertyChanged("IsPreviousStartGCOfScansVisible");
             }
-        }
-        public IterationManagerController(MainWindowController parent)
-            : base(parent)
-        {
         }
 
     }
