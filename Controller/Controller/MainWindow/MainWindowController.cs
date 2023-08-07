@@ -350,7 +350,7 @@ namespace Controller.MainWindow
 
         private string _generatorState = "Waiting for Changes";
 
-        private bool _iterateAndSave = true;
+        private bool _iterateAndSave = false;
 
         private bool _once = false;
 
@@ -442,8 +442,8 @@ namespace Controller.MainWindow
         {
             get
             {
-                //System.Console.WriteLine(Math.Floor((DurationTotalInSeconds / 3600)).ToString("00") + ":" + Math.Round(((DurationTotalInSeconds / 60) % 60)).ToString("00"));
-                return Math.Floor((DurationTotalInSeconds / 3600)).ToString("00") + ":" + Math.Round(((DurationTotalInSeconds / 60) % 60)).ToString("00");
+                //System.Console.WriteLine(Math.Floor((DurationTotalInSeconds / 60)).ToString("00") + ":" + Math.Round((DurationTotalInSeconds % 60)).ToString("00"));
+                return Math.Floor((DurationTotalInSeconds / 60)).ToString("00") + ":" + Math.Round((DurationTotalInSeconds % 60)).ToString("00");
             }
         }
 
@@ -751,6 +751,18 @@ namespace Controller.MainWindow
             }
         }
 
+        private Visibility _isPreviousStartGCOfScansVisible = Visibility.Visible;
+
+        public Visibility IsPreviousStartGCOfScansVisible
+        {
+            get { return _isPreviousStartGCOfScansVisible; }
+            set
+            {
+                _isPreviousStartGCOfScansVisible = value;
+                OnPropertyChanged("IsPreviousStartGCOfScansVisible");
+            }
+        }
+
         #endregion
         #endregion
 
@@ -895,8 +907,8 @@ namespace Controller.MainWindow
             //Ebaa 11.06
             // IterationManagerController.NotifyPropertyChanged("StartCounterOfScans");
             IterationManagerController.NotifyPropertyChanged("StartCounterOfScansOfCurrentModel");
-            IterationManagerController.NotifyPropertyChanged("LastStartCounterOfScans");
-            IterationManagerController.NotifyPropertyChanged("NumberOfIterations");
+            OnPropertyChanged("LastStartCounterOfScans");
+            OnPropertyChanged("NumberOfIterations");
             OnPropertyChanged("DurationTotal");
             OnPropertyChanged("EndTime");
             IterationManagerController.NotifyPropertyChanged("CompletedScans");
@@ -1708,7 +1720,6 @@ namespace Controller.MainWindow
                 if (IsStarted)
                     ProfileManagerController.IsSaveButtonEnabled = false;
 
-                IterationManagerController.IsPreviousStartGCOfScansVisible = Visibility.Hidden;
                 IterationManagerController.NameOfTheCurrentStartGCOfScans = "Start counter of routine: ";
                 IterationManagerController.IsScanOnlyOnceEnabled = false;
                 IterationManagerController.IsStopAfterScanEnabled = false;
@@ -1730,7 +1741,6 @@ namespace Controller.MainWindow
                 ProfileManagerController.IsSaveButtonEnabled = true;
 
                 IterationManagerController.NameOfTheCurrentStartGCOfScans = "Current Start GC of Scans: ";
-                IterationManagerController.IsPreviousStartGCOfScansVisible = Visibility.Visible;
                 IterationManagerController.IsScanOnlyOnceEnabled = true;
                 IterationManagerController.IsStopAfterScanEnabled = true;
                 IterationManagerController.IsShuffleIterationsEnabled = true;

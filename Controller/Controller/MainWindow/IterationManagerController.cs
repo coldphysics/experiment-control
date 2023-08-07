@@ -115,16 +115,6 @@ namespace Controller.MainWindow
             }
         }
 
-        public int LastStartCounterOfScans
-        {
-            get { return Parent.LastStartCounterOfScans; }
-        }
-
-        public int NumberOfIterations
-        {
-            get { return Parent.NumberOfIterations; }
-        }
-
         public int IterationOfScan
         {
             get { return Parent.IterationOfScan; }
