@@ -16,7 +16,13 @@ namespace HardwareAdWin.Simulator
     /// </summary>
     public class DummyAdWinHW:IDisposable
     {
-
+        /// <summary>
+        /// If DISABLE_SIMULATION is false, this class acts very much like the real Adwin, i.e. it takes commands and turns them into output voltages on the
+        /// different channels. Because the achievable speed at which this is done is orders of magnitude slower than for the real Adwin, this simulation
+        /// is not suitable for using sequences from real experiments.
+        /// Thus, when debugging issues involving such sequences, it may be useful to completely disable the detailed simulation.
+        /// </summary>
+        private static bool DISABLE_SIMULATION = true;
 
         /// <summary>
         /// The single instance of type <see cref=" DummyAdWinHW"/>.
@@ -282,6 +288,11 @@ namespace HardwareAdWin.Simulator
         {
             --fifoNumber;
             ConcurrentQueue<int> selectedQueue = fifos[fifoNumber];
+
+            if(DISABLE_SIMULATION)
+            { 
+                return;
+            }
 
             foreach (int element in array)
                 if (selectedQueue.Count < FIFO_SIZE)
