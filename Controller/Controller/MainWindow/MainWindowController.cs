@@ -751,18 +751,6 @@ namespace Controller.MainWindow
             }
         }
 
-        private bool _isAlwaysIncreaseEnabled = true;
-
-        public bool IsAlwaysIncreaseEnabled
-        {
-            get { return _isAlwaysIncreaseEnabled; }
-            set
-            {
-                _isAlwaysIncreaseEnabled = value;
-                OnPropertyChanged("IsAlwaysIncreaseEnabled");
-            }
-        }
-
         private Visibility _isPreviousStartGCOfScansVisible = Visibility.Visible;
 
         public Visibility IsPreviousStartGCOfScansVisible
@@ -919,8 +907,8 @@ namespace Controller.MainWindow
             //Ebaa 11.06
             // IterationManagerController.NotifyPropertyChanged("StartCounterOfScans");
             IterationManagerController.NotifyPropertyChanged("StartCounterOfScansOfCurrentModel");
-            IterationManagerController.NotifyPropertyChanged("LastStartCounterOfScans");
-            IterationManagerController.NotifyPropertyChanged("NumberOfIterations");
+            OnPropertyChanged("LastStartCounterOfScans");
+            OnPropertyChanged("NumberOfIterations");
             OnPropertyChanged("DurationTotal");
             OnPropertyChanged("EndTime");
             IterationManagerController.NotifyPropertyChanged("CompletedScans");
