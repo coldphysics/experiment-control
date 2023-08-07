@@ -13,7 +13,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0">
+        <ScrollViewer Grid.Row="0" MaxHeight="800px">
             <TextBlock
                 Margin="10"
                 HorizontalAlignment="Stretch"
