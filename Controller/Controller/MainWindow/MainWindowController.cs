@@ -89,6 +89,9 @@ namespace Controller.MainWindow
 
             CurrentModeController = MeasurementRoutineController;
             _incrementIteratorsIsEnabled = true;
+
+            _errorsController.IndicateErrorOnTaskbarEvent += (sender, e) => IndicateErrorOnTaskbarEvent?.Invoke(sender, e);
+            _errorsController.StopIndicatingErrorOnTaskbarEvent += (sender, e) => StopIndicatingErrorOnTaskbarEvent?.Invoke(sender, e);
         }
 
         public MainWindowController()
@@ -871,6 +874,14 @@ namespace Controller.MainWindow
         #endregion
 
         #region Events
+        /// <summary>
+        /// This event is fired when the user should be made aware of an error in the error window.
+        /// </summary>
+        public event EventHandler IndicateErrorOnTaskbarEvent;
+        /// <summary>
+        /// This event is fired when the user should not be made aware of an error in the error window anymore.
+        /// </summary>
+        public event EventHandler StopIndicatingErrorOnTaskbarEvent;
         //TODO DANGER! static event
         /// <summary>
         /// Occurs when the list of windows is changed.
