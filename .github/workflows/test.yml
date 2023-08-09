@@ -7,9 +7,5 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '4.8.x'
     - name: Execute unit tests
       run: dotnet test GeneratorUT\GeneratorUT.csproj
