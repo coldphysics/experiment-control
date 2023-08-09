@@ -2,10 +2,12 @@
 run-name: Tests for the experiment control software are being run
 on: [push]
 jobs:
-  build:
+  test:
     runs-on: windows-2019
+    env:
+      Test_Project_Path: GeneratorUT\GeneratorUT.csproj
     steps:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Execute unit tests
-      run: dotnet test GeneratorUT\GeneratorUT.csproj
+      run: dotnet test $env:Test_Project_Path
