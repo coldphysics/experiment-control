@@ -34,6 +34,8 @@ namespace GeneratorUT
             };
 
             buffer.CopyData(model, timesToReplicate);
+
+            Assert.IsTrue(false);
             
         }
     }
