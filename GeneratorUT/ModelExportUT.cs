@@ -336,10 +336,10 @@ namespace GeneratorUT
                             // check correct time
                             if (lastReadTime >= 0)
                             {
-                                Assert.AreEqual(lastReadTime + stepTime, decimal.Parse(record.TimeMillis));
+                                Assert.AreEqual(lastReadTime + stepTime, decimal.Parse(record.TimeMillis, NumberFormatInfo.InvariantInfo));
                             }
 
-                            lastReadTime = decimal.Parse(record.TimeMillis);
+                            lastReadTime = decimal.Parse(record.TimeMillis, NumberFormatInfo.InvariantInfo);
                         }
                     }
 

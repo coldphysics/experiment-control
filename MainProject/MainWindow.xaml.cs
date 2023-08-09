@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Controller.Helper;
 using Controller.MainWindow;
 using Controller.Settings;
 using MainProject.Builders;
-using Model.Properties;
 using Model.Settings;
 using System.Linq;
-
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace MainProject
 {
@@ -23,6 +21,16 @@ namespace MainProject
         /// Necessary when changing the settings models.
         /// </summary>
         private const bool CLEAR_PROFILES_WHEN_ERROR = false;
+        /// <summary>
+        /// Sound frequency of beeps emitted when making the user aware of errors.
+        /// </summary>
+        private static readonly int BEEP_FREQUENCY = 2000;
+        /// <summary>
+        /// Number of beeps emitted when making the user aware of errors.
+        /// </summary>
+        private static readonly int BEEPS = 3;
+
+        private Window _mainWindow;
 
         public MainWindow()
         {
@@ -98,23 +106,60 @@ namespace MainProject
                 .window
                 .Icon = new BitmapImage(new Uri("pack://application:,,,/View;component/Resources/errorIcon.png", UriKind.Absolute));
 
-            Window mainWindow = WindowsHelper.CreateWindowToHostViewModel(controller, true, false, true, false);
+            _mainWindow = WindowsHelper.CreateWindowToHostViewModel(controller, true, false, true, false);
 
             if (controller.Icon != null )
             {
-                mainWindow.Icon = new BitmapImage(new Uri("pack://application:,,," + controller.Icon, UriKind.Absolute));
+                _mainWindow.Icon = new BitmapImage(new Uri("pack://application:,,," + controller.Icon, UriKind.Absolute));
             }
 
-            mainWindow.Width = 850;
-            mainWindow.Height = 750;
-            mainWindow.Title = "Experiment Control";
-            mainWindow.Closing += (sender, args) => controller.ShutdownApplication(args);
-            BlinkManager.Initialize(mainWindow);
-            mainWindow.Show();
+            controller.IndicateErrorOnTaskbarEvent += (sender, e) => BlinkErrorAsync();
+            controller.StopIndicatingErrorOnTaskbarEvent += (sender, e) => StopBlinkingAsync();
+
+            _mainWindow.Width = 850;
+            _mainWindow.Height = 750;
+            _mainWindow.Title = "Experiment Control";
+            _mainWindow.Closing += (sender, args) => controller.ShutdownApplication(args);
+            _mainWindow.Show();
 
             InitializeComponent();
 
             this.Close();
+        }
+
+        public void BlinkErrorAsync()
+        {
+            Console.Write("Blinking Error!\n");
+
+            _mainWindow.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var taskInfo = new System.Windows.Shell.TaskbarItemInfo
+                {
+                    ProgressState = System.Windows.Shell.TaskbarItemProgressState.Error,
+                    ProgressValue = 100
+                };
+                _mainWindow.TaskbarItemInfo = taskInfo;
+                MainWindowController.WindowsList.Where(w => w.Name == "Errors").First().window.Activate();
+            }));
+
+            Task.Run(() =>
+            {
+                for (int i = 1; i <= BEEPS; ++i)
+                {
+                    Console.Beep(BEEP_FREQUENCY, 200);
+                    Thread.Sleep(200);
+                }
+            });
+        }
+
+        public void StopBlinkingAsync()
+        {
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var taskInfo = new System.Windows.Shell.TaskbarItemInfo();
+                taskInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                _mainWindow.TaskbarItemInfo = taskInfo;
+            }));
         }
     }
 }

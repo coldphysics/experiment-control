@@ -25,6 +25,15 @@ namespace Controller.Error
         private readonly Dictionary<ErrorCategory, bool> openedState = new Dictionary<ErrorCategory, bool>();
 
         /// <summary>
+        /// This event is fired when the user should be made aware of an error in the error window.
+        /// </summary>
+        public event EventHandler IndicateErrorOnTaskbarEvent;
+        /// <summary>
+        /// This event is fired when the user should not be made aware of an error in the error window anymore.
+        /// </summary>
+        public event EventHandler StopIndicatingErrorOnTaskbarEvent;
+
+        /// <summary>
         /// Provides access for the errors list
         /// </summary>
         public ObservableCollection<AbstractErrorItemController> Errors
@@ -174,11 +183,11 @@ namespace Controller.Error
             {
                 // only blink again if we have new errors!
                 if (newErrorsCount > 0)
-                    BlinkManager.GetInstance().BlinkErrorAsync();
+                    IndicateErrorOnTaskbarEvent(this, null);
             }
             else
             {
-                BlinkManager.GetInstance().StopBlinkingAsync();
+                StopIndicatingErrorOnTaskbarEvent(this, null);
             }
         }
 
