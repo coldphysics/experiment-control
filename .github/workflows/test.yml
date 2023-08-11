@@ -13,7 +13,7 @@ jobs:
         ssh-key: ${{ secrets.DLL_ACCESS_KEY }}
   
     - name: Move private DLLs
-      run: cp -f ./private_dlls/libs/*.dll ./libs
+      run: cp -force ./private_dlls/libs/*.dll ./libs
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
