@@ -4,10 +4,24 @@ on: [push]
 jobs:
   test:
     runs-on: windows-2019
-    env:
-      Test_Project_Path: GeneratorUT\GeneratorUT.csproj
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v2
-    - name: Execute unit tests
-      run: dotnet test $env:Test_Project_Path
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+
+    - name: Restore packages
+      run: msbuild MainProject\ExperimentControl.sln -t:restore
+
+    - name: Build
+      run: msbuild MainProject\ExperimentControl.sln -property:Configuration=Debug;Platform=x64 -t:build
+      
+    - name: Run tests
+      uses: microsoft-approved-actions/vstest@master
+      with:
+        testAssembly: GeneratorUT.dll
+        searchFolder: .\GeneratorUT\bin\Debug\
