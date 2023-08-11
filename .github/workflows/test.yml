@@ -11,9 +11,6 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
 
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v1
-
     - name: Restore packages
       run: msbuild MainProject\ExperimentControl.sln -t:restore
 
@@ -21,7 +18,7 @@ jobs:
       run: msbuild MainProject\ExperimentControl.sln -property:Configuration=Debug;Platform=x64 -t:build
       
     - name: Run tests
-      uses: microsoft/vstest@v1.2.0
+      uses: microsoft/vstest@latest
       with:
         testAssembly: GeneratorUT.dll
         searchFolder: .\GeneratorUT\bin\Debug\
