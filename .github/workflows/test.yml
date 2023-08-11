@@ -1,0 +1,34 @@
+name: Test
+run-name: Tests for the experiment control software are being run
+on: [push]
+jobs:
+  test:
+    runs-on: windows-2019
+    steps:
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+      
+    - name: Add vstest to path
+      uses: darenm/Setup-VSTest@v1.2
+      
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Pull private DLLs
+      uses: actions/checkout@v2
+      with:
+        repository: coldphysics/private_dlls
+        path: './private_dlls'
+        ssh-key: ${{ secrets.DLL_ACCESS_KEY }}
+  
+    - name: Move private DLLs
+      run: cp -force ./private_dlls/libs/*.dll ./libs
+
+    - name: Restore packages
+      run: msbuild MainProject\ExperimentControl.sln -t:Restore -p:RestorePackagesConfig=true
+
+    - name: Build
+      run: msbuild MainProject\ExperimentControl.sln -property:Configuration=Debug`;Platform=x64 -t:build
+      
+    - name: Run tests
+      run: vstest.console GeneratorUT\bin\x64\Debug\GeneratorUT.dll
