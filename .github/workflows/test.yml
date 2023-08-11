@@ -31,4 +31,4 @@ jobs:
       run: msbuild MainProject\ExperimentControl.sln -property:Configuration=Debug`;Platform=x64 -t:build
       
     - name: Run tests
-      run: vstest.console GeneratorUT\bin\Debug\GeneratorUT.dll
+      run: vstest.console GeneratorUT\bin\x64\Debug\GeneratorUT.dll
