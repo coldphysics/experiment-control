@@ -25,7 +25,7 @@ jobs:
       run: msbuild MainProject\ExperimentControl.sln -t:Restore -p:RestorePackagesConfig=true
 
     - name: Build
-      run: msbuild MainProject\ExperimentControl.sln -property:Configuration=Debug;Platform=x64 -t:build
+      run: msbuild MainProject\ExperimentControl.sln -property:Configuration=Debug`;Platform=x64 -t:build
       
     - name: Run tests
       uses: microsoft/vstest-action@v1.0.0
