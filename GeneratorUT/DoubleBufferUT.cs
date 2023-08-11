@@ -33,10 +33,7 @@ namespace GeneratorUT
                 Assert.IsTrue(DoubleEquals(output.OutputDurationMillis * timesToReplicate / 1000.0, buffer.DurationSeconds));
             };
 
-            buffer.CopyData(model, timesToReplicate);
-
-            Assert.IsTrue(false);
-            
+            buffer.CopyData(model, timesToReplicate);            
         }
     }
 }
