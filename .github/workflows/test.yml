@@ -1,4 +1,4 @@
-name: Test
+name: build and test
 run-name: Tests for the experiment control software are being run
 on: [push]
 jobs:
