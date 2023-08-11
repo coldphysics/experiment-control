@@ -5,6 +5,12 @@ jobs:
   test:
     runs-on: windows-2019
     steps:
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+      
+    - name: Add vstest to path
+      uses: darenm/Setup-VSTest@v1.2
+      
     - name: Checkout code
       uses: actions/checkout@v2
       
@@ -17,9 +23,6 @@ jobs:
   
     - name: Move private DLLs
       run: cp -force ./private_dlls/libs/*.dll ./libs
-
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
 
     - name: Restore packages
       run: msbuild MainProject\ExperimentControl.sln -t:Restore -p:RestorePackagesConfig=true
