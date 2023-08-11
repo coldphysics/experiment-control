@@ -1,5 +1,7 @@
 # Cold Physics Experiments Control Software (CPECS)
 
+![build and test](https://github.com/coldphysics/experiment-control/actions/workflows/test.yml/badge.svg)
+
 This repository maintains a software used to control physical experiments related to very cold molecules and atoms.
 
 ## Table of Contents
