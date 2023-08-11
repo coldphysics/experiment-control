@@ -8,9 +8,6 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
       
-    - name: Add vstest to path
-      uses: darenm/Setup-VSTest@v1.2
-      
     - name: Checkout code
       uses: actions/checkout@v2
       
@@ -31,4 +28,7 @@ jobs:
       run: msbuild MainProject\ExperimentControl.sln -property:Configuration=Debug`;Platform=x64 -t:build
       
     - name: Run tests
-      run: vstest.console GeneratorUT\bin\x64\Debug\GeneratorUT.dll
+      uses: microsoft/vstest-action@v1.0.0
+      with:
+        testAssembly: GeneratorUT.dll
+        searchFolder: .\GeneratorUT\bin\x64\Debug\
