@@ -17,6 +17,7 @@ namespace GeneratorUT
         [DataTestMethod]
         public void TestRegularOutputDurationWithReplication(string modelName, string profileName)
         {
+            SelectProfile(profileName);
             const int timesToReplicate = 3;
             RootModel model = base.LoadModel(modelName);
             ModelBuilder modelBuilder = new ModelBuilder(); 
