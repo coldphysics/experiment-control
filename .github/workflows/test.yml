@@ -21,7 +21,7 @@ jobs:
       run: msbuild MainProject\ExperimentControl.sln -property:Configuration=Debug;Platform=x64 -t:build
       
     - name: Run tests
-      uses: microsoft-approved-actions/vstest@master
+      uses: microsoft/vstest@v1.2.0
       with:
         testAssembly: GeneratorUT.dll
         searchFolder: .\GeneratorUT\bin\Debug\
