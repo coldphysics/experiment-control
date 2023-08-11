@@ -12,7 +12,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
 
     - name: Restore packages
-      run: msbuild MainProject\ExperimentControl.sln -t:restore
+      run: msbuild MainProject\ExperimentControl.sln -t:Restore -p:RestorePackagesConfig=true
 
     - name: Build
       run: msbuild MainProject\ExperimentControl.sln -property:Configuration=Debug;Platform=x64 -t:build
