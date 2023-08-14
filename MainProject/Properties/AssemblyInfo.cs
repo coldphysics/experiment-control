@@ -8,7 +8,7 @@ using System.Windows;
 [assembly: AssemblyTitle("Experiment Control")]
 [assembly: AssemblyDescription("This application controls the output of real-time signal generators (e.g, AdWin, NI) used in physical experiments.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("PI5 - University of Stuttgart")]
+[assembly: AssemblyCompany("PI5 - University of Stuttgart, IAP - University of Bonn")]
 [assembly: AssemblyProduct("Experiment Control")]
 [assembly: AssemblyCopyright("© 2015-2020 PI5 - University of Stuttgart")]
 [assembly: AssemblyTrademark("")]
@@ -49,5 +49,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.4.4.0")]
+[assembly: AssemblyVersion("1.4.5.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
