@@ -1122,9 +1122,9 @@ namespace Buffer.Basic
             }
             catch (Exception e)
             {
-                var errorCollector = ErrorCollector.Instance;
-                errorCollector.AddError(e.ToString(), ErrorCategory.Python, false, ErrorTypes.DynamicCompileError);
                 string error = pyExecutor.ExplainException(e);
+                var errorCollector = ErrorCollector.Instance;
+                errorCollector.AddError("Error in Python script \"" + pyhtonScript + "\":\n" + error, ErrorCategory.Python, false, ErrorTypes.DynamicCompileError);
                 Console.Error.WriteLine(error);
             }
         }
