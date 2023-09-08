@@ -44,7 +44,7 @@ namespace Controller.Helper
                     {
                         errorsWindow = WindowsHelper.CreateWindowToHostViewModel(window.Value, true, false, true, true);
                         errorsWindow.Title = "Errors";
-                        errorsWindow.ShowInTaskbar = false;
+                        errorsWindow.ShowInTaskbar = true;
                         errorsWindow.MinHeight = 450;
                         errorsWindow.MinWidth = 800;
                     }
@@ -57,7 +57,7 @@ namespace Controller.Helper
                     {
                         variablesWindow = WindowsHelper.CreateWindowToHostViewModel(window.Value, true, false, true, true);
                         variablesWindow.Title = "Variables";
-                        variablesWindow.ShowInTaskbar = false;
+                        variablesWindow.ShowInTaskbar = true;
                     }
 
                     output.Add(window.Key, variablesWindow);
@@ -69,7 +69,7 @@ namespace Controller.Helper
 
                     var realController = (WindowBasicController)window.Value;
                     Window currentWindow = WindowsHelper.CreateWindowToHostViewModel(realController, true, false, true, true);
-                    currentWindow.ShowInTaskbar = false;
+                    currentWindow.ShowInTaskbar = true;
                     currentWindow.Title = realController.Name;
                     output.Add(window.Key, currentWindow);
                 }
