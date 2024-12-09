@@ -153,6 +153,7 @@ namespace Buffer.Basic
         /// Indicates that the output loop should stop after the first whole scan of iterators is over.
         /// </summary>
         public bool stopAfterScan;
+        public bool reloadFilesForStepsEveryCycle = false;
 
 
         /// <summary>
@@ -282,6 +283,13 @@ namespace Buffer.Basic
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         public delegate void IterateVariablesEventHandler(object sender, EventArgs e);
+
+
+        public delegate void ReloadStepFileEventHandler(object sender, Model.Data.Steps.StepFileModel stepmodel);
+        /// <summary>
+        /// This event is fired every cycle to reload the contents of CSV files for CSV steps.
+        /// </summary>
+        public event ReloadStepFileEventHandler ReloadStepFileEvent;
 
 
         /// <summary>
@@ -805,7 +813,10 @@ namespace Buffer.Basic
                         lecroyControllerThread.Start(workLoopCopy);
                     }
 
-                    //
+
+                    // reload step file for file steps in every cycle
+                    ReloadStepFile(workLoopCopy);
+
                     BeforeIteratingVariablesEventArgs eventArgs = new BeforeIteratingVariablesEventArgs();
                     DoBeforeIteratingVariables(eventArgs);
 
@@ -1053,6 +1064,38 @@ namespace Buffer.Basic
             if (updateGuiIteratorState)
             {
                 UpdateIteratorState();
+            }
+        }
+
+        /// <summary>
+        /// Fire event to reload the csv file
+        /// </summary>
+        /// <param name="rootModel"></param>
+        private void ReloadStepFile(Model.Root.RootModel rootModel)
+        {
+
+            if (!reloadFilesForStepsEveryCycle)
+            {
+                return;
+            }
+
+            foreach (Model.Data.Cards.CardBasicModel cardUpdateCSV in rootModel.Data.group.Cards)
+            {
+
+                foreach (Model.Data.Sequences.SequenceModel sequenceUpdateCSV in cardUpdateCSV.Sequences)
+                {
+                    foreach (Model.Data.Channels.ChannelBasicModel channelUpdateCSV in sequenceUpdateCSV.Channels)
+                    {
+                        foreach (Model.Data.Steps.StepBasicModel stepUpdateCSV in channelUpdateCSV.Steps)
+                        {
+                            if (stepUpdateCSV is Model.Data.Steps.StepFileModel)
+                            {
+                                Model.Data.Steps.StepFileModel fileStep = (Model.Data.Steps.StepFileModel)stepUpdateCSV;
+                                ReloadStepFileEvent?.Invoke(this, fileStep);
+                            }
+                        }
+                    }
+                }
             }
         }
 

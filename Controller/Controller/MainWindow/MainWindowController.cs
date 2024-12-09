@@ -48,6 +48,13 @@ using Model.Utilities;
 using Controller.Helper;
 using Controller.Error;
 using Errors.Error;
+using AbstractController.Data;
+using AbstractController.Data.SequenceGroup;
+using AbstractController.Data.Card;
+using AbstractController.Data.Sequence;
+using AbstractController.Data.Channels;
+using AbstractController.Data.Steps;
+using Controller.Data.Steps;
 
 namespace Controller.MainWindow
 {
@@ -571,6 +578,12 @@ namespace Controller.MainWindow
         {
             get { return _outputHandler.pause; }
             set { _outputHandler.pause = value; }
+        }
+
+        public bool ReloadFilesForStepsEveryCycle
+        {
+            get { return _outputHandler.reloadFilesForStepsEveryCycle; }
+            set { _outputHandler.reloadFilesForStepsEveryCycle = value; }
         }
 
         public bool AlwaysIncrease
@@ -1504,6 +1517,37 @@ namespace Controller.MainWindow
             _variables.SetNewVariablesModel(model.Data.variablesModel);
             _variables.SetNewRootModel(model);
             _controllerRecipe.Cook(_model, _variables);
+
+
+            RootController rootController = GetRootController();
+            AbstractDataController abstractdataController = rootController.DataController;
+            AbstractSequenceGroupController abstractgroupController = abstractdataController.SequenceGroup;
+
+
+            foreach (AbstractCardController abstractcardController in abstractgroupController.Windows)
+            {
+
+                foreach (AbstractSequenceController abstractsequenceController in abstractcardController.Tabs)
+                {
+                    foreach (AbstractChannelController abstractchannelController in abstractsequenceController.Channels)
+                    {
+                        foreach (AbstractStepController abstractstepController in abstractchannelController.Steps.Skip(1))
+                        {
+                            if (abstractstepController is StepFileController)
+                            {
+                                StepFileController stepController = (StepFileController)abstractstepController;
+                                Model.Data.Steps.StepBasicModel stepmodel = stepController.Model;
+                                if (stepmodel is Model.Data.Steps.StepFileModel)
+                                {
+                                    Model.Data.Steps.StepFileModel stepfilemodel = (Model.Data.Steps.StepFileModel)stepmodel;
+                                    _outputHandler.ReloadStepFileEvent += stepController.ReloadFile;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
 
             //Trigger the callback if needed
             if (callback != null)

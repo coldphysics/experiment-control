@@ -209,6 +209,84 @@ namespace Controller.Data.Steps
             }
         }
 
+        ///// <summary>
+        ///// Reloads files for file steps that have already been defined.
+        ///// </summary>
+        public void ReloadFile(object sender, Model.Data.Steps.StepFileModel fileStep)
+        {
+            bool csv = false;
+            bool binary = false;
+            if (fileStep.Store == StepFileModel.StoreType.Csv)
+            {
+                csv = true;
+            }
+
+            if (fileStep.Store == StepFileModel.StoreType.Binary)
+            {
+                binary = true;
+            }
+
+
+            string fileName = fileStep.FileName;
+            int length = 0;
+            double value = 0;
+
+            if(fileName.EndsWith(".csv") && !csv)
+            {
+                throw new Exception();
+            }
+            if (fileName.EndsWith(".bin") && !binary)
+            {
+                throw new Exception();
+            }
+
+            if (csv)
+            {
+                length = File.ReadAllLines(fileName).Length;
+                value = Convert.ToDouble(File.ReadLines(fileName).Last());
+            }
+
+            if (binary)
+            {
+                var stream = new FileStream(fileName, FileMode.Open);
+                var byteLength = (int)stream.Length;
+                if (CardType() == CardBasicModel.CardType.Analog)
+                {
+                    length = (byteLength / sizeof(float));
+                    stream.Seek(-sizeof(float), SeekOrigin.End);
+                    var br = new BinaryReader(stream);
+                    value = br.ReadSingle();
+                    br.Close();
+                }
+
+                if (CardType() == CardBasicModel.CardType.Digital)
+                {
+                    length = (byteLength / sizeof(byte));
+                    stream.Seek(-sizeof(byte), SeekOrigin.End);
+                    var br = new BinaryReader(stream);
+                    value = br.ReadByte();
+                    br.Close();
+                }
+                stream.Close();
+            }
+
+            Duration = length * TimeSettingsInfo.GetInstance().SmallestTimeStep;
+            Value = value;
+            UpdateProperty("StartTime");
+            UpdateProperty("Duration");
+            UpdateProperty("Value");
+            ((ChannelBasicController)Parent).CopyToBuffer();
+
+            if (fileName.EndsWith(".csv") && !csv)
+            {
+                throw new Exception();
+            }
+            if (fileName.EndsWith(".bin") && !binary)
+            {
+                throw new Exception();
+            }
+        }
+
 
         /// <summary>
         /// Gets the name of the duration variable.

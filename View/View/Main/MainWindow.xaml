@@ -88,6 +88,7 @@
                         <RowDefinition Height="30" />
                         <RowDefinition Height="30" />
                         <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
@@ -260,10 +261,17 @@
                         Margin="2,5,0,0"
                         Content="Pause Increasing GC"
                         IsChecked="{Binding Pause}"
-                        IsEnabled="{Binding IsPauseEnabled}" /> 
+                        IsEnabled="{Binding IsPauseEnabled}" />
+                    <CheckBox
+                        Grid.Row="4"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Stretch"
+                        Margin="2,5,0,0"
+                        Content="Reload CSV or binary files for file steps from disk every cycle"
+                        IsChecked="{Binding ReloadFilesForStepsEveryCycle}" />
                     <CheckBox
                         Name="IterateAndSaveButton"
-                        Grid.Row="4"
+                        Grid.Row="5"
                         Grid.Column="0"
                         Grid.ColumnSpan="3"
                         Margin="2,5,0,0"
@@ -275,7 +283,7 @@
                         IsEnabled="{Binding IncrementIteratorsIsEnabled, Mode=TwoWay}" />
 
                     <ContentControl
-                        Grid.Row="5"
+                        Grid.Row="6"
                         Grid.Column="0"
                         Grid.ColumnSpan="4"
                         Content="{Binding IterationManagerController}"
