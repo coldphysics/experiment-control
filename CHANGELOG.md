@@ -1,8 +1,33 @@
 # Changelog
 
+## [v1.4.7](https://github.com/coldphysics/experiment-control/tree/v1.4.7) (2026-02-12)
+
+[Full Changelog](https://github.com/coldphysics/experiment-control/compare/v1.4.6...v1.4.7)
+
+**Implemented enhancements:**
+
+- Upgrade MySQL Connector/NET to work with MariaDB instead of MySQL Server
+
+**Fixed bugs:**
+
+- Improve robustness of icon loading in MainWindow
+
+## [v1.4.6](https://github.com/coldphysics/experiment-control/tree/v1.4.6) (2024-12-09)
+
+[Full Changelog](https://github.com/coldphysics/experiment-control/compare/v1.4.5...v1.4.6)
+
+**Implemented enhancements:**
+
+- Add (optional) ability to reload files for steps of the sequence for every cycle [\#68](https://github.com/coldphysics/experiment-control/pull/68)
+
+**Fixed bugs:**
+
+- Show all windows in taskbar instead of just main one [\#66](https://github.com/coldphysics/experiment-control/pull/66)
+- Display a nice error message when time-critical Python scripts fail [\#64](https://github.com/coldphysics/experiment-control/pull/64)
+
 ## [v1.4.5](https://github.com/coldphysics/experiment-control/tree/v1.4.5) (2023-08-14)
 
-[Full Changelog](https://github.com/coldphysics/experiment-control/compare/v1.4.5...HEAD)
+[Full Changelog](https://github.com/coldphysics/experiment-control/compare/v1.4.4...v1.4.5)
 
 **Implemented enhancements:**
 

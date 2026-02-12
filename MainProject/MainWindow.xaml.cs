@@ -110,7 +110,22 @@ namespace MainProject
 
             if (controller.Icon != null )
             {
-                _mainWindow.Icon = new BitmapImage(new Uri("pack://application:,,," + controller.Icon, UriKind.Absolute));
+                try
+                {
+                    string iconPath = controller.Icon;
+                    // Ensure the path starts with / for pack URI format
+                    if (!iconPath.StartsWith("/"))
+                    {
+                        iconPath = "/" + iconPath;
+                    }
+                    
+                    Uri iconUri = new Uri("pack://application:,,," + iconPath, UriKind.Absolute);
+                    _mainWindow.Icon = new BitmapImage(iconUri);
+                }
+                catch (Exception)
+                {
+                    // Invalid icon path - skip setting the icon
+                }
             }
 
             controller.IndicateErrorOnTaskbarEvent += (sender, e) => BlinkErrorAsync();

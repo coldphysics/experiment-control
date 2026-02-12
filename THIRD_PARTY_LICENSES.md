@@ -63,3 +63,63 @@ https://opensource.org/licenses/Apache-2.0
 ### Microsoft.Xaml.Behaviors.Wpf
 License: MIT
 https://licenses.nuget.org/MIT
+
+### BouncyCastle.Cryptography
+License: MIT
+https://www.bouncycastle.org/csharp/licence.html
+
+### Google.Protobuf
+License: BSD-3-Clause
+https://github.com/protocolbuffers/protobuf/blob/main/LICENSE
+
+### K4os.Compression.LZ4
+License: MIT
+https://github.com/MiloszKrajewski/K4os.Compression.LZ4/blob/master/LICENSE
+
+### K4os.Compression.LZ4.Streams
+License: MIT
+https://github.com/MiloszKrajewski/K4os.Compression.LZ4/blob/master/LICENSE
+
+### K4os.Hash.xxHash
+License: MIT
+https://github.com/MiloszKrajewski/K4os.Hash.xxHash/blob/master/LICENSE
+
+### Microsoft.Bcl.AsyncInterfaces
+License: MIT
+https://licenses.nuget.org/MIT
+
+### System.Buffers
+License: MIT
+https://licenses.nuget.org/MIT
+
+### System.Configuration.ConfigurationManager
+License: MIT
+https://licenses.nuget.org/MIT
+
+### System.Diagnostics.DiagnosticSource
+License: MIT
+https://licenses.nuget.org/MIT
+
+### System.IO.Pipelines
+License: MIT
+https://licenses.nuget.org/MIT
+
+### System.Memory
+License: MIT
+https://licenses.nuget.org/MIT
+
+### System.Numerics.Vectors
+License: MIT
+https://licenses.nuget.org/MIT
+
+### System.Runtime.CompilerServices.Unsafe
+License: MIT
+https://licenses.nuget.org/MIT
+
+### System.Threading.Tasks.Extensions
+License: MIT
+https://licenses.nuget.org/MIT
+
+### ZstdSharp.Port
+License: MIT
+https://github.com/oleg-fomenkov/ZstdSharp/blob/master/LICENSE
